@@ -1,0 +1,32 @@
+{
+  "units": [
+    {
+      "op": "add_unit",
+      "player": 1,
+      "unit_const": 598,
+      "x": 84,
+      "y": 48,
+      "status": 2,
+      "caption_string": "Gaia Text example: embedded XS, no data mod"
+    }
+  ],
+  "xs": {
+    "mode": "carrier",
+    "carrier_title": "Gaia Text minimal example",
+    "content_file": "examples/text/gaia_text_minimal.xs"
+  },
+  "triggers": [
+    {
+      "op": "add_trigger",
+      "name": "Gaia Text camera",
+      "effects": [
+        {
+          "op": "change_view",
+          "source_player": 1,
+          "location_x": 86,
+          "location_y": 50
+        }
+      ]
+    }
+  ]
+}

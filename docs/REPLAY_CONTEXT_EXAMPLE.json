@@ -1,0 +1,8 @@
+{
+  "name": "Example Scenario Context",
+  "telemetry_prefixes": ["SDS EVT", "SDSDBG"],
+  "regions": [
+    {"name": "Hub", "box": [120, 120, 180, 180]},
+    {"name": "North Trial", "box": [20, 30, 80, 90]}
+  ]
+}

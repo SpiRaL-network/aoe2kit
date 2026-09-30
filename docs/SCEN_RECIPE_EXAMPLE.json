@@ -1,0 +1,228 @@
+{
+  "victory": {
+    "conquest_required": 0,
+    "all_custom_conditions_required": 1,
+    "mode": 4
+  },
+  "players": [
+    {
+      "player": 1,
+      "active": true,
+      "human": true
+    },
+    {
+      "player": 2,
+      "active": true,
+      "human": false
+    }
+  ],
+  "diplomacy": [
+    {
+      "from": 1,
+      "to": 2,
+      "stance": 3
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "stance": 3
+    }
+  ],
+  "resources": [
+    {
+      "player": 1,
+      "food": 500,
+      "wood": 500,
+      "gold": 250,
+      "stone": 100
+    },
+    {
+      "player": 2,
+      "food": 0,
+      "wood": 0,
+      "gold": 0,
+      "stone": 0
+    }
+  ],
+  "masks": [
+    {
+      "name": "organic_patch",
+      "op": "blob",
+      "x1": 38,
+      "y1": 18,
+      "radius": 6,
+      "seed": 42
+    }
+  ],
+  "triggers": [
+    {
+      "op": "add_display_instructions",
+      "name": "AoE2Kit: Disabled Display Instructions Smoke",
+      "enabled": false,
+      "source_player": 1,
+      "display_time": 10,
+      "instruction_panel_position": 0,
+      "play_sound": 0,
+      "use_tag_color_for_icon": 0,
+      "message": "AoE2Kit scenario writer smoke test"
+    },
+    {
+      "op": "add_create_object",
+      "name": "AoE2Kit: Disabled Create Object Smoke",
+      "enabled": false,
+      "object_list_unit_id": 83,
+      "source_player": 1,
+      "location_x": 10,
+      "location_y": 10,
+      "disable_sound": 0
+    },
+    {
+      "op": "add_trigger",
+      "name": "AoE2Kit: Disabled Timer Activate Smoke",
+      "enabled": false,
+      "conditions": [
+        {
+          "op": "timer",
+          "timer": 5
+        }
+      ],
+      "effects": [
+        {
+          "op": "activate_trigger",
+          "trigger_id": 0
+        }
+      ]
+    },
+    {
+      "op": "edit_trigger",
+      "target_name": "AoE2Kit: Disabled Timer Activate Smoke",
+      "set_name": "AoE2Kit: Edited Timer Activate Smoke",
+      "enabled": false,
+      "remove_effects": [
+        0
+      ],
+      "remove_conditions": [
+        0
+      ],
+      "effects": [
+        {
+          "op": "display_instructions",
+          "message": "AoE2Kit edited-trigger smoke test",
+          "display_time": 5
+        }
+      ],
+      "conditions": [
+        {
+          "op": "object_selected",
+          "unit_object": 1
+        }
+      ]
+    }
+  ],
+  "units": [
+    {
+      "op": "add_unit",
+      "player": 1,
+      "unit_const": 83,
+      "x": 10.5,
+      "y": 12.5,
+      "z": 0,
+      "status": 2,
+      "rotation": 0,
+      "caption_string": "AoE2Kit Smoke Marker"
+    },
+    {
+      "op": "edit_unit",
+      "target_player": 1,
+      "target_caption": "AoE2Kit Smoke Marker",
+      "x": 11.5,
+      "y": 12.5,
+      "caption_string": "AoE2Kit Edited Smoke Marker"
+    },
+    {
+      "op": "cluster_scatter",
+      "player": 0,
+      "unit_const": 351,
+      "count": 4,
+      "centers": [{"x": 38.5, "y": 18.5}],
+      "cluster_shape": "packed",
+      "spread": 2.5,
+      "min_distance": 0.75,
+      "target_area_x1": 32,
+      "target_area_y1": 12,
+      "target_area_x2": 44,
+      "target_area_y2": 22,
+      "allowed_terrain_ids": [53, 58],
+      "seed": 42
+    }
+  ],
+  "map": [
+    {
+      "op": "set_terrain_rect",
+      "x1": 10,
+      "y1": 10,
+      "x2": 11,
+      "y2": 11,
+      "terrain_id": 0,
+      "elevation": 0,
+      "layer": -1
+    },
+    {
+      "op": "set_terrain_circle",
+      "x1": 20,
+      "y1": 20,
+      "radius": 2,
+      "terrain_id": 5
+    },
+    {
+      "op": "set_terrain_line",
+      "x1": 24,
+      "y1": 20,
+      "x2": 30,
+      "y2": 24,
+      "elevation": 1
+    },
+    {
+      "op": "terrain_grid",
+      "x1": 52,
+      "y1": 12,
+      "width": 2,
+      "height": 2,
+      "terrain_id": [1, 1, 2, 2],
+      "layer": [-1, 2, 1, -1],
+      "elevation": [0, 0, 0, 0]
+    },
+    {
+      "op": "noise_fill",
+      "mask": "organic_patch",
+      "x1": 32,
+      "y1": 12,
+      "x2": 44,
+      "y2": 22,
+      "terrain_id": 53,
+      "terrain_id_2": 58,
+      "seed": 42,
+      "scale": 5.5,
+      "threshold": 0.55
+    },
+    {
+      "op": "layered_crossfade",
+      "x1": 45,
+      "y1": 12,
+      "x2": 48,
+      "y2": 12,
+      "terrain_id": 1,
+      "terrain_id_2": 2
+    },
+    {
+      "op": "semantic_erode",
+      "mask": "organic_patch",
+      "x1": 32,
+      "y1": 12,
+      "x2": 44,
+      "y2": 22,
+      "iterations": 1,
+      "terrain_ids": [53, 58]
+    }
+  ]
+}

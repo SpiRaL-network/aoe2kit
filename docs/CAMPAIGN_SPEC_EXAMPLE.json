@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "Example Campaign",
+  "writer_scenario": "Example Campaign Save Point",
+  "players": 4,
+  "fields": [
+    {
+      "name": "level",
+      "type": "int",
+      "per_player": true,
+      "default": 1
+    },
+    {
+      "name": "xp",
+      "type": "int",
+      "per_player": true,
+      "default": 0
+    },
+    {
+      "name": "chapter",
+      "type": "string",
+      "default": "opening"
+    }
+  ]
+}

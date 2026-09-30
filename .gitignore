@@ -1,0 +1,29 @@
+# Local scratch and editor noise.
+*.log
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Test/build byproducts that are not part of the portable kit payload.
+coverage.out
+dist/
+tmp/
+
+# Compiled binaries: built locally for our own use, never tracked.
+# The kit is distributed as SOURCE; ship a binary only when we know the target.
+/kit
+/cba
+/bin/
+/build/
+
+# Scratch sprite frame dumps from `kit dat sprite`.
+/*_png/
+
+# Local handoff archive produced by `./kit pack AoE2Kit.zip`.
+/AoE2Kit.zip
+/AoE2Kit.zip.sha256
+
+# Third-party reference scenarios studied locally (e.g. SpiRaL's CB Front Towers).
+# Study technique only — never track/redistribute (author license forbids it).
+*REFERENCE.aoe2scenario

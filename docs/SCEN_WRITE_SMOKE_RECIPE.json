@@ -1,0 +1,115 @@
+{
+  "triggers": [
+    {
+      "op": "add_trigger",
+      "name": "AOE2KIT WRITE SMOKE - display/chat/timer",
+      "message": "",
+      "enabled": false,
+      "effects": [
+        {
+          "op": "display_instructions",
+          "message": "AOE2KIT WRITE SMOKE: display-instructions written by Go.",
+          "source_player": 1,
+          "display_time": 8
+        },
+        {
+          "op": "send_chat",
+          "message": "AOE2KIT WRITE SMOKE: send-chat written by Go.",
+          "source_player": 1
+        },
+        {
+          "op": "display_timer",
+          "message": "AOE2KIT WRITE SMOKE TIMER",
+          "source_player": 1,
+          "display_time": 8
+        }
+      ],
+      "conditions": [
+        {
+          "op": "timer",
+          "timer": 5
+        }
+      ]
+    },
+    {
+      "op": "add_trigger",
+      "name": "AOE2KIT WRITE SMOKE - create/task/kill/remove",
+      "message": "",
+      "enabled": false,
+      "effects": [
+        {
+          "op": "create_object",
+          "object_list_unit_id": 83,
+          "source_player": 1,
+          "location_x": 146,
+          "location_y": 176
+        },
+        {
+          "op": "task_object",
+          "source_player": 1,
+          "location_x": 146,
+          "location_y": 176,
+          "action_type": 1
+        },
+        {
+          "op": "kill_object",
+          "object_list_unit_id": 83,
+          "source_player": 1,
+          "area_x1": 145,
+          "area_y1": 175,
+          "area_x2": 146,
+          "area_y2": 176
+        },
+        {
+          "op": "remove_object",
+          "object_list_unit_id": 83,
+          "source_player": 1,
+          "area_x1": 145,
+          "area_y1": 175,
+          "area_x2": 146,
+          "area_y2": 176
+        }
+      ]
+    },
+    {
+      "op": "add_trigger",
+      "name": "AOE2KIT WRITE SMOKE - trigger control",
+      "message": "",
+      "enabled": false,
+      "effects": [
+        {
+          "op": "activate_trigger",
+          "trigger_id": 0
+        },
+        {
+          "op": "deactivate_trigger",
+          "trigger_id": 0
+        }
+      ]
+    }
+  ],
+  "units": [
+    {
+      "op": "add_unit",
+      "player": 1,
+      "unit_const": 83,
+      "x": 146.5,
+      "y": 176.5,
+      "z": 0,
+      "status": 2,
+      "rotation": 0
+    }
+  ],
+  "map": [
+    {
+      "op": "set_terrain_rect",
+      "x1": 145,
+      "y1": 175,
+      "x2": 147,
+      "y2": 177,
+      "terrain_id": 47,
+      "elevation": 0,
+      "layer": -1
+    }
+  ]
+}

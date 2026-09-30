@@ -1,0 +1,17 @@
+{
+  "prefixes": ["SDS EVT", "SDSDBG"],
+  "events": {
+    "trial_start": {
+      "required": ["id"]
+    },
+    "trial_clear": {
+      "required": ["id"]
+    },
+    "objective_progress": {
+      "required": ["id", "value"]
+    },
+    "reward": {
+      "required": ["player", "item"]
+    }
+  }
+}

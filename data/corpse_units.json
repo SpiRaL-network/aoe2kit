@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "generated": "2026-08-19",
+  "method": "seeded observed replay replacements plus unambiguous DAT name pairs; use only exact single-delta matches for automatic replay labeling",
+  "rows": [
+    {
+      "unit_id": 73,
+      "unit_name": "CHUKN",
+      "corpse_id": 28,
+      "corpse_name": "CHUKN_D",
+      "delta": -45,
+      "provenance": ["observed", "name_heuristic", "zero_hp"],
+      "confidence": "engine_verified",
+      "fixture_ref": "engine fixture: kill-factory run, 2026-08-18",
+      "observed_fresh_carry_delta": 285,
+      "carry_meaning": "corpse decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 625,
+      "unit_name": "PAV3",
+      "corpse_id": 1478,
+      "corpse_name": "Pavilion C (Rubble)",
+      "delta": 853,
+      "provenance": ["observed", "zero_hp", "rubble_name"],
+      "confidence": "engine_verified",
+      "fixture_ref": "engine fixture: executioner ledger run (v12)",
+      "carry_meaning": "rubble decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 626,
+      "unit_name": "PAV2",
+      "corpse_id": 1477,
+      "corpse_name": "Pavilion B (Rubble)",
+      "delta": 851,
+      "provenance": ["observed", "zero_hp", "rubble_name"],
+      "confidence": "engine_verified",
+      "fixture_ref": "engine fixture: executioner ledger run (v12)",
+      "carry_meaning": "rubble decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 1231,
+      "unit_name": "KIPCHAK",
+      "corpse_id": 1232,
+      "corpse_name": "KIPCHAK_D",
+      "delta": 1,
+      "provenance": ["observed_sync_log", "name_heuristic", "zero_hp"],
+      "confidence": "engine_verified",
+      "fixture_ref": "desync sync-log, match 500473166",
+      "observed_carry_min": 295,
+      "observed_carry_max": 299,
+      "observed_carry_drop": 2,
+      "observed_duration_ms": 1924,
+      "observed_decay_per_second": 1.0395010395010396,
+      "carry_meaning": "corpse decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 259,
+      "unit_name": "VMFAR",
+      "corpse_id": 226,
+      "corpse_name": "VMFAR_D",
+      "delta": -33,
+      "provenance": ["observed_sync_log", "name_heuristic", "zero_hp"],
+      "confidence": "engine_verified",
+      "fixture_ref": "desync sync-log, match 500473166",
+      "observed_carry_min": 237,
+      "observed_carry_max": 239,
+      "observed_carry_drop": 2,
+      "observed_duration_ms": 1924,
+      "observed_decay_per_second": 1.0395010395010396,
+      "carry_meaning": "corpse decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 123,
+      "unit_name": "VMLUM",
+      "corpse_id": 228,
+      "corpse_name": "VMLUM_D",
+      "delta": 105,
+      "provenance": ["observed_sync_log", "name_heuristic", "zero_hp"],
+      "confidence": "engine_verified",
+      "fixture_ref": "desync sync-log, match 500473166",
+      "observed_carry_min": 284,
+      "observed_carry_max": 286,
+      "observed_carry_drop": 2,
+      "observed_duration_ms": 1924,
+      "observed_decay_per_second": 1.0395010395010396,
+      "carry_meaning": "corpse decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 124,
+      "unit_name": "VMMIN",
+      "corpse_id": 229,
+      "corpse_name": "VMMIN_D",
+      "delta": 105,
+      "provenance": ["observed_sync_log", "name_heuristic", "zero_hp"],
+      "confidence": "engine_verified",
+      "fixture_ref": "desync sync-log, match 500473166",
+      "observed_carry_min": 237,
+      "observed_carry_max": 266,
+      "observed_carry_drop": 2,
+      "observed_duration_ms": 1924,
+      "observed_decay_per_second": 1.0395010395010396,
+      "carry_meaning": "corpse decay timer in replay checksum word_4 / sync-log carry"
+    },
+    {
+      "unit_id": 4,
+      "unit_name": "ARCHR",
+      "corpse_id": 3,
+      "corpse_name": "ARCHR_D",
+      "delta": -1,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 36,
+      "unit_name": "BCANN",
+      "corpse_id": 16,
+      "corpse_name": "BCANN_D",
+      "delta": -20,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 38,
+      "unit_name": "KNGHT",
+      "corpse_id": 111,
+      "corpse_name": "KNGHT_D",
+      "delta": 73,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 42,
+      "unit_name": "TREBU",
+      "corpse_id": 194,
+      "corpse_name": "TREBU_D",
+      "delta": 152,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 74,
+      "unit_name": "SPRMN",
+      "corpse_id": 152,
+      "corpse_name": "SPRMN_D",
+      "delta": 78,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 75,
+      "unit_name": "SWDMN",
+      "corpse_id": 154,
+      "corpse_name": "SWDMN_D",
+      "delta": 79,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 76,
+      "unit_name": "HVSWD",
+      "corpse_id": 99,
+      "corpse_name": "HVSWD_D",
+      "delta": 23,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 93,
+      "unit_name": "PKEMN",
+      "corpse_id": 140,
+      "corpse_name": "PKEMN_D",
+      "delta": 47,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 125,
+      "unit_name": "MONKX",
+      "corpse_id": 134,
+      "corpse_name": "MONKX_D",
+      "delta": 9,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 283,
+      "unit_name": "PALDN",
+      "corpse_id": 139,
+      "corpse_name": "PALDN_D",
+      "delta": -144,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 293,
+      "unit_name": "VFBAS",
+      "corpse_id": 211,
+      "corpse_name": "VFBAS_D",
+      "delta": -82,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 441,
+      "unit_name": "HUSSAR",
+      "corpse_id": 480,
+      "corpse_name": "HUSSAR_D",
+      "delta": 39,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    },
+    {
+      "unit_id": 448,
+      "unit_name": "SCOUT",
+      "corpse_id": 449,
+      "corpse_name": "SCOUT_D",
+      "delta": 1,
+      "provenance": ["name_heuristic", "zero_hp"],
+      "confidence": "strong_hypothesis"
+    }
+  ]
+}

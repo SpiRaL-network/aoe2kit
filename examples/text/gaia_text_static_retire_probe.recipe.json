@@ -1,0 +1,1488 @@
+{
+  "triggers": [
+    {
+      "effects": [
+        {
+          "location_x": 72,
+          "location_y": 58,
+          "op": "change_view",
+          "source_player": 1
+        }
+      ],
+      "name": "Retire probe camera",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 1,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 1",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 2,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 2",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 3,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 3",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 4,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 4",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 5,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 5",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 6,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 6",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 7,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 7",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 8,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 8",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 9,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 9",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 10,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 10",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 11,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 11",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 12,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 12",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 13,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 13",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 14,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 14",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 15,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 15",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 16,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 16",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 17,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 17",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 18,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 18",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 19,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 19",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 20,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 20",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 21,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 21",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 22,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 22",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 23,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 23",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 24,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 24",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 25,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 25",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 26,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 26",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 27,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 27",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 28,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 28",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 29,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 29",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 30,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 30",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 31,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 31",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 32,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 32",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 33,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 33",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 34,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 34",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 35,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 35",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 36,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 36",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 37,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 37",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 38,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 38",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 39,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 39",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 40,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 40",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 41,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 41",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 42,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 42",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 43,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 43",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 44,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 44",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 45,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 45",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 46,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 46",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 47,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 47",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 48,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 48",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 49,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 49",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 50,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 50",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 51,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 51",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 52,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 52",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 53,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 53",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 54,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 54",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 55,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 55",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 56,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 56",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 57,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 57",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 58,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 58",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 59,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 59",
+      "op": "add_trigger"
+    },
+    {
+      "conditions": [
+        {
+          "comparison": 0,
+          "op": "variable_value",
+          "quantity": 60,
+          "variable": 10
+        }
+      ],
+      "effects": [
+        {
+          "area_x1": 112,
+          "area_x2": 116,
+          "area_y1": 112,
+          "area_y2": 116,
+          "op": "remove_object",
+          "source_player": 0
+        }
+      ],
+      "enabled": true,
+      "looping": false,
+      "name": "Stump sweep 60",
+      "op": "add_trigger"
+    }
+  ],
+  "units": [
+    {
+      "caption_string": "KEEP ALIVE BARRACKS",
+      "op": "add_unit",
+      "player": 1,
+      "status": 2,
+      "unit_const": 12,
+      "x": 8,
+      "y": 8
+    },
+    {
+      "caption_string": "STUMP RETIRE PROBE",
+      "op": "add_unit",
+      "player": 1,
+      "status": 2,
+      "unit_const": 598,
+      "x": 72,
+      "y": 52
+    }
+  ],
+  "variables": [
+    {
+      "id": 10,
+      "name": "stump_sweep",
+      "op": "add_variable"
+    }
+  ],
+  "xs": {
+    "carrier_title": "Gaia stump retire probe",
+    "content_file": "examples/text/gaia_text_static_retire_probe.xs",
+    "mode": "carrier"
+  }
+}

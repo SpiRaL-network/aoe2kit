@@ -1,0 +1,16 @@
+{
+  "units": [
+    {"op":"add_unit","player":1,"unit_const":598,"x":84,"y":43,"status":2,"caption_string":"GAIA TEXT SHOWCASE"},
+    {"op":"add_unit","player":1,"unit_const":598,"x":84,"y":51,"status":2,"caption_string":"RUNTIME TEXT + LIVE NUMBERS"},
+    {"op":"add_unit","player":1,"unit_const":598,"x":84,"y":58,"status":2,"caption_string":"BITMAP / STROKE / BEZIER PATHS"},
+    {"op":"add_unit","player":1,"unit_const":598,"x":84,"y":65,"status":2,"caption_string":"NO DATA MOD - RUNTIME XS"}
+  ],
+  "xs": {
+    "mode":"carrier",
+    "carrier_title":"Gaia text showcase",
+    "content_file":"examples/text/gaia_text_showcase.xs"
+  },
+  "triggers": [
+    {"op":"add_trigger","name":"Showcase camera","effects":[{"op":"change_view","source_player":1,"location_x":84,"location_y":54}]}
+  ]
+}

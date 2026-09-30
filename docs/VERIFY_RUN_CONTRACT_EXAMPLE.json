@@ -1,0 +1,57 @@
+{
+  "name": "Example replay verification contract",
+  "scenario": {
+    "tier": "trigger_graph",
+    "fingerprint": "replace_with_expected_trigger_graph_sha256"
+  },
+  "data_set": {
+    "status": "modded",
+    "active_data_sets": ["Example Data Set Name"]
+  },
+  "players": {
+    "min_count": 2,
+    "required_ids": [1],
+    "forbidden_ids": [8]
+  },
+  "player_profile": {
+    "min_replay_actions": 10,
+    "min_decoded_percent": 80,
+    "players": [
+      {
+        "player_id": 1,
+        "min_actions": 1,
+        "min_decoded_percent": 50
+      }
+    ]
+  },
+  "telemetry": [
+    {
+      "name": "mod_loaded",
+      "fields": {
+        "name": "Example Data Set Name"
+      },
+      "min_count": 1
+    }
+  ],
+  "forbidden_telemetry": [
+    {
+      "name": "error"
+    }
+  ],
+  "chat": [
+    {
+      "contains": "ready",
+      "min_count": 1
+    }
+  ],
+  "result": {
+    "winners": [1],
+    "losers": [2]
+  },
+  "render_expectations": [
+    {
+      "id": "caption_visible",
+      "description": "A human tester should see the expected caption over the test unit."
+    }
+  ]
+}

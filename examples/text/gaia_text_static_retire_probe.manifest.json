@@ -1,0 +1,10 @@
+{
+  "duration_seconds": 30,
+  "engine_verified": false,
+  "keep_alive_unit": "BARRACKS",
+  "keep_alive_unit_id": 12,
+  "material": "STUMP",
+  "material_id": 415,
+  "notes": "Fresh blank one-number probe. Non-fire retirement is isolated from the material swatch; sidecar separates calls, successful moves, move failures, and invalid IDs.",
+  "trigger_removals": 60
+}

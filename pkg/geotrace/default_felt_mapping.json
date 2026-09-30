@@ -1,0 +1,1422 @@
+{
+  "schema": "geotrace-felt-mapping.v1",
+  "purpose": "The Earth->AoE2 translation table geo-trace's classifier consumes. Per cell (climate_zone x elevation_band x distance_to_shore) -> AoE2 terrain_id PROPORTIONS + confidence + reason, plus species per (climate x band) for cluster_scatter. This is the felt project's payoff for tracing, and the SHARED PALETTE every trace-worm uses so no bird re-derives it. Consumes Dex's interface: {x,y,lat,lon,elevation_m,land,distance_to_shore_tiles,elevation_band in [water,beach,lowland,upland,highland],climate_zone}.",
+  "confidence_ladder": [
+    "from_data",
+    "inferred",
+    "default"
+  ],
+  "climate_shore_rule": "THE naturalism climate rule, automated: warm zones (tropical/subtropical) -> tan/white SAND beaches + AZURE water tint. temperate -> sand or mixed, blue water. cold (boreal/polar) -> snow/ice/rock coast, blue-gray water. arid coast -> tan sand, clear blue. mediterranean -> tan sand, blue. Gaia decorative placement is guarded separately from terrain choice.",
+  "water_by_distance_to_shore": {
+    "note": "elevation_band=water. Bucket by distance_to_shore_tiles; tint by climate. All from_data (distance is computed).",
+    "buckets": [
+      {
+        "max_dist_tiles": 1,
+        "confidence": "from_data",
+        "by_climate": {
+          "tropical": [
+            {
+              "t": 1,
+              "w": 0.4
+            },
+            {
+              "t": 58,
+              "w": 0.5
+            },
+            {
+              "t": 80,
+              "w": 0.1
+            }
+          ],
+          "subtropical": [
+            {
+              "t": 1,
+              "w": 0.45
+            },
+            {
+              "t": 58,
+              "w": 0.45
+            },
+            {
+              "t": 80,
+              "w": 0.1
+            }
+          ],
+          "temperate": [
+            {
+              "t": 1,
+              "w": 0.7
+            },
+            {
+              "t": 80,
+              "w": 0.3
+            }
+          ],
+          "boreal": [
+            {
+              "t": 1,
+              "w": 0.5
+            },
+            {
+              "t": 37,
+              "w": 0.3
+            },
+            {
+              "t": 35,
+              "w": 0.2
+            }
+          ],
+          "arid": [
+            {
+              "t": 1,
+              "w": 0.7
+            },
+            {
+              "t": 58,
+              "w": 0.3
+            }
+          ]
+        }
+      },
+      {
+        "max_dist_tiles": 3,
+        "confidence": "from_data",
+        "by_climate": {
+          "tropical": [
+            {
+              "t": 58,
+              "w": 0.6
+            },
+            {
+              "t": 1,
+              "w": 0.4
+            }
+          ],
+          "subtropical": [
+            {
+              "t": 58,
+              "w": 0.5
+            },
+            {
+              "t": 1,
+              "w": 0.5
+            }
+          ],
+          "temperate": [
+            {
+              "t": 1,
+              "w": 0.5
+            },
+            {
+              "t": 23,
+              "w": 0.5
+            }
+          ],
+          "boreal": [
+            {
+              "t": 1,
+              "w": 0.6
+            },
+            {
+              "t": 23,
+              "w": 0.4
+            }
+          ],
+          "arid": [
+            {
+              "t": 58,
+              "w": 0.4
+            },
+            {
+              "t": 1,
+              "w": 0.6
+            }
+          ]
+        }
+      },
+      {
+        "max_dist_tiles": 8,
+        "confidence": "from_data",
+        "default": [
+          {
+            "t": 23,
+            "w": 0.7
+          },
+          {
+            "t": 1,
+            "w": 0.3
+          }
+        ]
+      },
+      {
+        "max_dist_tiles": 20,
+        "confidence": "from_data",
+        "default": [
+          {
+            "t": 22,
+            "w": 0.7
+          },
+          {
+            "t": 23,
+            "w": 0.3
+          }
+        ]
+      },
+      {
+        "max_dist_tiles": 9999,
+        "confidence": "from_data",
+        "default": [
+          {
+            "t": 57,
+            "w": 0.85
+          },
+          {
+            "t": 22,
+            "w": 0.15
+          }
+        ]
+      }
+    ]
+  },
+  "land_by_climate_and_band": {
+    "_terrain_id_legend": "0=grass 12=grass2 100=dry-grass 41=savannah 60=jungle-grass 2=beach 53=white-beach 52=beach-veg 82=rock-wet 37=ice-beach 10=forest-floor 40=rock 70=gravel 14=desert 32=snow 111=swamp 101=bogland 55=mangrove-floor 95=green-water",
+    "subtropical": {
+      "beach": {
+        "proportions": [
+          {
+            "t": 53,
+            "w": 0.35
+          },
+          {
+            "t": 2,
+            "w": 0.5
+          },
+          {
+            "t": 52,
+            "w": 0.15
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "warm climate -> white/tan sand"
+      },
+      "lowland": {
+        "proportions": [
+          {
+            "t": 0,
+            "w": 0.55
+          },
+          {
+            "t": 12,
+            "w": 0.3
+          },
+          {
+            "t": 100,
+            "w": 0.15
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "low flat land -> grass",
+        "wetland_candidate": {
+          "proportions": [
+            {
+              "t": 111,
+              "w": 0.4
+            },
+            {
+              "t": 55,
+              "w": 0.3
+            },
+            {
+              "t": 101,
+              "w": 0.2
+            },
+            {
+              "t": 95,
+              "w": 0.1
+            }
+          ],
+          "confidence": "inferred",
+          "reason": "near-sea-level flat = possible Everglades/marsh, but DEM+landmask cannot confirm dry-vs-wet; HELD at inferred until a land-cover provider supplies wetland extent"
+        }
+      },
+      "upland": {
+        "proportions": [
+          {
+            "t": 0,
+            "w": 0.5
+          },
+          {
+            "t": 10,
+            "w": 0.35
+          },
+          {
+            "t": 100,
+            "w": 0.15
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "drier higher ground -> grass/forest floor"
+      },
+      "highland": {
+        "proportions": [
+          {
+            "t": 70,
+            "w": 0.55
+          },
+          {
+            "t": 70,
+            "w": 0.2
+          },
+          {
+            "t": 10,
+            "w": 0.25
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "rock (rare in subtropics)"
+      }
+    },
+    "tropical": {
+      "beach": {
+        "proportions": [
+          {
+            "t": 53,
+            "w": 0.5
+          },
+          {
+            "t": 2,
+            "w": 0.5
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "lowland": {
+        "proportions": [
+          {
+            "t": 60,
+            "w": 0.6
+          },
+          {
+            "t": 0,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "jungle-grass floor"
+      },
+      "upland": {
+        "proportions": [
+          {
+            "t": 56,
+            "w": 0.5
+          },
+          {
+            "t": 60,
+            "w": 0.5
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "highland": {
+        "proportions": [
+          {
+            "t": 70,
+            "w": 0.7
+          },
+          {
+            "t": 56,
+            "w": 0.3
+          }
+        ],
+        "confidence": "from_data"
+      }
+    },
+    "temperate": {
+      "beach": {
+        "proportions": [
+          {
+            "t": 2,
+            "w": 0.7
+          },
+          {
+            "t": 52,
+            "w": 0.3
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "lowland": {
+        "proportions": [
+          {
+            "t": 0,
+            "w": 0.6
+          },
+          {
+            "t": 12,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "upland": {
+        "proportions": [
+          {
+            "t": 10,
+            "w": 0.5
+          },
+          {
+            "t": 0,
+            "w": 0.5
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "highland": {
+        "proportions": [
+          {
+            "t": 70,
+            "w": 0.6
+          },
+          {
+            "t": 70,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data"
+      }
+    },
+    "boreal": {
+      "beach": {
+        "proportions": [
+          {
+            "t": 82,
+            "w": 0.45
+          },
+          {
+            "t": 37,
+            "w": 0.35
+          },
+          {
+            "t": 32,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "cold shore: rock-wet, ice beach, and snow; object placement is guarded separately"
+      },
+      "lowland": {
+        "proportions": [
+          {
+            "t": 32,
+            "w": 0.55
+          },
+          {
+            "t": 10,
+            "w": 0.45
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "cold lowland: snow and forest floor; object placement is guarded separately"
+      },
+      "upland": {
+        "proportions": [
+          {
+            "t": 10,
+            "w": 0.55
+          },
+          {
+            "t": 32,
+            "w": 0.45
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "cold upland: forest floor and snow"
+      },
+      "highland": {
+        "proportions": [
+          {
+            "t": 40,
+            "w": 0.45
+          },
+          {
+            "t": 10,
+            "w": 0.35
+          },
+          {
+            "t": 32,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "cold highland: rock, forest floor, and snow"
+      }
+    },
+    "arid": {
+      "beach": {
+        "proportions": [
+          {
+            "t": 2,
+            "w": 0.6
+          },
+          {
+            "t": 14,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "lowland": {
+        "proportions": [
+          {
+            "t": 41,
+            "w": 0.4
+          },
+          {
+            "t": 14,
+            "w": 0.4
+          },
+          {
+            "t": 100,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "savannah/desert"
+      },
+      "upland": {
+        "proportions": [
+          {
+            "t": 14,
+            "w": 0.5
+          },
+          {
+            "t": 14,
+            "w": 0.5
+          }
+        ],
+        "confidence": "from_data"
+      },
+      "highland": {
+        "proportions": [
+          {
+            "t": 70,
+            "w": 0.7
+          },
+          {
+            "t": 70,
+            "w": 0.3
+          }
+        ],
+        "confidence": "from_data"
+      }
+    }
+  },
+  "species_for_cluster_scatter": {
+    "note": "per (climate x band): species consts to cluster_scatter, gated to that band's terrain. Palms/trees TIDE-GATED to dry beach/land above high tide; mangroves only on mangrove-floor in water.",
+    "subtropical": {
+      "beach": [
+        {
+          "c": 351,
+          "note": "palms, tide-gated"
+        },
+        {
+          "c": 2583,
+          "note": "wax palm"
+        }
+      ],
+      "lowland_dry": [
+        {
+          "c": 2567,
+          "note": "live oak"
+        },
+        {
+          "c": 350,
+          "note": "pine flatwoods, sparse"
+        }
+      ],
+      "lowland_wet": [
+        {
+          "c": 1144,
+          "note": "mangrove (in water)"
+        },
+        {
+          "c": 1350,
+          "note": "reeds"
+        },
+        {
+          "c": 2536,
+          "note": "lily"
+        }
+      ],
+      "upland": [
+        {
+          "c": 350,
+          "note": "pine"
+        },
+        {
+          "c": 2567,
+          "note": "live oak"
+        }
+      ]
+    },
+    "tropical": {
+      "beach": [
+        {
+          "c": 351
+        }
+      ],
+      "lowland": [
+        {
+          "c": 414,
+          "note": "jungle"
+        },
+        {
+          "c": 1146,
+          "note": "rainforest"
+        },
+        {
+          "c": 1144,
+          "note": "mangrove wet"
+        }
+      ],
+      "upland": [
+        {
+          "c": 1146
+        },
+        {
+          "c": 1984,
+          "note": "lush bamboo"
+        }
+      ]
+    },
+    "temperate": {
+      "beach": [
+        {
+          "c": 351,
+          "note": "or none if cool"
+        }
+      ],
+      "lowland": [
+        {
+          "c": 2567,
+          "note": "green oak"
+        },
+        {
+          "c": 349,
+          "note": "oak"
+        }
+      ],
+      "upland": [
+        {
+          "c": 350,
+          "note": "pine"
+        },
+        {
+          "c": 1717,
+          "note": "birch"
+        }
+      ]
+    },
+    "boreal": {
+      "lowland": [
+        {
+          "c": 413,
+          "note": "snow pine"
+        },
+        {
+          "c": 1249,
+          "note": "snow-autumn oak"
+        }
+      ],
+      "upland": [
+        {
+          "c": 413
+        }
+      ],
+      "highland": []
+    },
+    "arid": {
+      "lowland": [
+        {
+          "c": 1063,
+          "note": "acacia"
+        },
+        {
+          "c": 709,
+          "note": "cactus"
+        }
+      ],
+      "upland": [
+        {
+          "c": 1051,
+          "note": "dragon tree on crag"
+        }
+      ]
+    },
+    "mediterranean": {
+      "beach": [
+        {
+          "c": 351
+        }
+      ],
+      "lowland": [
+        {
+          "c": 1349,
+          "note": "olive"
+        },
+        {
+          "c": 2529,
+          "note": "cypress"
+        }
+      ],
+      "upland": [
+        {
+          "c": 1348,
+          "note": "italian pine"
+        }
+      ]
+    }
+  },
+  "for_the_village": "This table is climate x band x distance -> terrain proportions + species. Any bird tracing ANY place picks a climate_zone (or per-cell from latitude/Koppen) and the mapping is done. A land-cover provider will later REPLACE the inferred wetland/forest guesses with from_data biome classes; until then, wetland/forest are held at 'inferred'. For NON-map tracing (images/art), a sibling color-mapping table maps source COLOR -> terrain instead of elevation_band -> terrain; same proportions+confidence shape.",
+  "landcover_class_mapping": {
+    "note": "ESA WorldCover class -> AoE2 terrain proportions + species, by climate. Land-cover is AUTHORITATIVE so confidence=from_data. THIS RETIRES the held `inferred` wetland: classes 90/95 paint the real Everglades/mangrove where they are. Also supplies inland water (class 80 = Lake Okeechobee, rivers). Distinct from the elevation-band mapping (that's the DEM-only fallback); when land-cover is present, it WINS over the band default.",
+    "source": "ESA WorldCover 10m (global) or NLCD (US, finer). classes: 10 tree,20 shrub,30 grass,40 crop,50 built,60 bare,70 snow,80 water,90 herb-wetland,95 mangrove,100 moss",
+    "by_class": {
+      "10_tree_cover": {
+        "proportions": [
+          {
+            "t": 10,
+            "w": 0.8
+          },
+          {
+            "t": 0,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "species_by_climate": {
+          "subtropical": [
+            {
+              "c": 350,
+              "note": "pine flatwoods"
+            },
+            {
+              "c": 2567,
+              "note": "live oak"
+            }
+          ],
+          "tropical": [
+            {
+              "c": 414
+            },
+            {
+              "c": 1146
+            },
+            {
+              "c": 351
+            }
+          ],
+          "temperate": [
+            {
+              "c": 349
+            },
+            {
+              "c": 1717
+            },
+            {
+              "c": 350
+            }
+          ],
+          "boreal": [
+            {
+              "c": 413
+            }
+          ],
+          "mediterranean": [
+            {
+              "c": 1349
+            },
+            {
+              "c": 2529
+            },
+            {
+              "c": 1348
+            }
+          ],
+          "arid": [
+            {
+              "c": 1063
+            }
+          ]
+        }
+      },
+      "20_shrubland": {
+        "proportions": [
+          {
+            "t": 0,
+            "w": 0.6
+          },
+          {
+            "t": 100,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data",
+        "species_by_climate": {
+          "subtropical": [
+            {
+              "c": 1054,
+              "note": "palmetto/berry scrub"
+            }
+          ],
+          "arid": [
+            {
+              "c": 1063
+            },
+            {
+              "c": 709
+            }
+          ]
+        }
+      },
+      "30_grassland": {
+        "proportions": [
+          {
+            "t": 0,
+            "w": 0.6
+          },
+          {
+            "t": 12,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data",
+        "species_by_climate": {
+          "arid": [],
+          "subtropical": []
+        }
+      },
+      "40_cropland": {
+        "proportions": [
+          {
+            "t": 7,
+            "w": 1.0
+          }
+        ],
+        "confidence": "from_data",
+        "species_by_climate": {
+          "_any": [
+            {
+              "c": 1089,
+              "note": "granary"
+            },
+            {
+              "c": 857,
+              "note": "haystack"
+            }
+          ]
+        }
+      },
+      "50_built_up": {
+        "proportions": [
+          {
+            "t": 6,
+            "w": 0.6
+          },
+          {
+            "t": 24,
+            "w": 0.4
+          }
+        ],
+        "confidence": "from_data",
+        "note": "for pure-nature traces, treat as grass instead"
+      },
+      "60_bare_sparse": {
+        "proportions": [
+          {
+            "t": 70,
+            "w": 0.5
+          },
+          {
+            "t": 14,
+            "w": 0.3
+          },
+          {
+            "t": 14,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "species_by_climate": {
+          "arid": [
+            {
+              "c": 709
+            }
+          ]
+        }
+      },
+      "70_snow_ice": {
+        "proportions": [
+          {
+            "t": 32,
+            "w": 0.7
+          },
+          {
+            "t": 35,
+            "w": 0.3
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "snow/ice landcover maps to snow and cracked ice; object placement is guarded separately",
+        "species_by_climate": {
+          "boreal": [
+            {
+              "c": 413
+            }
+          ]
+        }
+      },
+      "80_permanent_water": {
+        "proportions": [
+          {
+            "t": 1,
+            "w": 0.4
+          },
+          {
+            "t": 23,
+            "w": 0.4
+          },
+          {
+            "t": 22,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "note": "INLAND water = Lake Okeechobee, rivers. Grade by size/distance-to-edge like sea; freshwater tint (no azure/deep-ocean unless large). reeds+lily at edges via species",
+        "species_by_climate": {
+          "_any": [
+            {
+              "c": 1350,
+              "note": "reeds at edge"
+            },
+            {
+              "c": 2536,
+              "note": "lily"
+            }
+          ]
+        }
+      },
+      "90_herbaceous_wetland": {
+        "proportions": [
+          {
+            "t": 111,
+            "w": 0.45
+          },
+          {
+            "t": 55,
+            "w": 0.25
+          },
+          {
+            "t": 101,
+            "w": 0.2
+          },
+          {
+            "t": 95,
+            "w": 0.1
+          }
+        ],
+        "confidence": "from_data",
+        "note": "THE EVERGLADES - from_data now, retires the inferred hold. swamp/mangrove-floor/bog/green-water mosaic",
+        "species_by_climate": {
+          "_any": [
+            {
+              "c": 1350,
+              "note": "sawgrass reeds - blanket"
+            },
+            {
+              "c": 1144,
+              "note": "mangrove tree-islands"
+            },
+            {
+              "c": 2536,
+              "note": "lily"
+            }
+          ]
+        }
+      },
+      "95_mangrove": {
+        "proportions": [
+          {
+            "t": 55,
+            "w": 0.7
+          },
+          {
+            "t": 95,
+            "w": 0.3
+          }
+        ],
+        "confidence": "from_data",
+        "note": "beach/coastal mangrove - mangrove-floor + brackish water",
+        "species_by_climate": {
+          "_any": [
+            {
+              "c": 1144,
+              "note": "mangroves, roots in water"
+            }
+          ]
+        }
+      },
+      "100_moss_lichen": {
+        "proportions": [
+          {
+            "t": 32,
+            "w": 0.45
+          },
+          {
+            "t": 10,
+            "w": 0.35
+          },
+          {
+            "t": 40,
+            "w": 0.2
+          }
+        ],
+        "confidence": "from_data",
+        "reason": "moss/lichen in cold ground: snow, forest floor, and rock; object placement is guarded separately"
+      }
+    },
+    "precedence": "When a cell has land-cover, use by_class (from_data). Fall back to elevation-band mapping only where land-cover is absent/no-data. Water depth (sea) still graded by distance_to_shore; inland water (class 80) graded by size."
+  },
+  "florida_region_favoring": {
+    "note": "chrae 2026-09-15: FL is palm-dominant by raw population BUT is KNOWN for wetlands — favor the signature species over the merely-numerous. Bias weights when a cell could plausibly host several.",
+    "coast": {
+      "favor": [
+        "mangrove-beach",
+        "sandy-beach"
+      ],
+      "rule": "chrae v3: coast is STILL green-meets-water in places; it should be ALMOST UNIVERSALLY SAND (or mangrove where brackish). Widen the sand band so no green terrain touches open water, and palms have a shore to sit on."
+    },
+    "interior_deep": {
+      "favor": [
+        {
+          "c": 2567,
+          "s": "live oak"
+        },
+        {
+          "c": 349,
+          "s": "oak"
+        }
+      ],
+      "note": "OAK FOREST deep in the state — favor oak hammock inland, not palm"
+    },
+    "wetland": {
+      "favor": [
+        {
+          "c": 1144,
+          "s": "mangrove"
+        },
+        {
+          "c": 1350,
+          "s": "reeds/sawgrass"
+        }
+      ],
+      "note": "mangrove + sawgrass carry the Everglades — the soul of FL"
+    },
+    "palm_downweight": {
+      "factor": 0.8,
+      "note": "chrae 2026-09-15 v3: x0.5 overshot -> ZERO palms visible. Palms are the SIGNATURE of the sandy barrier coast; keep them THERE (just not inland-dominant). x0.8, and ensure sandy coast is broad enough to host them."
+    }
+  },
+  "coast_type_rule": "EVERY coast cell resolves to SANDY-BEACH (warm/open) or MANGROVE-BEACH (brackish/sheltered) — never bare/rock/other. Mangrove-beach = mangrove-floor(55) + mangrove(1144) in the fringing water; sandy-beach = white/tan beach + tide-gated palms.",
+  "water_isolation_rule": "chrae 2026-09-15: WATER must touch NO other terrain or vegetation directly — always a beach/shallow BUFFER band between open water and any land terrain or land vegetation. NO tree on a water tile (except mangrove on mangrove-floor). The 'trees in the middle of the water' flare = this rule violated.",
+  "fish_density": {
+    "ocean_factor": 0.30,
+    "note": "chrae 2026-09-15 v3-replay: density is now UNEVEN — 'every tile over here has fish' in one spot, 'no fish out here' in another. Even it out: ocean SPARSE but never fully empty (a few schools always visible per open-water region); inland DENSE; shore CONTINUOUS.",
+    "inland_water": "PURE FISH, dense — Perch/Salmon. Every landlocked waterbody fills; none empty.",
+    "shore": "continuous ring, near-shore species, whole coast",
+    "ocean": "sparse (0.30x) but distributed — no fully-empty open-water region, and no over-full patch either"
+  },
+  "water_fauna_diversity_rule": "chrae 2026-09-15: fish are ANIMATED, so 'rotation' gives NO diversity — diversity must come from DISTINCT SPECIES CONSTS. Assign a DIFFERENT const per water band (shore / shallow-reef / medium / deep) and DO NOT repeat one const across the ocean. Dex: pull the full water-fauna const roster from the felt compendium and spread distinct species across the bands (deep especially needs its own species, not the shore fish).",
+  "water_fauna_by_band": {
+    "note": "chrae 2026-09-15 v3-replay: fish read MONOTONOUS and variety POOR — animated so rotation gives nothing; diversity MUST come from distinct species per band. Near-shore species were MISSING. Dex: resolve these species NAMES to consts from the scrape and place per band. Every band a DIFFERENT visible species.",
+    "inland_lake": {
+      "species": [
+        "Fish (Perch)",
+        "Fish (Salmon)"
+      ],
+      "rule": "ALWAYS pure fish — Perch is the freshwater/pond fish, the signature inland species. The flagged landlocked lakes (~367,91 & ~428,49) had NO fish; fix the classifier so every inland waterbody fills. This is the ONE place density stays HIGH."
+    },
+    "shore_nearshore": {
+      "species": [
+        "Fish (Dorado)",
+        "Fish (Snapper)",
+        "Oysters"
+      ],
+      "rule": "CONTINUOUS along the entire coast; Dorado + reef Snapper + Oyster beds ring the whole shoreline."
+    },
+    "shallow_reef_azure": {
+      "species": [
+        "Fish (Snapper)",
+        "Oysters"
+      ],
+      "rule": "reef life on azure"
+    },
+    "medium_depth": {
+      "species": [
+        "Fish (Salmon)"
+      ],
+      "rule": "the medium band gets its own species; visibly distinct from shore"
+    },
+    "deep_ocean": {
+      "species": [
+        "Fish (Tuna)",
+        "Fish (Marlin)",
+        "Whale"
+      ],
+      "rule": "deep gets Tuna + Marlin + the occasional Whale far out — NOT the shore fish. Deep must look different from shore."
+    }
+  },
+  "landcover_species_by_class": {
+    "_note": "chrae 2026-09-15: maps GLC_FCS30D forest-TYPE classes -> AoE2 species, gated by climate (Koppen). Replaces the latitude-only guess. Dex: resolve species NAMES to consts from the scrape; species with a const are set, names marked (resolve) need the scrape. Focus climates: subtropical (FL), humid_continental (WI). 'general' = fallback.",
+    "closed_evergreen_broadleaf_forest": {
+      "subtropical": [
+        {
+          "c": 2567,
+          "s": "live oak (hammock)"
+        },
+        {
+          "s": "cabbage/sabal palm (resolve)"
+        },
+        {
+          "c": 2580,
+          "s": "subtropical hardwood (brazilwood stand-in)"
+        }
+      ],
+      "tropical": [
+        {
+          "c": 1146,
+          "s": "rainforest"
+        },
+        {
+          "c": 414,
+          "s": "jungle"
+        }
+      ],
+      "general": [
+        {
+          "c": 2567,
+          "s": "evergreen oak"
+        }
+      ]
+    },
+    "open_evergreen_broadleaf_forest": {
+      "subtropical": [
+        {
+          "c": 2567,
+          "s": "live oak, open"
+        },
+        {
+          "c": 351,
+          "s": "palm, sparse"
+        }
+      ],
+      "general": [
+        {
+          "c": 2567,
+          "s": "evergreen oak, open"
+        }
+      ]
+    },
+    "closed_deciduous_broadleaf_forest": {
+      "humid_continental": [
+        {
+          "c": 349,
+          "s": "oak"
+        },
+        {
+          "s": "sugar maple (resolve)"
+        },
+        {
+          "c": 1717,
+          "s": "birch"
+        },
+        {
+          "s": "beech (resolve)"
+        }
+      ],
+      "subtropical": [
+        {
+          "c": 2567,
+          "s": "live/water oak"
+        },
+        {
+          "c": 349,
+          "s": "oak"
+        }
+      ],
+      "general": [
+        {
+          "c": 349,
+          "s": "oak"
+        },
+        {
+          "c": 1717,
+          "s": "birch"
+        }
+      ]
+    },
+    "open_deciduous_broadleaf_forest": {
+      "humid_continental": [
+        {
+          "c": 349,
+          "s": "oak, open"
+        },
+        {
+          "c": 1717,
+          "s": "birch"
+        }
+      ],
+      "general": [
+        {
+          "c": 349,
+          "s": "oak, open"
+        }
+      ]
+    },
+    "closed_evergreen_needleleaf_forest": {
+      "subtropical": [
+        {
+          "c": 350,
+          "s": "slash pine (FL flatwoods)"
+        }
+      ],
+      "humid_continental": [
+        {
+          "c": 350,
+          "s": "white/red pine"
+        },
+        {
+          "s": "spruce (resolve)"
+        }
+      ],
+      "boreal": [
+        {
+          "c": 413,
+          "s": "snow pine"
+        }
+      ],
+      "general": [
+        {
+          "c": 350,
+          "s": "pine"
+        }
+      ]
+    },
+    "open_evergreen_needleleaf_forest": {
+      "subtropical": [
+        {
+          "c": 350,
+          "s": "slash pine, open flatwoods"
+        }
+      ],
+      "humid_continental": [
+        {
+          "c": 350,
+          "s": "pine, open (barrens)"
+        }
+      ],
+      "general": [
+        {
+          "c": 350,
+          "s": "pine, open"
+        }
+      ]
+    },
+    "deciduous_needleleaf_forest": {
+      "humid_continental": [
+        {
+          "s": "tamarack/larch (resolve; snowpine 413 fallback)"
+        },
+        {
+          "c": 413,
+          "s": "snow pine"
+        }
+      ],
+      "boreal": [
+        {
+          "c": 413,
+          "s": "tamarack -> snow pine"
+        }
+      ],
+      "general": [
+        {
+          "c": 413,
+          "s": "larch -> snow pine"
+        }
+      ]
+    },
+    "mixed_forest": {
+      "humid_continental": [
+        {
+          "c": 349,
+          "s": "oak"
+        },
+        {
+          "c": 350,
+          "s": "pine"
+        },
+        {
+          "c": 1717,
+          "s": "birch"
+        }
+      ],
+      "subtropical": [
+        {
+          "c": 2567,
+          "s": "live oak"
+        },
+        {
+          "c": 350,
+          "s": "pine"
+        }
+      ],
+      "general": [
+        {
+          "c": 349,
+          "s": "oak"
+        },
+        {
+          "c": 350,
+          "s": "pine"
+        }
+      ]
+    },
+    "shrubland": {
+      "subtropical": [
+        {
+          "c": 1054,
+          "s": "saw palmetto / scrub"
+        },
+        {
+          "c": 59,
+          "s": "berry scrub"
+        }
+      ],
+      "humid_continental": [
+        {
+          "c": 1054,
+          "s": "shrub"
+        }
+      ],
+      "arid": [
+        {
+          "c": 1063,
+          "s": "acacia"
+        },
+        {
+          "c": 709,
+          "s": "cactus"
+        }
+      ],
+      "general": [
+        {
+          "c": 1054,
+          "s": "shrub"
+        }
+      ]
+    },
+    "grassland": {
+      "subtropical": [
+        {
+          "c": 1358,
+          "s": "grass/palmetto texture, sparse"
+        }
+      ],
+      "humid_continental": [
+        {
+          "c": 349,
+          "s": "oak savanna scatter"
+        },
+        {
+          "s": "prairie grass texture"
+        }
+      ],
+      "general": []
+    },
+    "cropland": {
+      "general": [
+        {
+          "s": "FARM terrain(7) + granary 1089 / haystack 857"
+        }
+      ]
+    },
+    "swamp_flooded_forest": {
+      "subtropical": [
+        {
+          "s": "bald cypress (resolve; 1984 cypress-strand fallback)"
+        },
+        {
+          "c": 1984,
+          "s": "cypress-strand feel"
+        }
+      ],
+      "humid_continental": [
+        {
+          "s": "black spruce/tamarack bog (resolve)"
+        },
+        {
+          "c": 413,
+          "s": "snow pine fallback"
+        }
+      ],
+      "general": [
+        {
+          "c": 1984,
+          "s": "flooded-forest stand"
+        }
+      ]
+    },
+    "herbaceous_wetland_marsh": {
+      "general": [
+        {
+          "c": 1350,
+          "s": "reeds/sawgrass"
+        },
+        {
+          "c": 2536,
+          "s": "water lily"
+        }
+      ]
+    },
+    "mangrove": {
+      "general": [
+        {
+          "c": 1144,
+          "s": "mangrove (in brackish water, mangrove-floor)"
+        }
+      ]
+    },
+    "sparse_bare": {
+      "arid": [
+        {
+          "c": 709,
+          "s": "cactus, sparse"
+        }
+      ],
+      "cold": [
+        {
+          "s": "rock/gravel, dead trees sparse"
+        }
+      ],
+      "general": []
+    },
+    "moss_lichen_tundra": {
+      "general": [
+        {
+          "c": 413,
+          "s": "sparse dead/snow pine"
+        }
+      ]
+    }
+  }
+}

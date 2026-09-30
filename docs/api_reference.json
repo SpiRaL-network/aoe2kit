@@ -1,0 +1,6975 @@
+{
+  "tool": "aoe2kit",
+  "version": "0.1.0",
+  "generated_by": "cmd/apiref (usage parsed from the kit binary; output contracts probed against fixtures)",
+  "probe_fixtures": {},
+  "command_count": 238,
+  "probed_count": 17,
+  "commands": [
+    {
+      "path": [
+        "ai",
+        "diff"
+      ],
+      "name": "ai diff",
+      "group": "ai",
+      "usage": "kit ai diff \u003cbefore-file-or-folder\u003e \u003cafter-file-or-folder\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cbefore-file-or-folder\u003e",
+        "\u003cafter-file-or-folder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "ai",
+        "fingerprint"
+      ],
+      "name": "ai fingerprint",
+      "group": "ai",
+      "usage": "kit ai fingerprint \u003cfile-or-folder\u003e [--registry known_ais.json] [--register NAME] [--signature AI_FILES_SIGNATURE]",
+      "flags": [
+        {
+          "name": "--registry",
+          "value_hint": "known_ais.json"
+        },
+        {
+          "name": "--register",
+          "value_hint": "NAME"
+        },
+        {
+          "name": "--signature",
+          "value_hint": "AI_FILES_SIGNATURE"
+        }
+      ],
+      "positional": [
+        "\u003cfile-or-folder\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "ai",
+        "lint"
+      ],
+      "name": "ai lint",
+      "group": "ai",
+      "usage": "kit ai lint \u003cfile-or-folder\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile-or-folder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "campaign"
+      ],
+      "name": "campaign",
+      "usage": "kit campaign \u003cgenerate|extract\u003e ...",
+      "subcommands": [
+        "generate",
+        "extract"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "campaign",
+        "extract"
+      ],
+      "name": "campaign extract",
+      "group": "campaign",
+      "usage": "kit campaign extract \u003ccampaign.aoe2campaign\u003e [--scenario N | --name STEM] [--out-dir DIR] [--text|--json]",
+      "flags": [
+        {
+          "name": "--scenario",
+          "value_hint": "N"
+        },
+        {
+          "name": "--name",
+          "value_hint": "STEM",
+          "required": true
+        },
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR"
+        }
+      ],
+      "positional": [
+        "\u003ccampaign.aoe2campaign\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "campaign",
+        "generate"
+      ],
+      "name": "campaign generate",
+      "group": "campaign",
+      "usage": "kit campaign generate \u003ccampaign.json\u003e [--out-dir DIR] [--prefix A2KCampaign] [--text]",
+      "flags": [
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--prefix",
+          "value_hint": "A2KCampaign"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003ccampaign.json\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "cba",
+        "archive"
+      ],
+      "name": "cba archive",
+      "group": "cba",
+      "usage": "kit cba archive --queue \u003cq.json\u003e --out \u003cdir\u003e --max N [--delay-ms MS] [--manifest f.jsonl]",
+      "flags": [
+        {
+          "name": "--queue",
+          "required": true
+        },
+        {
+          "name": "--out",
+          "required": true
+        },
+        {
+          "name": "--max",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--delay-ms",
+          "value_hint": "MS"
+        },
+        {
+          "name": "--manifest",
+          "value_hint": "f.jsonl"
+        }
+      ],
+      "positional": [
+        "\u003cq.json\u003e",
+        "\u003cdir\u003e"
+      ],
+      "mutates": false,
+      "network": true,
+      "trait": "network",
+      "input": "other",
+      "probe_status": "skipped_network"
+    },
+    {
+      "path": [
+        "cba",
+        "axes"
+      ],
+      "name": "cba axes",
+      "group": "cba",
+      "usage": "kit cba axes --corpus \u003cfile.jsonl\u003e [--min-games N] [--names \u003cfile.json\u003e] [--text]",
+      "flags": [
+        {
+          "name": "--corpus",
+          "required": true
+        },
+        {
+          "name": "--min-games",
+          "value_hint": "N"
+        },
+        {
+          "name": "--names"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.jsonl\u003e",
+        "\u003cfile.json\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --corpus must be supplied by the caller"
+    },
+    {
+      "path": [
+        "cba",
+        "balance"
+      ],
+      "name": "cba balance",
+      "group": "cba",
+      "usage": "kit cba balance [--text|--json]",
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "cba",
+        "balance"
+      ],
+      "output_top_level_keys": [
+        "evidence",
+        "method",
+        "missing",
+        "rows",
+        "summary",
+        "verification",
+        "warnings"
+      ],
+      "response_type": "cba.BalanceReport",
+      "verification": "partial_changelog_rows_plus_trigger_graph_global_threshold_evidence",
+      "method": "source_labeled_cba_requiem_balance_table"
+    },
+    {
+      "path": [
+        "cba",
+        "export"
+      ],
+      "name": "cba export",
+      "group": "cba",
+      "usage": "kit cba export --corpus \u003cfile.jsonl\u003e [--names \u003cfile.json\u003e] [--sql]",
+      "flags": [
+        {
+          "name": "--corpus",
+          "required": true
+        },
+        {
+          "name": "--names"
+        },
+        {
+          "name": "--sql"
+        }
+      ],
+      "positional": [
+        "\u003cfile.jsonl\u003e",
+        "\u003cfile.json\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --corpus must be supplied by the caller"
+    },
+    {
+      "path": [
+        "cba",
+        "ingest"
+      ],
+      "name": "cba ingest",
+      "group": "cba",
+      "usage": "kit cba ingest --corpus \u003cfile.jsonl\u003e (--registry \u003cfile.json\u003e|--unverified \u003creplay|dir\u003e...) [--force] [--limit N]",
+      "flags": [
+        {
+          "name": "--corpus",
+          "required": true
+        },
+        {
+          "name": "--force"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.jsonl\u003e",
+        "\u003cfile.json\u003e|--unverified",
+        "\u003creplay|dir\u003e...)"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "replay",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "cba",
+        "phase-facts"
+      ],
+      "name": "cba phase-facts",
+      "group": "cba",
+      "usage": "kit cba phase-facts \u003cfile.aoe2record|replay.zip\u003e --dat \u003cempires2_x2_p1.dat\u003e [--text]",
+      "flags": [
+        {
+          "name": "--dat",
+          "required": true
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|replay.zip\u003e",
+        "\u003cempires2_x2_p1.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "cba",
+        "registry"
+      ],
+      "name": "cba registry",
+      "group": "cba",
+      "usage": "kit cba registry \u003creplay|dir\u003e... [--out \u003cfile.json\u003e] [--text]",
+      "flags": [
+        {
+          "name": "--out"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003creplay|dir\u003e...",
+        "\u003cfile.json\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "replay",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "cba",
+        "replay"
+      ],
+      "name": "cba replay",
+      "group": "cba",
+      "usage": "kit cba replay \u003cprogression|razes|raze-pressure|phases|perf|doctrine\u003e \u003cfile.aoe2record|replay.zip\u003e [--dat \u003cempires2_x2_p1.dat\u003e] [--text|--json]",
+      "flags": [
+        {
+          "name": "--dat"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|replay.zip\u003e",
+        "\u003cempires2_x2_p1.dat\u003e",
+        "--text|--json"
+      ],
+      "subcommands": [
+        "progression",
+        "razes",
+        "raze-pressure",
+        "phases",
+        "perf",
+        "doctrine"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "cba",
+        "sidechannels"
+      ],
+      "name": "cba sidechannels",
+      "group": "cba",
+      "usage": "kit cba sidechannels \u003cfile.aoe2record|replay.zip\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|replay.zip\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "cba",
+        "trigger-razes"
+      ],
+      "name": "cba trigger-razes",
+      "group": "cba",
+      "usage": "kit cba trigger-razes \u003cfile.aoe2record|replay.zip\u003e [--dat \u003cempires2_x2_p1.dat\u003e] [--text]",
+      "flags": [
+        {
+          "name": "--dat"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|replay.zip\u003e",
+        "\u003cempires2_x2_p1.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "cba",
+        "trigger-spawns"
+      ],
+      "name": "cba trigger-spawns",
+      "group": "cba",
+      "usage": "kit cba trigger-spawns \u003cfile.aoe2record|replay.zip\u003e [--dat \u003cempires2_x2_p1.dat\u003e] [--text]",
+      "flags": [
+        {
+          "name": "--dat"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|replay.zip\u003e",
+        "\u003cempires2_x2_p1.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "ci"
+      ],
+      "name": "ci",
+      "usage": "kit ci \u003cinit|check\u003e ...",
+      "subcommands": [
+        "init",
+        "check"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "ci",
+        "check"
+      ],
+      "name": "ci check",
+      "group": "ci",
+      "usage": "kit ci check [aoe2kit-ci.json] [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "aoe2kit-ci.json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "ci",
+        "init"
+      ],
+      "name": "ci init",
+      "group": "ci",
+      "usage": "kit ci init [scenario.aoe2scenario] [--root DIR] [--overwrite] [--text]",
+      "flags": [
+        {
+          "name": "--root",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--overwrite"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "scenario.aoe2scenario"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "collect"
+      ],
+      "name": "collect",
+      "usage": "kit collect \u003cfolder\u003e [--registry known_scenarios.json] [--dry-run]",
+      "flags": [
+        {
+          "name": "--registry",
+          "value_hint": "known_scenarios.json"
+        },
+        {
+          "name": "--dry-run"
+        }
+      ],
+      "positional": [
+        "\u003cfolder\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "folder",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "credits"
+      ],
+      "name": "credits",
+      "usage": "kit credits [notice] [folder] [--text|--json]",
+      "positional": [
+        "notice",
+        "folder",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "credits",
+        "."
+      ],
+      "output_top_level_keys": [
+        "dependencies",
+        "generated_by",
+        "license",
+        "project",
+        "references",
+        "schema"
+      ],
+      "response_type": "kit.CreditsDocument"
+    },
+    {
+      "path": [
+        "dat"
+      ],
+      "name": "dat",
+      "usage": "kit dat \u003cinfo|check|roundtrip|codec-plan|codec-patch|delete-plan|delete|plan|patch|...\u003e \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cinfo|check|roundtrip|codec-plan|codec-patch|delete-plan|delete|plan|patch|...\u003e",
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "abilities"
+      ],
+      "name": "dat abilities",
+      "group": "dat",
+      "usage": "kit dat abilities \u003cempires*.dat\u003e [--limit N|--all] [--name-contains TEXT] [--effect-id N] [--command-type N] [--operand N]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--name-contains",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--effect-id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--command-type",
+          "value_hint": "N"
+        },
+        {
+          "name": "--operand",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "ability"
+      ],
+      "name": "dat ability",
+      "group": "dat",
+      "usage": "kit dat ability \u003cempires*.dat\u003e \u003ctech_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003ctech_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "ability-create"
+      ],
+      "name": "dat ability-create",
+      "group": "dat",
+      "usage": "kit dat ability-create \u003cin.dat\u003e \u003cout.dat\u003e --from-tech N --name TEXT [--effect-name TEXT] [--from-effect N] [--command type,a,b,c,d|json] [--append-command type,a,b,c,d|json] [tech flags]",
+      "flags": [
+        {
+          "name": "--from-tech",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--name",
+          "value_hint": "TEXT",
+          "required": true
+        },
+        {
+          "name": "--effect-name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--from-effect",
+          "value_hint": "N"
+        },
+        {
+          "name": "--command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--append-command",
+          "value_hint": "type,a,b,c,d|json"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "tech"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "ability-delete"
+      ],
+      "name": "dat ability-delete",
+      "group": "dat",
+      "usage": "kit dat ability-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "ability-disable"
+      ],
+      "name": "dat ability-disable",
+      "group": "dat",
+      "usage": "kit dat ability-disable \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "ability-patch"
+      ],
+      "name": "dat ability-patch",
+      "group": "dat",
+      "usage": "kit dat ability-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech_id\u003e [--name TEXT] [--effect-name TEXT] [--clear-commands] [--command type,a,b,c,d|json] [--append-command type,a,b,c,d|json] [--remove-command N] [tech flags]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--effect-name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--clear-commands"
+        },
+        {
+          "name": "--command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--append-command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--remove-command",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech_id\u003e",
+        "tech"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "availability"
+      ],
+      "name": "dat availability",
+      "group": "dat",
+      "usage": "kit dat availability \u003cempires*.dat\u003e \u003cunit_id\u003e [--civ N|--all-civs]",
+      "flags": [
+        {
+          "name": "--civ",
+          "value_hint": "N|--all-civs"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cunit_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "availability-set"
+      ],
+      "name": "dat availability-set",
+      "group": "dat",
+      "usage": "kit dat availability-set \u003cin.dat\u003e \u003cout.dat\u003e \u003cunit_id\u003e (--civ N|--all-civs) --enabled true|false|1|0",
+      "flags": [
+        {
+          "name": "--enabled",
+          "value_hint": "true|false|1|0",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cunit_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "civ-patch"
+      ],
+      "name": "dat civ-patch",
+      "group": "dat",
+      "usage": "kit dat civ-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003cciv_id\u003e [--name TEXT] [--tech-tree-id N] [--team-bonus-id N] [--icon-set N] [--resource INDEX,VALUE]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--tech-tree-id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--team-bonus-id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--icon-set",
+          "value_hint": "N"
+        },
+        {
+          "name": "--resource",
+          "value_hint": "INDEX,VALUE"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cciv_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "civs"
+      ],
+      "name": "dat civs",
+      "group": "dat",
+      "usage": "kit dat civs \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "codec-patch"
+      ],
+      "name": "dat codec-patch",
+      "group": "dat",
+      "usage": "kit dat codec-patch \u003cin.dat\u003e \u003cout.dat\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "codec-plan"
+      ],
+      "name": "dat codec-plan",
+      "group": "dat",
+      "usage": "kit dat codec-plan \u003cin.dat\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "command-matrix"
+      ],
+      "name": "dat command-matrix",
+      "group": "dat",
+      "usage": "kit dat command-matrix \u003cempires*.dat\u003e [--limit examples_per_type|--all] [--command-type N] [--operand N] [--reference-kind unit|tech] [--reference-field FIELD] [--typed-only|--typed|--unknown-only|--unknown|--candidate-only|--candidate] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "examples_per_type|--all"
+        },
+        {
+          "name": "--command-type",
+          "value_hint": "N"
+        },
+        {
+          "name": "--operand",
+          "value_hint": "N"
+        },
+        {
+          "name": "--reference-kind",
+          "value_hint": "unit|tech"
+        },
+        {
+          "name": "--reference-field",
+          "value_hint": "FIELD"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "--typed-only|--typed|--unknown-only|--unknown|--candidate-only|--candidate",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "delete"
+      ],
+      "name": "dat delete",
+      "group": "dat",
+      "usage": "kit dat delete \u003cin.dat\u003e \u003cout.dat\u003e \u003csection|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind\u003e \u003ctarget\u003e [--civ N|--all-civs]",
+      "flags": [
+        {
+          "name": "--civ",
+          "value_hint": "N|--all-civs"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003csection|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind\u003e",
+        "\u003ctarget\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "delete-plan"
+      ],
+      "name": "dat delete-plan",
+      "group": "dat",
+      "usage": "kit dat delete-plan \u003cin.dat\u003e \u003csection|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind\u003e \u003ctarget\u003e [--civ N|--all-civs] [--text]",
+      "flags": [
+        {
+          "name": "--civ",
+          "value_hint": "N|--all-civs"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003csection|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind\u003e",
+        "\u003ctarget\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "diff"
+      ],
+      "name": "dat diff",
+      "group": "dat",
+      "usage": "kit dat diff \u003cbase.dat\u003e \u003cmod.dat\u003e [--section NAME|all] [--limit N|--all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--section",
+          "value_hint": "NAME|all"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        }
+      ],
+      "positional": [
+        "\u003cbase.dat\u003e",
+        "\u003cmod.dat\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "disconnect"
+      ],
+      "name": "dat disconnect",
+      "group": "dat",
+      "usage": "kit dat disconnect \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech|unit\u003e \u003cid\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech|unit\u003e",
+        "\u003cid\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effect"
+      ],
+      "name": "dat effect",
+      "group": "dat",
+      "usage": "kit dat effect \u003cempires*.dat\u003e \u003ceffect_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003ceffect_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-command-delete"
+      ],
+      "name": "dat effect-command-delete",
+      "group": "dat",
+      "usage": "kit dat effect-command-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003ceffect_id\u003e \u003ccommand_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ceffect_id\u003e",
+        "\u003ccommand_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-create"
+      ],
+      "name": "dat effect-create",
+      "group": "dat",
+      "usage": "kit dat effect-create \u003cin.dat\u003e \u003cout.dat\u003e --name TEXT [--from-effect N] [--command type,a,b,c,d|json] [--append-command type,a,b,c,d|json] [--remove-command N]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "TEXT",
+          "required": true
+        },
+        {
+          "name": "--from-effect",
+          "value_hint": "N"
+        },
+        {
+          "name": "--command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--append-command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--remove-command",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-delete"
+      ],
+      "name": "dat effect-delete",
+      "group": "dat",
+      "usage": "kit dat effect-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003ceffect_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ceffect_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-disable"
+      ],
+      "name": "dat effect-disable",
+      "group": "dat",
+      "usage": "kit dat effect-disable \u003cin.dat\u003e \u003cout.dat\u003e \u003ceffect_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ceffect_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-explain"
+      ],
+      "name": "dat effect-explain",
+      "group": "dat",
+      "usage": "kit dat effect-explain \u003cempires*.dat\u003e \u003ceffect_id\u003e [--text|--json]",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003ceffect_id\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "effect-patch"
+      ],
+      "name": "dat effect-patch",
+      "group": "dat",
+      "usage": "kit dat effect-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003ceffect_id\u003e [--name TEXT] [--clear-commands] [--command type,a,b,c,d|json] [--append-command type,a,b,c,d|json] [--remove-command N]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--clear-commands"
+        },
+        {
+          "name": "--command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--append-command",
+          "value_hint": "type,a,b,c,d|json"
+        },
+        {
+          "name": "--remove-command",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ceffect_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "effects"
+      ],
+      "name": "dat effects",
+      "group": "dat",
+      "usage": "kit dat effects \u003cempires*.dat\u003e [--limit N|--all] [--command-type N] [--operand N]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--command-type",
+          "value_hint": "N"
+        },
+        {
+          "name": "--operand",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "facts"
+      ],
+      "name": "dat facts",
+      "group": "dat",
+      "usage": "kit dat facts \u003ceffect-types|attributes|resources|task-types|tech-modifiers\u003e [--text|--json]",
+      "positional": [
+        "--text|--json"
+      ],
+      "subcommands": [
+        "effect-types",
+        "attributes",
+        "resources",
+        "task-types",
+        "tech-modifiers"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "dat",
+        "facts"
+      ],
+      "probe_exit_code": 2,
+      "probe_note": "usage: kit dat facts \u003ceffect-types|attributes|resources|task-types|tech-modifiers|effect-command\u003e [id] [--text|--json]"
+    },
+    {
+      "path": [
+        "dat",
+        "facts",
+        "effect-command"
+      ],
+      "name": "dat facts effect-command",
+      "group": "dat",
+      "usage": "kit dat facts effect-command \u003cid\u003e [--text|--json]",
+      "positional": [
+        "\u003cid\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "dat",
+        "facts",
+        "effect-command"
+      ],
+      "probe_exit_code": 1,
+      "probe_note": "kit dat facts: usage: kit dat facts effect-command \u003cid\u003e [--text|--json]"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic"
+      ],
+      "name": "dat graphic",
+      "group": "dat",
+      "usage": "kit dat graphic \u003cempires*.dat\u003e \u003cgraphic_id\u003e [--spans|--raw]",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cgraphic_id\u003e",
+        "--spans|--raw"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic-angle-sound-delete"
+      ],
+      "name": "dat graphic-angle-sound-delete",
+      "group": "dat",
+      "usage": "kit dat graphic-angle-sound-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cgraphic_id\u003e \u003crow_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cgraphic_id\u003e",
+        "\u003crow_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic-create"
+      ],
+      "name": "dat graphic-create",
+      "group": "dat",
+      "usage": "kit dat graphic-create \u003cin.dat\u003e \u003cout.dat\u003e --from N [graphic scalar flags]",
+      "flags": [
+        {
+          "name": "--from",
+          "value_hint": "N",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "graphic"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic-delete"
+      ],
+      "name": "dat graphic-delete",
+      "group": "dat",
+      "usage": "kit dat graphic-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cgraphic_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cgraphic_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic-delta-delete"
+      ],
+      "name": "dat graphic-delta-delete",
+      "group": "dat",
+      "usage": "kit dat graphic-delta-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cgraphic_id\u003e \u003crow_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cgraphic_id\u003e",
+        "\u003crow_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "graphic-patch"
+      ],
+      "name": "dat graphic-patch",
+      "group": "dat",
+      "usage": "kit dat graphic-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003cgraphic_id\u003e [graphic scalar flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cgraphic_id\u003e",
+        "graphic"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "graphics"
+      ],
+      "name": "dat graphics",
+      "group": "dat",
+      "usage": "kit dat graphics \u003cempires*.dat\u003e [--limit N|--all] [--particle] [--name-contains TEXT] [--spans|--raw]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--particle"
+        },
+        {
+          "name": "--name-contains",
+          "value_hint": "TEXT"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "--spans|--raw"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "palette"
+      ],
+      "name": "dat palette",
+      "group": "dat",
+      "usage": "kit dat palette \u003cempires*.dat\u003e [--id N] [--min-variants N] [--json|--text]",
+      "flags": [
+        {
+          "name": "--id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--min-variants",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "--json|--text"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "patch"
+      ],
+      "name": "dat patch",
+      "group": "dat",
+      "usage": "kit dat patch \u003cin.dat\u003e \u003cout.dat\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "patch-graphic"
+      ],
+      "name": "dat patch-graphic",
+      "group": "dat",
+      "usage": "kit dat patch-graphic \u003cin.dat\u003e \u003cout.dat\u003e \u003cgraphic_id\u003e [graphic scalar flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cgraphic_id\u003e",
+        "graphic"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "patch-unit"
+      ],
+      "name": "dat patch-unit",
+      "group": "dat",
+      "usage": "kit dat patch-unit \u003cin.dat\u003e \u003cout.dat\u003e \u003cciv_id\u003e \u003cunit_id\u003e [scalar flags] [--type50-attack I,field=value] [--cost I,field=value] [--task I,field=value]",
+      "flags": [
+        {
+          "name": "--type50-attack",
+          "value_hint": "I,field=value"
+        },
+        {
+          "name": "--cost",
+          "value_hint": "I,field=value"
+        },
+        {
+          "name": "--task",
+          "value_hint": "I,field=value"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cciv_id\u003e",
+        "\u003cunit_id\u003e",
+        "scalar"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "plan"
+      ],
+      "name": "dat plan",
+      "group": "dat",
+      "usage": "kit dat plan \u003cin.dat\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "player-colour-create"
+      ],
+      "name": "dat player-colour-create",
+      "group": "dat",
+      "usage": "kit dat player-colour-create \u003cin.dat\u003e \u003cout.dat\u003e --from N [colour-flags]",
+      "flags": [
+        {
+          "name": "--from",
+          "value_hint": "N",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "colour-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "player-colour-delete"
+      ],
+      "name": "dat player-colour-delete",
+      "group": "dat",
+      "usage": "kit dat player-colour-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003ccolour_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ccolour_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "player-colour-patch"
+      ],
+      "name": "dat player-colour-patch",
+      "group": "dat",
+      "usage": "kit dat player-colour-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003ccolour_id\u003e [colour-flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ccolour_id\u003e",
+        "colour-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "player-colours"
+      ],
+      "name": "dat player-colours",
+      "group": "dat",
+      "usage": "kit dat player-colours \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "random-maps"
+      ],
+      "name": "dat random-maps",
+      "group": "dat",
+      "usage": "kit dat random-maps \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "refs"
+      ],
+      "name": "dat refs",
+      "group": "dat",
+      "usage": "kit dat refs \u003cin.dat\u003e \u003csection\u003e \u003cid\u003e [--class CLASS] [--confidence NAME] [--source-section SECTION] [--limit N|--all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--class",
+          "value_hint": "CLASS"
+        },
+        {
+          "name": "--confidence",
+          "value_hint": "NAME"
+        },
+        {
+          "name": "--source-section",
+          "value_hint": "SECTION"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003csection\u003e",
+        "\u003cid\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "semantic-priors"
+      ],
+      "name": "dat semantic-priors",
+      "group": "dat",
+      "usage": "kit dat semantic-priors \u003cempires*.dat\u003e [--text|--json]",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "semantics-pack"
+      ],
+      "name": "dat semantics-pack",
+      "group": "dat",
+      "usage": "kit dat semantics-pack \u003cin.dat\u003e \u003cout-dir\u003e [--feature full|local-building-effects|class-scope-effects]",
+      "flags": [
+        {
+          "name": "--feature",
+          "value_hint": "full|local-building-effects|class-scope-effects"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout-dir\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "semantics-readback"
+      ],
+      "name": "dat semantics-readback",
+      "group": "dat",
+      "usage": "kit dat semantics-readback \u003cexpected.json\u003e --dat empires*.dat --scenario file.aoe2scenario --replay file.aoe2record [--out report.md] [--text]",
+      "flags": [
+        {
+          "name": "--dat",
+          "value_hint": "empires*.dat",
+          "required": true
+        },
+        {
+          "name": "--scenario",
+          "value_hint": "file.aoe2scenario",
+          "required": true
+        },
+        {
+          "name": "--replay",
+          "value_hint": "file.aoe2record",
+          "required": true
+        },
+        {
+          "name": "--out",
+          "value_hint": "report.md"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cexpected.json\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sound"
+      ],
+      "name": "dat sound",
+      "group": "dat",
+      "usage": "kit dat sound \u003cempires*.dat\u003e \u003csound_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003csound_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "sound-create"
+      ],
+      "name": "dat sound-create",
+      "group": "dat",
+      "usage": "kit dat sound-create \u003cin.dat\u003e \u003cout.dat\u003e --from N [sound-flags] [--item file,resource,probability,civ,icon_set]",
+      "flags": [
+        {
+          "name": "--from",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--item",
+          "value_hint": "file,resource,probability,civ,icon_set"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "sound-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sound-delete"
+      ],
+      "name": "dat sound-delete",
+      "group": "dat",
+      "usage": "kit dat sound-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003csound_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003csound_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sound-item-delete"
+      ],
+      "name": "dat sound-item-delete",
+      "group": "dat",
+      "usage": "kit dat sound-item-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003csound_id\u003e \u003citem_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003csound_id\u003e",
+        "\u003citem_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sound-patch"
+      ],
+      "name": "dat sound-patch",
+      "group": "dat",
+      "usage": "kit dat sound-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003csound_id\u003e [sound-flags] [--item INDEX,field=value...] [--remove-item N]",
+      "flags": [
+        {
+          "name": "--item",
+          "value_hint": "INDEX,field=value..."
+        },
+        {
+          "name": "--remove-item",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003csound_id\u003e",
+        "sound-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sounds"
+      ],
+      "name": "dat sounds",
+      "group": "dat",
+      "usage": "kit dat sounds \u003cempires*.dat\u003e [--limit N|--all] [--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "spans"
+      ],
+      "name": "dat spans",
+      "group": "dat",
+      "usage": "kit dat spans \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "sprite"
+      ],
+      "name": "dat sprite",
+      "group": "dat",
+      "usage": "kit dat sprite \u003cfile.sld\u003e [--out dir] [--limit N] [--stats] [--text]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "dir"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--stats"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.sld\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "sql"
+      ],
+      "name": "dat sql",
+      "group": "dat",
+      "usage": "kit dat sql \u003cempires*.dat\u003e \u003cout.db\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cout.db\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech"
+      ],
+      "name": "dat tech",
+      "group": "dat",
+      "usage": "kit dat tech \u003cempires*.dat\u003e \u003ctech_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003ctech_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-create"
+      ],
+      "name": "dat tech-create",
+      "group": "dat",
+      "usage": "kit dat tech-create \u003cin.dat\u003e \u003cout.dat\u003e --from N [tech-flags]",
+      "flags": [
+        {
+          "name": "--from",
+          "value_hint": "N",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "tech-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-delete"
+      ],
+      "name": "dat tech-delete",
+      "group": "dat",
+      "usage": "kit dat tech-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech_id\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-explain"
+      ],
+      "name": "dat tech-explain",
+      "group": "dat",
+      "usage": "kit dat tech-explain \u003cempires*.dat\u003e \u003ctech_id\u003e [--text|--json]",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003ctech_id\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-patch"
+      ],
+      "name": "dat tech-patch",
+      "group": "dat",
+      "usage": "kit dat tech-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003ctech_id\u003e [tech-flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003ctech_id\u003e",
+        "tech-flags"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-tree"
+      ],
+      "name": "dat tech-tree",
+      "group": "dat",
+      "usage": "kit dat tech-tree \u003cempires*.dat\u003e [--full]",
+      "flags": [
+        {
+          "name": "--full"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-tree-connection-create"
+      ],
+      "name": "dat tech-tree-connection-create",
+      "group": "dat",
+      "usage": "kit dat tech-tree-connection-create \u003cin.dat\u003e \u003cout.dat\u003e \u003cbuilding|unit|research\u003e \u003cfrom_index\u003e [connection flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cbuilding|unit|research\u003e",
+        "\u003cfrom_index\u003e",
+        "connection"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-tree-connection-delete"
+      ],
+      "name": "dat tech-tree-connection-delete",
+      "group": "dat",
+      "usage": "kit dat tech-tree-connection-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cbuilding|unit|research\u003e \u003cindex\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cbuilding|unit|research\u003e",
+        "\u003cindex\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "tech-tree-connection-patch"
+      ],
+      "name": "dat tech-tree-connection-patch",
+      "group": "dat",
+      "usage": "kit dat tech-tree-connection-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003cbuilding|unit|research\u003e \u003cindex\u003e [connection flags]",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cbuilding|unit|research\u003e",
+        "\u003cindex\u003e",
+        "connection"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "techs"
+      ],
+      "name": "dat techs",
+      "group": "dat",
+      "usage": "kit dat techs \u003cempires*.dat\u003e [--limit N|--all] [--name-contains TEXT]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--name-contains",
+          "value_hint": "TEXT"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "terrain"
+      ],
+      "name": "dat terrain",
+      "group": "dat",
+      "usage": "kit dat terrain \u003cempires*.dat\u003e \u003cterrain_id\u003e [--json]",
+      "flags": [
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cterrain_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "terrain-patch"
+      ],
+      "name": "dat terrain-patch",
+      "group": "dat",
+      "usage": "kit dat terrain-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003cterrain_id\u003e [--name TEXT] [--name-2 TEXT] [--overlay-mask-name TEXT]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--name-2",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--overlay-mask-name",
+          "value_hint": "TEXT"
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cterrain_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "terrain-restriction-patch"
+      ],
+      "name": "dat terrain-restriction-patch",
+      "group": "dat",
+      "usage": "kit dat terrain-restriction-patch \u003cin.dat\u003e \u003cout.dat\u003e \u003crestriction_id\u003e --terrain TERRAIN_ID,PASSABILITY",
+      "flags": [
+        {
+          "name": "--terrain",
+          "value_hint": "TERRAIN_ID,PASSABILITY",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003crestriction_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "terrain-restrictions"
+      ],
+      "name": "dat terrain-restrictions",
+      "group": "dat",
+      "usage": "kit dat terrain-restrictions \u003cempires*.dat\u003e [--limit N|--all] [--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "terrains"
+      ],
+      "name": "dat terrains",
+      "group": "dat",
+      "usage": "kit dat terrains \u003cempires*.dat\u003e [--limit N|--all] [--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "unit"
+      ],
+      "name": "dat unit",
+      "group": "dat",
+      "usage": "kit dat unit \u003cempires*.dat\u003e \u003cciv_id\u003e \u003cunit_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cciv_id\u003e",
+        "\u003cunit_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-child-delete"
+      ],
+      "name": "dat unit-child-delete",
+      "group": "dat",
+      "usage": "kit dat unit-child-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cdamage-graphic|attack|armour|train-location|drop-site|task\u003e \u003cciv_id\u003e \u003cunit_id\u003e \u003crow_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cdamage-graphic|attack|armour|train-location|drop-site|task\u003e",
+        "\u003cciv_id\u003e",
+        "\u003cunit_id\u003e",
+        "\u003crow_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-create"
+      ],
+      "name": "dat unit-create",
+      "group": "dat",
+      "usage": "kit dat unit-create \u003cin.dat\u003e \u003cout.dat\u003e --from-civ N --from-unit N (--civ N|--all-civs) [unit patch flags]",
+      "flags": [
+        {
+          "name": "--from-civ",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--from-unit",
+          "value_hint": "N",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "unit"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-delete"
+      ],
+      "name": "dat unit-delete",
+      "group": "dat",
+      "usage": "kit dat unit-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cunit_id\u003e (--civ N|--all-civs)",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cunit_id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-header"
+      ],
+      "name": "dat unit-header",
+      "group": "dat",
+      "usage": "kit dat unit-header \u003cempires*.dat\u003e \u003cheader_id\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e",
+        "\u003cheader_id\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-header-task-delete"
+      ],
+      "name": "dat unit-header-task-delete",
+      "group": "dat",
+      "usage": "kit dat unit-header-task-delete \u003cin.dat\u003e \u003cout.dat\u003e \u003cunit_header_id\u003e \u003ctask_index\u003e",
+      "positional": [
+        "\u003cin.dat\u003e",
+        "\u003cout.dat\u003e",
+        "\u003cunit_header_id\u003e",
+        "\u003ctask_index\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "dat",
+        "unit-headers"
+      ],
+      "name": "dat unit-headers",
+      "group": "dat",
+      "usage": "kit dat unit-headers \u003cempires*.dat\u003e [--limit N|--all] [--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "units"
+      ],
+      "name": "dat units",
+      "group": "dat",
+      "usage": "kit dat units \u003cempires*.dat\u003e [--civ N] [--id N] [--name TEXT|--name-contains TEXT] [--class building|unit|creatable] [--limit N|--all] [--json]",
+      "flags": [
+        {
+          "name": "--civ",
+          "value_hint": "N"
+        },
+        {
+          "name": "--id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--name",
+          "value_hint": "TEXT|--name-contains"
+        },
+        {
+          "name": "--class",
+          "value_hint": "building|unit|creatable"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N|--all"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "docs"
+      ],
+      "name": "docs",
+      "usage": "kit docs \u003clint\u003e ...",
+      "positional": [
+        "\u003clint\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "docs",
+        "lint"
+      ],
+      "name": "docs lint",
+      "group": "docs",
+      "usage": "kit docs lint [folder] [--text|--json]",
+      "positional": [
+        "folder",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "docs",
+        "lint",
+        "."
+      ],
+      "output_top_level_keys": [
+        "examples",
+        "files_scanned",
+        "ok",
+        "root",
+        "verification"
+      ],
+      "verification": "structure_verified_not_engine_verified"
+    },
+    {
+      "path": [
+        "doctor"
+      ],
+      "name": "doctor",
+      "usage": "kit doctor",
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "doctor"
+      ],
+      "probe_note": "AoE2Kit doctor"
+    },
+    {
+      "path": [
+        "facts"
+      ],
+      "name": "facts",
+      "usage": "kit facts \u003clist|check\u003e [--include-provisional] [--domain DOMAIN] [--text]",
+      "flags": [
+        {
+          "name": "--include-provisional"
+        },
+        {
+          "name": "--domain",
+          "value_hint": "DOMAIN"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "subcommands": [
+        "list",
+        "check"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "font",
+        "glyphs"
+      ],
+      "name": "font glyphs",
+      "group": "font",
+      "usage": "kit font glyphs \u003cfont.ttf\u003e [--chars TEXT] [--material N] [--rotation DEGREES] [--out FILE]",
+      "flags": [
+        {
+          "name": "--chars",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--material",
+          "value_hint": "N"
+        },
+        {
+          "name": "--rotation",
+          "value_hint": "DEGREES"
+        },
+        {
+          "name": "--out",
+          "value_hint": "FILE"
+        }
+      ],
+      "positional": [
+        "\u003cfont.ttf\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "fx",
+        "bind"
+      ],
+      "name": "fx bind",
+      "group": "fx",
+      "usage": "kit fx bind --atlas file.png|--dds file.dds --grid RxC|--frames N --frame-size WxH --into resources/_common --dat empires*.dat --unit N --slot flying|standing|attack|dying --from graphic_id --name fx_name [--dry-run]",
+      "flags": [
+        {
+          "name": "--atlas",
+          "value_hint": "file.png|--dds",
+          "required": true
+        },
+        {
+          "name": "--grid",
+          "value_hint": "RxC|--frames",
+          "required": true
+        },
+        {
+          "name": "--frame-size",
+          "value_hint": "WxH",
+          "required": true
+        },
+        {
+          "name": "--into",
+          "value_hint": "resources/_common",
+          "required": true
+        },
+        {
+          "name": "--dat",
+          "value_hint": "empires*.dat",
+          "required": true
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--slot",
+          "value_hint": "flying|standing|attack|dying",
+          "required": true
+        },
+        {
+          "name": "--from",
+          "value_hint": "graphic_id",
+          "required": true
+        },
+        {
+          "name": "--name",
+          "value_hint": "fx_name",
+          "required": true
+        },
+        {
+          "name": "--dry-run"
+        }
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "fx",
+        "lint"
+      ],
+      "name": "fx lint",
+      "group": "fx",
+      "usage": "kit fx lint \u003cmod-or-resources/_common\u003e [--dat empires*.dat] [--text]",
+      "flags": [
+        {
+          "name": "--dat",
+          "value_hint": "empires*.dat"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cmod-or-resources/_common\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "fx",
+        "new"
+      ],
+      "name": "fx new",
+      "group": "fx",
+      "usage": "kit fx new \u003cname\u003e --preset trail|explosion|aura|projectile-fire [--grid RxC] [descriptor overrides]",
+      "flags": [
+        {
+          "name": "--preset",
+          "value_hint": "trail|explosion|aura|projectile-fire",
+          "required": true
+        },
+        {
+          "name": "--grid",
+          "value_hint": "RxC"
+        }
+      ],
+      "positional": [
+        "\u003cname\u003e",
+        "descriptor"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "geo",
+        "trace-dem"
+      ],
+      "name": "geo trace-dem",
+      "group": "geo",
+      "usage": "kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]",
+      "flags": [
+        {
+          "name": "--bbox",
+          "value_hint": "minLat,minLon,maxLat,maxLon"
+        },
+        {
+          "name": "--center",
+          "value_hint": "lat,lon"
+        },
+        {
+          "name": "--span-km",
+          "value_hint": "N"
+        },
+        {
+          "name": "--grid",
+          "value_hint": "N"
+        },
+        {
+          "name": "--landmask",
+          "value_hint": "naturalearth|geojson"
+        },
+        {
+          "name": "--landcover",
+          "value_hint": "worldcover|glc-fcs30d"
+        },
+        {
+          "name": "--roads",
+          "value_hint": "osm-interstate|osm-motorway|osm-major|nhpn-interstate"
+        },
+        {
+          "name": "--out",
+          "value_hint": "report.json"
+        },
+        {
+          "name": "--recipe-out",
+          "value_hint": "recipe.json"
+        },
+        {
+          "name": "--scenario-out",
+          "value_hint": "out.aoe2scenario"
+        }
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "gfx",
+        "export"
+      ],
+      "name": "gfx export",
+      "group": "gfx",
+      "usage": "kit gfx export \u003cfile.sld\u003e [--out dir] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "dir"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.sld\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "gfx",
+        "info"
+      ],
+      "name": "gfx info",
+      "group": "gfx",
+      "usage": "kit gfx info \u003cfile.sld\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.sld\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "identify"
+      ],
+      "name": "identify",
+      "usage": "kit identify \u003cfile.aoe2scenario|file.aoe2record\u003e [--registry known_scenarios.json] [--ai-registry known_ais.json] [--register NAME] [--family FAMILY] [--description TEXT]",
+      "flags": [
+        {
+          "name": "--registry",
+          "value_hint": "known_scenarios.json"
+        },
+        {
+          "name": "--ai-registry",
+          "value_hint": "known_ais.json"
+        },
+        {
+          "name": "--register",
+          "value_hint": "NAME"
+        },
+        {
+          "name": "--family",
+          "value_hint": "FAMILY"
+        },
+        {
+          "name": "--description",
+          "value_hint": "TEXT"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario|file.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "inventory"
+      ],
+      "name": "inventory",
+      "usage": "kit inventory [folder]",
+      "positional": [
+        "folder"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "inventory",
+        "."
+      ],
+      "output_top_level_keys": [
+        "files",
+        "mod_dirs",
+        "root"
+      ],
+      "response_type": "kit.Inventory"
+    },
+    {
+      "path": [
+        "manifest"
+      ],
+      "name": "manifest",
+      "usage": "kit manifest",
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "manifest"
+      ],
+      "output_top_level_keys": [
+        "commands",
+        "docs",
+        "domains",
+        "limitations",
+        "name",
+        "neutrality",
+        "runtime",
+        "version"
+      ],
+      "response_type": "kit.Manifest"
+    },
+    {
+      "path": [
+        "mod"
+      ],
+      "name": "mod",
+      "usage": "kit mod \u003ccheck|inspect\u003e \u003cmoddir\u003e [--status mod-status.json]",
+      "flags": [
+        {
+          "name": "--status",
+          "value_hint": "mod-status.json"
+        }
+      ],
+      "positional": [
+        "\u003cmoddir\u003e"
+      ],
+      "subcommands": [
+        "check",
+        "inspect"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "pack"
+      ],
+      "name": "pack",
+      "usage": "kit pack [out.zip] [folder] [--profile full|handoff|sandbox|public]",
+      "flags": [
+        {
+          "name": "--profile",
+          "value_hint": "full|handoff|sandbox|public"
+        }
+      ],
+      "positional": [
+        "out.zip",
+        "folder"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "folder",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "player",
+        "stats"
+      ],
+      "name": "player stats",
+      "group": "player",
+      "usage": "kit player stats \u003cprofileId\u003e [--match-type N] [--cache-dir DIR] [--force] [--text]",
+      "flags": [
+        {
+          "name": "--match-type",
+          "value_hint": "N"
+        },
+        {
+          "name": "--cache-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--force"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cprofileId\u003e"
+      ],
+      "mutates": false,
+      "network": true,
+      "trait": "network",
+      "input": "other",
+      "probe_status": "skipped_network"
+    },
+    {
+      "path": [
+        "portable-check"
+      ],
+      "name": "portable-check",
+      "usage": "kit portable-check [folder] [--profile full|handoff|sandbox|public]",
+      "flags": [
+        {
+          "name": "--profile",
+          "value_hint": "full|handoff|sandbox|public"
+        }
+      ],
+      "positional": [
+        "folder"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "portable-check",
+        "."
+      ],
+      "probe_exit_code": 1,
+      "output_top_level_keys": [
+        "checks",
+        "errors",
+        "ok",
+        "profile",
+        "root",
+        "warnings"
+      ],
+      "response_type": "kit.PortableReport"
+    },
+    {
+      "path": [
+        "project"
+      ],
+      "name": "project",
+      "usage": "kit project \u003cinspect|snapshot|diff|lineage\u003e ...",
+      "subcommands": [
+        "inspect",
+        "snapshot",
+        "diff",
+        "lineage"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "project",
+        "diff"
+      ],
+      "name": "project diff",
+      "group": "project",
+      "usage": "kit project diff \u003cbefore-snapshot.json\u003e \u003cafter-snapshot.json\u003e [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cbefore-snapshot.json\u003e",
+        "\u003cafter-snapshot.json\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "project",
+        "inspect"
+      ],
+      "name": "project inspect",
+      "group": "project",
+      "usage": "kit project inspect [folder] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "folder",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "project",
+        "inspect",
+        "."
+      ],
+      "output_top_level_keys": [
+        "files",
+        "files_scanned",
+        "kind_counts",
+        "recommendations",
+        "role_counts",
+        "root",
+        "shown",
+        "verification"
+      ],
+      "response_type": "kit.ProjectInspectReport",
+      "verification": "structure_verified_not_engine_verified"
+    },
+    {
+      "path": [
+        "project",
+        "lineage"
+      ],
+      "name": "project lineage",
+      "group": "project",
+      "usage": "kit project lineage --input PATH --output PATH [--input PATH...] [--output PATH...] [--tool TEXT] [--note TEXT] [--manifest lineage.json] [--text|--json]",
+      "flags": [
+        {
+          "name": "--input",
+          "value_hint": "PATH",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "value_hint": "PATH",
+          "required": true
+        },
+        {
+          "name": "--input",
+          "value_hint": "PATH..."
+        },
+        {
+          "name": "--output",
+          "value_hint": "PATH..."
+        },
+        {
+          "name": "--tool",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--note",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--manifest",
+          "value_hint": "lineage.json"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "project",
+        "snapshot"
+      ],
+      "name": "project snapshot",
+      "group": "project",
+      "usage": "kit project snapshot [folder] --out project-snapshot.json [--text|--json]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "project-snapshot.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "folder",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "folder",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "recipe"
+      ],
+      "name": "recipe",
+      "usage": "kit recipe \u003clist|show\u003e ...",
+      "subcommands": [
+        "list",
+        "show"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "recipe"
+      ],
+      "probe_exit_code": 2,
+      "probe_note": "usage: kit recipe \u003clist|show|export\u003e ..."
+    },
+    {
+      "path": [
+        "recipe",
+        "export"
+      ],
+      "name": "recipe export",
+      "group": "recipe",
+      "usage": "kit recipe export \u003cout-dir\u003e [--domain scenario|dat|all] [--force] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|all"
+        },
+        {
+          "name": "--force"
+        }
+      ],
+      "positional": [
+        "\u003cout-dir\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "recipe",
+        "list"
+      ],
+      "name": "recipe list",
+      "group": "recipe",
+      "usage": "kit recipe list [--domain scenario|dat|all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|all"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "recipe",
+        "list"
+      ],
+      "output_top_level_keys": [
+        "count",
+        "templates",
+        "verification"
+      ],
+      "response_type": "kit.RecipeTemplateListReport",
+      "verification": "structure_verified_not_engine_verified"
+    },
+    {
+      "path": [
+        "recipe",
+        "show"
+      ],
+      "name": "recipe show",
+      "group": "recipe",
+      "usage": "kit recipe show \u003cname\u003e [--recipe-only] [--text|--json]",
+      "flags": [
+        {
+          "name": "--recipe-only"
+        }
+      ],
+      "positional": [
+        "\u003cname\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "recipe",
+        "show"
+      ],
+      "probe_exit_code": 2,
+      "probe_note": "usage: kit recipe show \u003cname\u003e [--recipe-only] [--text|--json]"
+    },
+    {
+      "path": [
+        "release-check"
+      ],
+      "name": "release-check",
+      "usage": "kit release-check \u003cscenario.aoe2scenario\u003e [--previous old.aoe2scenario] [--mod moddir] [--status mod-status.json] [--pack out.zip] [--text]",
+      "flags": [
+        {
+          "name": "--previous",
+          "value_hint": "old.aoe2scenario"
+        },
+        {
+          "name": "--mod",
+          "value_hint": "moddir"
+        },
+        {
+          "name": "--status",
+          "value_hint": "mod-status.json"
+        },
+        {
+          "name": "--pack",
+          "value_hint": "out.zip"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cscenario.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "replay"
+      ],
+      "name": "replay",
+      "usage": "kit replay \u003cinfo|summary|graph|triggers|trigger-neighborhood|diff-triggers|coverage|opaque-spans|frontier|corpus|opaque-clusters|ai-manifest|effective-data|effective-units|datamod-check|fetch|diff-state|scan-value|header-anchors|objects|object-state|object-shapes|spawns|lifecycle|postgame|camera|sync|sync-log|checksum-phase|checksum-probe|combat|deaths|player-series|playtest|carrier|sidecar-sync|xs-telemetry|events|actions|player-events|chat|feedback|story|player-profile|inbox|telemetry|issues|unknowns\u003e \u003cpath\u003e",
+      "positional": [
+        "\u003cpath\u003e"
+      ],
+      "subcommands": [
+        "info",
+        "summary",
+        "graph",
+        "triggers",
+        "trigger-neighborhood",
+        "diff-triggers",
+        "coverage",
+        "opaque-spans",
+        "frontier",
+        "corpus",
+        "opaque-clusters",
+        "ai-manifest",
+        "effective-data",
+        "effective-units",
+        "datamod-check",
+        "fetch",
+        "diff-state",
+        "scan-value",
+        "header-anchors",
+        "objects",
+        "object-state",
+        "object-shapes",
+        "spawns",
+        "lifecycle",
+        "postgame",
+        "camera",
+        "sync",
+        "sync-log",
+        "checksum-phase",
+        "checksum-probe",
+        "combat",
+        "deaths",
+        "player-series",
+        "playtest",
+        "carrier",
+        "sidecar-sync",
+        "xs-telemetry",
+        "events",
+        "actions",
+        "player-events",
+        "chat",
+        "feedback",
+        "story",
+        "player-profile",
+        "inbox",
+        "telemetry",
+        "issues",
+        "unknowns"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "replay",
+        "actions"
+      ],
+      "name": "replay actions",
+      "group": "replay",
+      "usage": "kit replay actions \u003cfile.aoe2record\u003e [--action-id N] [--limit N] [--objects] [--raw] [--text|--json]",
+      "flags": [
+        {
+          "name": "--action-id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--objects"
+        },
+        {
+          "name": "--raw"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "ai-manifest"
+      ],
+      "name": "replay ai-manifest",
+      "group": "replay",
+      "usage": "kit replay ai-manifest \u003cfile.aoe2record\u003e [--promisory-root DIR] [--text]",
+      "flags": [
+        {
+          "name": "--promisory-root",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "carrier"
+      ],
+      "name": "replay carrier",
+      "group": "replay",
+      "usage": "kit replay carrier \u003cfile.aoe2record\u003e --ledger expected.json [--text|--json]",
+      "flags": [
+        {
+          "name": "--ledger",
+          "value_hint": "expected.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --ledger must be supplied by the caller"
+    },
+    {
+      "path": [
+        "replay",
+        "chat"
+      ],
+      "name": "replay chat",
+      "group": "replay",
+      "usage": "kit replay chat \u003cfile.aoe2record\u003e [--text|--json]",
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "checksum-phase"
+      ],
+      "name": "replay checksum-phase",
+      "group": "replay",
+      "usage": "kit replay checksum-phase \u003cfile.aoe2record\u003e [--word N|--all-words] [--player N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--word",
+          "value_hint": "N|--all-words"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "checksum-probe"
+      ],
+      "name": "replay checksum-probe",
+      "group": "replay",
+      "usage": "kit replay checksum-probe \u003cfile.aoe2record\u003e [--preset v6-playground-helper|v7-checksum-calibration] [--player N] [--object-count-delta N] [--unit-type-sum-delta N] [--object-id-sum-delta N] [--state-sum-delta N] [--carry-sum-delta N] [--digest-delta N] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--preset",
+          "value_hint": "v6-playground-helper|v7-checksum-calibration"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--object-count-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit-type-sum-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--object-id-sum-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--state-sum-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--carry-sum-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--digest-delta",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "combat"
+      ],
+      "name": "replay combat",
+      "group": "replay",
+      "usage": "kit replay combat \u003cfile.aoe2record\u003e [--window-ms N] [--min-net-loss N] [--limit N] [--sort loss|time] [--text|--json]",
+      "flags": [
+        {
+          "name": "--window-ms",
+          "value_hint": "N"
+        },
+        {
+          "name": "--min-net-loss",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--sort",
+          "value_hint": "loss|time"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "corpus"
+      ],
+      "name": "replay corpus",
+      "group": "replay",
+      "usage": "kit replay corpus \u003cfolder-or-replay\u003e [--flat] [--no-zip] [--unknown-samples N] [--text]",
+      "flags": [
+        {
+          "name": "--flat"
+        },
+        {
+          "name": "--no-zip"
+        },
+        {
+          "name": "--unknown-samples",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfolder-or-replay\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "replay",
+        "corpus",
+        "."
+      ],
+      "output_top_level_keys": [
+        "folder",
+        "method",
+        "rows",
+        "summary",
+        "verification"
+      ],
+      "response_type": "replay.ReplayCorpusReport",
+      "verification": "structure_verified_not_engine_verified",
+      "method": "folder_replay_corpus_coverage_events_postgame"
+    },
+    {
+      "path": [
+        "replay",
+        "coverage"
+      ],
+      "name": "replay coverage",
+      "group": "replay",
+      "usage": "kit replay coverage \u003cfile.aoe2record\u003e [--text|--json] [--fail-on-opaque]",
+      "flags": [
+        {
+          "name": "--fail-on-opaque"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "datamod-check"
+      ],
+      "name": "replay datamod-check",
+      "group": "replay",
+      "usage": "kit replay datamod-check \u003cfile.aoe2record\u003e [--baseline-replay baseline.aoe2record] [--dat empires2_x2_p1.dat] [--known-template SHA256] [--tail-offset N] [--count N] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--baseline-replay",
+          "value_hint": "baseline.aoe2record"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "empires2_x2_p1.dat"
+        },
+        {
+          "name": "--known-template",
+          "value_hint": "SHA256"
+        },
+        {
+          "name": "--tail-offset",
+          "value_hint": "N"
+        },
+        {
+          "name": "--count",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "deaths"
+      ],
+      "name": "replay deaths",
+      "group": "replay",
+      "usage": "kit replay deaths \u003cfile.aoe2record\u003e [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "diff-state"
+      ],
+      "name": "replay diff-state",
+      "group": "replay",
+      "usage": "kit replay diff-state \u003cbefore.aoe2record\u003e \u003cafter.aoe2record\u003e [--focus all|opaque] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--focus",
+          "value_hint": "all|opaque"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2record\u003e",
+        "\u003cafter.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "diff-triggers"
+      ],
+      "name": "replay diff-triggers",
+      "group": "replay",
+      "usage": "kit replay diff-triggers \u003cbefore.aoe2record|zip\u003e \u003cafter.aoe2record|zip\u003e [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2record|zip\u003e",
+        "\u003cafter.aoe2record|zip\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "effective-data"
+      ],
+      "name": "replay effective-data",
+      "group": "replay",
+      "usage": "kit replay effective-data \u003cfile.aoe2record\u003e [--dat empires2_x2_p1.dat] [--player N] [--tail-offset N] [--count N] [--limit N] [--known-template SHA256] [--all] [--text|--tree]",
+      "flags": [
+        {
+          "name": "--dat",
+          "value_hint": "empires2_x2_p1.dat"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--tail-offset",
+          "value_hint": "N"
+        },
+        {
+          "name": "--count",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--known-template",
+          "value_hint": "SHA256"
+        },
+        {
+          "name": "--all"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--tree"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "effective-units"
+      ],
+      "name": "replay effective-units",
+      "group": "replay",
+      "usage": "kit replay effective-units \u003cfile.aoe2record\u003e --dat empires2_x2_p1.dat [--player N] [--limit N] [--include-unchanged] [--all-types] [--include-duplicates] [--text]",
+      "flags": [
+        {
+          "name": "--dat",
+          "value_hint": "empires2_x2_p1.dat",
+          "required": true
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--include-unchanged"
+        },
+        {
+          "name": "--all-types"
+        },
+        {
+          "name": "--include-duplicates"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "events"
+      ],
+      "name": "replay events",
+      "group": "replay",
+      "usage": "kit replay events \u003cfile.aoe2record\u003e [--all] [--system] [--untyped-actions] [--objects] [--raw] [--context context.json] [--text]",
+      "flags": [
+        {
+          "name": "--all"
+        },
+        {
+          "name": "--system"
+        },
+        {
+          "name": "--untyped-actions"
+        },
+        {
+          "name": "--objects"
+        },
+        {
+          "name": "--raw"
+        },
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "feedback"
+      ],
+      "name": "replay feedback",
+      "group": "replay",
+      "usage": "kit replay feedback \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "fetch"
+      ],
+      "name": "replay fetch",
+      "group": "replay",
+      "usage": "kit replay fetch \u003cgameId\u003e --all-povs --from-roster \u003creplay.aoe2record|zip\u003e [--out dir] [--force] [--text]",
+      "flags": [
+        {
+          "name": "--all-povs",
+          "required": true
+        },
+        {
+          "name": "--from-roster",
+          "required": true
+        },
+        {
+          "name": "--out",
+          "value_hint": "dir"
+        },
+        {
+          "name": "--force"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cgameId\u003e",
+        "\u003creplay.aoe2record|zip\u003e"
+      ],
+      "mutates": false,
+      "network": true,
+      "trait": "network",
+      "input": "replay",
+      "probe_status": "skipped_network"
+    },
+    {
+      "path": [
+        "replay",
+        "frontier"
+      ],
+      "name": "replay frontier",
+      "group": "replay",
+      "usage": "kit replay frontier \u003cfile.aoe2record\u003e [--min-duplicate-bytes N] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--min-duplicate-bytes",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "header-anchors"
+      ],
+      "name": "replay header-anchors",
+      "group": "replay",
+      "usage": "kit replay header-anchors \u003cfile.aoe2record\u003e [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "health"
+      ],
+      "name": "replay health",
+      "group": "replay",
+      "usage": "kit replay health \u003cfile.aoe2record\u003e [--window 5m] [--text|--json] [--out path]",
+      "flags": [
+        {
+          "name": "--window",
+          "value_hint": "5m"
+        },
+        {
+          "name": "--out",
+          "value_hint": "path"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "inbox"
+      ],
+      "name": "replay inbox",
+      "group": "replay",
+      "usage": "kit replay inbox \u003cfolder\u003e [--context context.json] [--text]",
+      "flags": [
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfolder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "replay",
+        "inbox",
+        "."
+      ],
+      "output_top_level_keys": [
+        "count",
+        "items",
+        "root",
+        "summary"
+      ],
+      "response_type": "replay.InboxReport"
+    },
+    {
+      "path": [
+        "replay",
+        "info"
+      ],
+      "name": "replay info",
+      "group": "replay",
+      "usage": "kit replay info \u003cfile.aoe2record|zip\u003e [--text|--json] [--tiles] [--full]",
+      "flags": [
+        {
+          "name": "--tiles"
+        },
+        {
+          "name": "--full"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|zip\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "issues"
+      ],
+      "name": "replay issues",
+      "group": "replay",
+      "usage": "kit replay issues \u003cfile.aoe2record\u003e [--context context.json] [--text]",
+      "flags": [
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "lifecycle"
+      ],
+      "name": "replay lifecycle",
+      "group": "replay",
+      "usage": "kit replay lifecycle \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "object-shapes"
+      ],
+      "name": "replay object-shapes",
+      "group": "replay",
+      "usage": "kit replay object-shapes \u003cfile.aoe2record\u003e [--referenced] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--referenced"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "object-state"
+      ],
+      "name": "replay object-state",
+      "group": "replay",
+      "usage": "kit replay object-state \u003cfile.aoe2record\u003e [--referenced] [--class CLASS] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--referenced"
+        },
+        {
+          "name": "--class",
+          "value_hint": "CLASS"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "objects"
+      ],
+      "name": "replay objects",
+      "group": "replay",
+      "usage": "kit replay objects \u003cfile.aoe2record\u003e [--referenced] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--referenced"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "opaque-clusters"
+      ],
+      "name": "replay opaque-clusters",
+      "group": "replay",
+      "usage": "kit replay opaque-clusters \u003cfolder-or-replay\u003e [--space inflated_header|body] [--min-bytes N] [--limit N] [--samples N] [--flat] [--no-zip] [--text]",
+      "flags": [
+        {
+          "name": "--space",
+          "value_hint": "inflated_header|body"
+        },
+        {
+          "name": "--min-bytes",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--samples",
+          "value_hint": "N"
+        },
+        {
+          "name": "--flat"
+        },
+        {
+          "name": "--no-zip"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfolder-or-replay\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "replay",
+        "opaque-clusters",
+        "."
+      ],
+      "output_top_level_keys": [
+        "clusters",
+        "folder",
+        "method",
+        "summary",
+        "verification"
+      ],
+      "response_type": "replay.OpaqueClusterReport",
+      "verification": "structure_verified_opaque_bytes_profiled_not_semantically_decoded",
+      "method": "folder_opaque_span_structural_clustering"
+    },
+    {
+      "path": [
+        "replay",
+        "opaque-spans"
+      ],
+      "name": "replay opaque-spans",
+      "group": "replay",
+      "usage": "kit replay opaque-spans \u003cfile.aoe2record\u003e [--space inflated_header|body] [--min-bytes N] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--space",
+          "value_hint": "inflated_header|body"
+        },
+        {
+          "name": "--min-bytes",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "player-events"
+      ],
+      "name": "replay player-events",
+      "group": "replay",
+      "usage": "kit replay player-events \u003cfile.aoe2record\u003e [--player N] [--type TYPE] [--action-id N] [--phase PHASE] [--from TIME] [--to TIME] [--limit N] [--objects] [--raw] [--text]",
+      "flags": [
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--type",
+          "value_hint": "TYPE"
+        },
+        {
+          "name": "--action-id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--phase",
+          "value_hint": "PHASE"
+        },
+        {
+          "name": "--from",
+          "value_hint": "TIME"
+        },
+        {
+          "name": "--to",
+          "value_hint": "TIME"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--objects"
+        },
+        {
+          "name": "--raw"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "player-profile"
+      ],
+      "name": "replay player-profile",
+      "group": "replay",
+      "usage": "kit replay player-profile \u003cfile.aoe2record\u003e [--context context.json] [--window-sec N] [--dead-gap-sec N] [--cell-size N] [--include-events] [--text|--json]",
+      "flags": [
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        },
+        {
+          "name": "--window-sec",
+          "value_hint": "N"
+        },
+        {
+          "name": "--dead-gap-sec",
+          "value_hint": "N"
+        },
+        {
+          "name": "--cell-size",
+          "value_hint": "N"
+        },
+        {
+          "name": "--include-events"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "player-series"
+      ],
+      "name": "replay player-series",
+      "group": "replay",
+      "usage": "kit replay player-series \u003cfile.aoe2record\u003e [--player N] [--changes-only] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--changes-only"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "playtest"
+      ],
+      "name": "replay playtest",
+      "group": "replay",
+      "usage": "kit replay playtest \u003cfile.aoe2record\u003e [--window N] [--include-computers] [--text|--json]",
+      "flags": [
+        {
+          "name": "--window",
+          "value_hint": "N"
+        },
+        {
+          "name": "--include-computers"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "postgame"
+      ],
+      "name": "replay postgame",
+      "group": "replay",
+      "usage": "kit replay postgame \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "scan-value"
+      ],
+      "name": "replay scan-value",
+      "group": "replay",
+      "usage": "kit replay scan-value \u003cfile.aoe2record\u003e [--value N] [--width 8|16|32|64] [--hex BYTES] [--string TEXT] [--space inflated_header|body] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--value",
+          "value_hint": "N"
+        },
+        {
+          "name": "--width",
+          "value_hint": "8|16|32|64"
+        },
+        {
+          "name": "--hex",
+          "value_hint": "BYTES"
+        },
+        {
+          "name": "--string",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--space",
+          "value_hint": "inflated_header|body"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "sidecar-sync"
+      ],
+      "name": "replay sidecar-sync",
+      "group": "replay",
+      "usage": "kit replay sidecar-sync \u003cfile.aoe2record\u003e --xsdat run.xsdat (--ledger expected.json|--schema rtv12|rtv13|rtv14|rtv141|rtv142|rtv15|rtv16|rtv17|a2ksem2|customstore|engine-harness) [--player N] [--window-ms N] [--fail-on-mismatch] [--text|--json]",
+      "flags": [
+        {
+          "name": "--xsdat",
+          "value_hint": "run.xsdat",
+          "required": true
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--window-ms",
+          "value_hint": "N"
+        },
+        {
+          "name": "--fail-on-mismatch"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "xsdat",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --xsdat must be supplied by the caller"
+    },
+    {
+      "path": [
+        "replay",
+        "spawns"
+      ],
+      "name": "replay spawns",
+      "group": "replay",
+      "usage": "kit replay spawns \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "story"
+      ],
+      "name": "replay story",
+      "group": "replay",
+      "usage": "kit replay story \u003cfile.aoe2record\u003e [--context context.json] [--text|--brief]",
+      "flags": [
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--brief"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "sync"
+      ],
+      "name": "replay sync",
+      "group": "replay",
+      "usage": "kit replay sync \u003cfile.aoe2record\u003e [--checksums] [--raw-words] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--checksums"
+        },
+        {
+          "name": "--raw-words"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "sync-log"
+      ],
+      "name": "replay sync-log",
+      "group": "replay",
+      "usage": "kit replay sync-log \u003cp0-sync.txt\u003e [--replay file.aoe2record] [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--replay",
+          "value_hint": "file.aoe2record"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cp0-sync.txt\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "telemetry"
+      ],
+      "name": "replay telemetry",
+      "group": "replay",
+      "usage": "kit replay telemetry \u003cfile-or-folder\u003e [--context context.json] [--schema telemetry.json] [--text]",
+      "flags": [
+        {
+          "name": "--context",
+          "value_hint": "context.json"
+        },
+        {
+          "name": "--schema",
+          "value_hint": "telemetry.json"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile-or-folder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "other",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "trigger-neighborhood"
+      ],
+      "name": "replay trigger-neighborhood",
+      "group": "replay",
+      "usage": "kit replay trigger-neighborhood \u003cfile.aoe2record|zip\u003e --trigger N [--depth N] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--trigger",
+          "value_hint": "N",
+          "required": true
+        },
+        {
+          "name": "--depth",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|zip\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --trigger must be supplied by the caller"
+    },
+    {
+      "path": [
+        "replay",
+        "triggers"
+      ],
+      "name": "replay triggers",
+      "group": "replay",
+      "usage": "kit replay triggers \u003cfile.aoe2record|zip\u003e [--grep TEXT] [--effect ID_OR_NAME] [--condition ID_OR_NAME] [--player N] [--variable N] [--unit-const ID] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--grep",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--effect",
+          "value_hint": "ID_OR_NAME"
+        },
+        {
+          "name": "--condition",
+          "value_hint": "ID_OR_NAME"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--variable",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit-const",
+          "value_hint": "ID"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record|zip\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "unknowns"
+      ],
+      "name": "replay unknowns",
+      "group": "replay",
+      "usage": "kit replay unknowns \u003cfolder\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfolder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "replay",
+        "unknowns",
+        "."
+      ],
+      "output_top_level_keys": [
+        "replays",
+        "root"
+      ],
+      "response_type": "replay.UnknownsReport"
+    },
+    {
+      "path": [
+        "replay",
+        "xs-telemetry"
+      ],
+      "name": "replay xs-telemetry",
+      "group": "replay",
+      "usage": "kit replay xs-telemetry \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "roadmap"
+      ],
+      "name": "roadmap",
+      "usage": "kit roadmap \u003ccrud|rwd|dark\u003e [--domain scenario|dat|replay|all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|replay|all"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "subcommands": [
+        "crud",
+        "rwd",
+        "dark"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "roadmap"
+      ],
+      "probe_exit_code": 2,
+      "probe_note": "usage: kit roadmap \u003ccrud|rwd|dark\u003e [--domain scenario|dat|replay|all] [--text|--json]"
+    },
+    {
+      "path": [
+        "roadmap",
+        "crud"
+      ],
+      "name": "roadmap crud",
+      "group": "roadmap",
+      "usage": "kit roadmap crud [--domain scenario|dat|replay|all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|replay|all"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "roadmap",
+        "crud"
+      ],
+      "output_top_level_keys": [
+        "domain",
+        "method",
+        "notes",
+        "rows",
+        "summary",
+        "verification",
+        "version"
+      ],
+      "response_type": "roadmap.CRUDReport",
+      "verification": "structure_verified_not_engine_verified",
+      "method": "code-owned CRUD capability ledger derived from the R/W/D source rows; update is the authoring write surface"
+    },
+    {
+      "path": [
+        "roadmap",
+        "dark"
+      ],
+      "name": "roadmap dark",
+      "group": "roadmap",
+      "usage": "kit roadmap dark [--domain scenario|dat|replay|all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|replay|all"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "roadmap",
+        "dark"
+      ],
+      "output_top_level_keys": [
+        "domain",
+        "frontiers",
+        "method",
+        "notes",
+        "summary",
+        "verification",
+        "version"
+      ],
+      "response_type": "roadmap.DarkReport",
+      "verification": "structure_verified_not_engine_verified",
+      "method": "frontier ledger from decoded replay/scenario/DAT work; unknowns stay named instead of becoming claims"
+    },
+    {
+      "path": [
+        "roadmap",
+        "rwd"
+      ],
+      "name": "roadmap rwd",
+      "group": "roadmap",
+      "usage": "kit roadmap rwd [--domain scenario|dat|replay|all] [--text|--json]",
+      "flags": [
+        {
+          "name": "--domain",
+          "value_hint": "scenario|dat|replay|all"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "roadmap",
+        "rwd"
+      ],
+      "output_top_level_keys": [
+        "domain",
+        "method",
+        "notes",
+        "rows",
+        "summary",
+        "verification",
+        "version"
+      ],
+      "response_type": "roadmap.MatrixReport",
+      "verification": "structure_verified_not_engine_verified",
+      "method": "code-owned capability ledger; statuses describe implemented Kit surfaces, not promised engine behavior"
+    },
+    {
+      "path": [
+        "rpg",
+        "custom-store"
+      ],
+      "name": "rpg custom-store",
+      "group": "rpg",
+      "usage": "kit rpg custom-store [--out-dir DIR] [--name TEXT] [--unit N] [--instances N] [--players N] [--timestamp UNIX] [--xs-check PATH] [--text|--json]",
+      "flags": [
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--instances",
+          "value_hint": "N"
+        },
+        {
+          "name": "--players",
+          "value_hint": "N"
+        },
+        {
+          "name": "--timestamp",
+          "value_hint": "UNIX"
+        },
+        {
+          "name": "--xs-check",
+          "value_hint": "PATH"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "none",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "rpg",
+        "shop-demo"
+      ],
+      "name": "rpg shop-demo",
+      "group": "rpg",
+      "usage": "kit rpg shop-demo [--out-dir DIR] [--name TEXT] [--timestamp UNIX] [--text|--json]",
+      "flags": [
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--timestamp",
+          "value_hint": "UNIX"
+        }
+      ],
+      "positional": [
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "none",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen"
+      ],
+      "name": "scen",
+      "usage": "kit scen \u003cblank|info|check|describe|settings|field|strings|refs|delete-plan|delete|disconnect|effects|diff-effects|glossary|idioms|analyze|triggers|units|map|terrain|palette-usage|regions|coverage|verify|lint|xs|deploycheck|diff|diff-triggers|bytediff|write-check|dump-body|plan|patch|shop-catalog|import-triggers|smoke|smoke-recipe\u003e \u003cfile.aoe2scenario\u003e",
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "subcommands": [
+        "blank",
+        "info",
+        "check",
+        "describe",
+        "settings",
+        "field",
+        "strings",
+        "refs",
+        "delete-plan",
+        "delete",
+        "disconnect",
+        "effects",
+        "diff-effects",
+        "glossary",
+        "idioms",
+        "analyze",
+        "triggers",
+        "units",
+        "map",
+        "terrain",
+        "palette-usage",
+        "regions",
+        "coverage",
+        "verify",
+        "lint",
+        "xs",
+        "deploycheck",
+        "diff",
+        "diff-triggers",
+        "bytediff",
+        "write-check",
+        "dump-body",
+        "plan",
+        "patch",
+        "shop-catalog",
+        "import-triggers",
+        "smoke",
+        "smoke-recipe"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "scen",
+        "analyze"
+      ],
+      "name": "scen analyze",
+      "group": "scen",
+      "usage": "kit scen analyze \u003cfile.aoe2scenario\u003e",
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "audit-player-coverage"
+      ],
+      "name": "scen audit-player-coverage",
+      "group": "scen",
+      "usage": "kit scen audit-player-coverage \u003cfile.aoe2scenario\u003e [--players 1,2,3,4] [--text]",
+      "flags": [
+        {
+          "name": "--players",
+          "value_hint": "1,2,3,4"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "blank"
+      ],
+      "name": "scen blank",
+      "group": "scen",
+      "usage": "kit scen blank \u003cout.aoe2scenario\u003e [--size N] [--width N] [--height N] [--players N] [--human-slots N] [--timestamp UNIX] [--no-starters] [--dummy-unit UNIT_ID] [--dummy-origin X,Y] [--dummy-spacing N] [--no-conquest] [--closeout-seconds N] [--closeout-player N] [--keep-seed-triggers] [--text]",
+      "flags": [
+        {
+          "name": "--size",
+          "value_hint": "N"
+        },
+        {
+          "name": "--width",
+          "value_hint": "N"
+        },
+        {
+          "name": "--height",
+          "value_hint": "N"
+        },
+        {
+          "name": "--players",
+          "value_hint": "N"
+        },
+        {
+          "name": "--human-slots",
+          "value_hint": "N"
+        },
+        {
+          "name": "--timestamp",
+          "value_hint": "UNIX"
+        },
+        {
+          "name": "--no-starters"
+        },
+        {
+          "name": "--dummy-unit",
+          "value_hint": "UNIT_ID"
+        },
+        {
+          "name": "--dummy-origin",
+          "value_hint": "X,Y"
+        },
+        {
+          "name": "--dummy-spacing",
+          "value_hint": "N"
+        },
+        {
+          "name": "--no-conquest"
+        },
+        {
+          "name": "--closeout-seconds",
+          "value_hint": "N"
+        },
+        {
+          "name": "--closeout-player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--keep-seed-triggers"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cout.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "none",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "bytediff"
+      ],
+      "name": "scen bytediff",
+      "group": "scen",
+      "usage": "kit scen bytediff \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--text|--json] [--include-noise]",
+      "flags": [
+        {
+          "name": "--include-noise"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2scenario\u003e",
+        "\u003cafter.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "coverage"
+      ],
+      "name": "scen coverage",
+      "group": "scen",
+      "usage": "kit scen coverage \u003cfile.aoe2scenario\u003e [--text|--json] | kit scen coverage --root DIR [--root DIR ...] [--text|--json] [--strict]",
+      "flags": [
+        {
+          "name": "--root",
+          "value_hint": "DIR",
+          "required": true
+        },
+        {
+          "name": "--root",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--strict"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --root must be supplied by the caller"
+    },
+    {
+      "path": [
+        "scen",
+        "delete"
+      ],
+      "name": "scen delete",
+      "group": "scen",
+      "usage": "kit scen delete \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e units-area \u003cx1,y1,x2,y2\u003e [--player N] [--unit N]",
+      "flags": [
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e",
+        "\u003cx1,y1,x2,y2\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "delete-plan"
+      ],
+      "name": "scen delete-plan",
+      "group": "scen",
+      "usage": "kit scen delete-plan \u003cfile.aoe2scenario\u003e units-area \u003cx1,y1,x2,y2\u003e [--player N] [--unit N] [--text]",
+      "flags": [
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "\u003cx1,y1,x2,y2\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "deploycheck"
+      ],
+      "name": "scen deploycheck",
+      "group": "scen",
+      "usage": "kit scen deploycheck \u003cfile.aoe2scenario\u003e \u003cdeploy-tree\u003e [--text] [--include-provisional]",
+      "flags": [
+        {
+          "name": "--text"
+        },
+        {
+          "name": "--include-provisional"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "\u003cdeploy-tree\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "describe"
+      ],
+      "name": "scen describe",
+      "group": "scen",
+      "usage": "kit scen describe \u003cfile.aoe2scenario\u003e [--section triggers|units|map|players|victory|messages|disables|ai|resources|all] [--full] [--json] [--no-path|--quiet-header]",
+      "flags": [
+        {
+          "name": "--section",
+          "value_hint": "triggers|units|map|players|victory|messages|disables|ai|resources|all"
+        },
+        {
+          "name": "--full"
+        },
+        {
+          "name": "--json"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--no-path|--quiet-header"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "diff"
+      ],
+      "name": "scen diff",
+      "group": "scen",
+      "usage": "kit scen diff \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--all-fields] [--text|--json]",
+      "flags": [
+        {
+          "name": "--all-fields"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2scenario\u003e",
+        "\u003cafter.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "diff-effects"
+      ],
+      "name": "scen diff-effects",
+      "group": "scen",
+      "usage": "kit scen diff-effects \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e --where EFFECT [--trigger N] [--limit N] [--max-mb N] [--raw] [--text|--json]",
+      "flags": [
+        {
+          "name": "--where",
+          "value_hint": "EFFECT",
+          "required": true
+        },
+        {
+          "name": "--trigger",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--max-mb",
+          "value_hint": "N"
+        },
+        {
+          "name": "--raw"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2scenario\u003e",
+        "\u003cafter.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --where must be supplied by the caller"
+    },
+    {
+      "path": [
+        "scen",
+        "diff-triggers"
+      ],
+      "name": "scen diff-triggers",
+      "group": "scen",
+      "usage": "kit scen diff-triggers \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--limit N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2scenario\u003e",
+        "\u003cafter.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "disconnect"
+      ],
+      "name": "scen disconnect",
+      "group": "scen",
+      "usage": "kit scen disconnect \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e units-area \u003cx1,y1,x2,y2\u003e [--player N] [--unit N]",
+      "flags": [
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e",
+        "\u003cx1,y1,x2,y2\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "dump-body"
+      ],
+      "name": "scen dump-body",
+      "group": "scen",
+      "usage": "kit scen dump-body --inflated \u003cfile.aoe2scenario\u003e",
+      "flags": [
+        {
+          "name": "--inflated",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --inflated must be supplied by the caller"
+    },
+    {
+      "path": [
+        "scen",
+        "effects"
+      ],
+      "name": "scen effects",
+      "group": "scen",
+      "usage": "kit scen effects \u003cfile.aoe2scenario\u003e [--raw|--census|--where EFFECT] [--trigger N] [--limit N] [--max-mb N] [--text]",
+      "flags": [
+        {
+          "name": "--trigger",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--max-mb",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--raw|--census|--where"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "field"
+      ],
+      "name": "scen field",
+      "group": "scen",
+      "usage": "kit scen field \u003cpath\u003e \u003cfile.aoe2scenario|--root DIR\u003e [--strict]",
+      "flags": [
+        {
+          "name": "--strict"
+        }
+      ],
+      "positional": [
+        "\u003cpath\u003e",
+        "\u003cfile.aoe2scenario|--root"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "glossary"
+      ],
+      "name": "scen glossary",
+      "group": "scen",
+      "usage": "kit scen glossary \u003cfile.aoe2scenario\u003e [--limit N] [--max-mb N] [--text]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--max-mb",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "idioms"
+      ],
+      "name": "scen idioms",
+      "group": "scen",
+      "usage": "kit scen idioms \u003cfile.aoe2scenario\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "import-triggers"
+      ],
+      "name": "scen import-triggers",
+      "group": "scen",
+      "usage": "kit scen import-triggers \u003csrc.aoe2scenario\u003e \u003cdst.aoe2scenario\u003e [--select names/ids/ranges] [--prefix PREFIX] --out \u003cfile.aoe2scenario\u003e",
+      "flags": [
+        {
+          "name": "--select",
+          "value_hint": "names/ids/ranges"
+        },
+        {
+          "name": "--prefix",
+          "value_hint": "PREFIX"
+        },
+        {
+          "name": "--out",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003csrc.aoe2scenario\u003e",
+        "\u003cdst.aoe2scenario\u003e",
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "lint"
+      ],
+      "name": "scen lint",
+      "group": "scen",
+      "usage": "kit scen lint \u003cfile.aoe2scenario\u003e [--text] [--include-provisional] [--load-safety] [--semantic]",
+      "flags": [
+        {
+          "name": "--text"
+        },
+        {
+          "name": "--include-provisional"
+        },
+        {
+          "name": "--load-safety"
+        },
+        {
+          "name": "--semantic"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "mechanic"
+      ],
+      "name": "scen mechanic",
+      "group": "scen",
+      "usage": "kit scen mechanic \u003cfile.aoe2scenario\u003e --kind garrison-token|transform-toggle|teleport-transition|refresh-cycle [--grep TEXT] [--text]",
+      "flags": [
+        {
+          "name": "--kind",
+          "value_hint": "garrison-token|transform-toggle|teleport-transition|refresh-cycle",
+          "required": true
+        },
+        {
+          "name": "--grep",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --kind must be supplied by the caller"
+    },
+    {
+      "path": [
+        "scen",
+        "palette-usage"
+      ],
+      "name": "scen palette-usage",
+      "group": "scen",
+      "usage": "kit scen palette-usage \u003cfile.aoe2scenario\u003e --dat \u003cempires*.dat\u003e [--json|--text]",
+      "flags": [
+        {
+          "name": "--dat",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "\u003cempires*.dat\u003e",
+        "--json|--text"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "patch"
+      ],
+      "name": "scen patch",
+      "group": "scen",
+      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "plan"
+      ],
+      "name": "scen plan",
+      "group": "scen",
+      "usage": "kit scen plan \u003cin.aoe2scenario\u003e --recipe recipe.json",
+      "flags": [
+        {
+          "name": "--recipe",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "refs"
+      ],
+      "name": "scen refs",
+      "group": "scen",
+      "usage": "kit scen refs \u003cfile.aoe2scenario\u003e [--kind unit|trigger|variable|string|all] [--id N] [--text]",
+      "flags": [
+        {
+          "name": "--kind",
+          "value_hint": "unit|trigger|variable|string|all"
+        },
+        {
+          "name": "--id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "settings"
+      ],
+      "name": "scen settings",
+      "group": "scen",
+      "usage": "kit scen settings \u003cfile.aoe2scenario\u003e [--text|--json]",
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "shop-catalog"
+      ],
+      "name": "scen shop-catalog",
+      "group": "scen",
+      "usage": "kit scen shop-catalog \u003ccatalog.json\u003e --out recipe.json [--text|--json]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "recipe.json",
+          "required": true
+        }
+      ],
+      "positional": [
+        "\u003ccatalog.json\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "smoke"
+      ],
+      "name": "scen smoke",
+      "group": "scen",
+      "usage": "kit scen smoke \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]",
+      "flags": [
+        {
+          "name": "--x",
+          "value_hint": "N"
+        },
+        {
+          "name": "--y",
+          "value_hint": "N"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--terrain",
+          "value_hint": "N"
+        },
+        {
+          "name": "--elevation",
+          "value_hint": "N"
+        },
+        {
+          "name": "--layer",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "smoke-recipe"
+      ],
+      "name": "scen smoke-recipe",
+      "group": "scen",
+      "usage": "kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]",
+      "flags": [
+        {
+          "name": "--x",
+          "value_hint": "N"
+        },
+        {
+          "name": "--y",
+          "value_hint": "N"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--unit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--terrain",
+          "value_hint": "N"
+        },
+        {
+          "name": "--elevation",
+          "value_hint": "N"
+        },
+        {
+          "name": "--layer",
+          "value_hint": "N"
+        }
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "ok",
+      "probe_args": [
+        "scen",
+        "smoke-recipe"
+      ],
+      "output_top_level_keys": [
+        "map",
+        "triggers",
+        "units"
+      ],
+      "response_type": "scenario.Recipe"
+    },
+    {
+      "path": [
+        "scen",
+        "strings"
+      ],
+      "name": "scen strings",
+      "group": "scen",
+      "usage": "kit scen strings \u003cfile.aoe2scenario\u003e",
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "terrain"
+      ],
+      "name": "scen terrain",
+      "group": "scen",
+      "usage": "kit scen terrain \u003cfile.aoe2scenario\u003e [--id N] [--tiles] [--text|--json]",
+      "flags": [
+        {
+          "name": "--id",
+          "value_hint": "N"
+        },
+        {
+          "name": "--tiles"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "trigger-flow"
+      ],
+      "name": "scen trigger-flow",
+      "group": "scen",
+      "usage": "kit scen trigger-flow \u003cfile.aoe2scenario\u003e (--grep TEXT|--unit-ref ID|--variable N) [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "trigger-neighborhood"
+      ],
+      "name": "scen trigger-neighborhood",
+      "group": "scen",
+      "usage": "kit scen trigger-neighborhood \u003cfile.aoe2scenario\u003e (--trigger N|--unit-ref ID|--variable N) [--depth N] [--limit N] [--text]",
+      "flags": [
+        {
+          "name": "--depth",
+          "value_hint": "N"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "triggers"
+      ],
+      "name": "scen triggers",
+      "group": "scen",
+      "usage": "kit scen triggers \u003cfile.aoe2scenario\u003e [--grep TEXT] [--effect ID_OR_NAME] [--condition ID_OR_NAME] [--message TEXT] [--unit-ref ID] [--unit-type ID] [--player N] [--variable N] [--area x1,y1,x2,y2] [--limit N] [--max-mb N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--grep",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--effect",
+          "value_hint": "ID_OR_NAME"
+        },
+        {
+          "name": "--condition",
+          "value_hint": "ID_OR_NAME"
+        },
+        {
+          "name": "--message",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--unit-ref",
+          "value_hint": "ID"
+        },
+        {
+          "name": "--unit-type",
+          "value_hint": "ID"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--variable",
+          "value_hint": "N"
+        },
+        {
+          "name": "--area",
+          "value_hint": "x1,y1,x2,y2"
+        },
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--max-mb",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "units"
+      ],
+      "name": "scen units",
+      "group": "scen",
+      "usage": "kit scen units \u003cfile.aoe2scenario\u003e [--named]",
+      "flags": [
+        {
+          "name": "--named"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "write-check"
+      ],
+      "name": "scen write-check",
+      "group": "scen",
+      "usage": "kit scen write-check \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--text|--json] [--include-provisional]",
+      "flags": [
+        {
+          "name": "--include-provisional"
+        }
+      ],
+      "positional": [
+        "\u003cbefore.aoe2scenario\u003e",
+        "\u003cafter.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "xs"
+      ],
+      "name": "scen xs",
+      "group": "scen",
+      "usage": "kit scen xs \u003cfile.aoe2scenario\u003e [--deploy-tree dir] [--text|--json]",
+      "flags": [
+        {
+          "name": "--deploy-tree",
+          "value_hint": "dir"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "xs",
+        "attach"
+      ],
+      "name": "scen xs attach",
+      "group": "scen",
+      "usage": "kit scen xs attach \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --xs file.xs [--name Entry.xs] [--also-carrier] [--title TITLE] [--trigger-name NAME] [--text|--json]",
+      "flags": [
+        {
+          "name": "--xs",
+          "value_hint": "file.xs",
+          "required": true
+        },
+        {
+          "name": "--name",
+          "value_hint": "Entry.xs"
+        },
+        {
+          "name": "--also-carrier"
+        },
+        {
+          "name": "--title",
+          "value_hint": "TITLE"
+        },
+        {
+          "name": "--trigger-name",
+          "value_hint": "NAME"
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "xs",
+        "compare"
+      ],
+      "name": "scen xs compare",
+      "group": "scen",
+      "usage": "kit scen xs compare \u003cfile.aoe2scenario\u003e \u003cfile.xs\u003e [--carrier N|--trigger N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--carrier",
+          "value_hint": "N|--trigger"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "\u003cfile.xs\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "xs",
+        "deploy"
+      ],
+      "name": "scen xs deploy",
+      "group": "scen",
+      "usage": "kit scen xs deploy \u003cfile.aoe2scenario\u003e \u003cdeploy-tree\u003e [--name Entry.xs] [--carrier N|--trigger N] [--force] [--check] [--text|--json]",
+      "flags": [
+        {
+          "name": "--name",
+          "value_hint": "Entry.xs"
+        },
+        {
+          "name": "--carrier",
+          "value_hint": "N|--trigger"
+        },
+        {
+          "name": "--force"
+        },
+        {
+          "name": "--check"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "\u003cdeploy-tree\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "xs",
+        "embed"
+      ],
+      "name": "scen xs embed",
+      "group": "scen",
+      "usage": "kit scen xs embed \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --xs file.xs [--title TITLE] [--trigger-name NAME] [--replace-trigger N] [--append] [--keep-attachment] [--text|--json]",
+      "flags": [
+        {
+          "name": "--xs",
+          "value_hint": "file.xs",
+          "required": true
+        },
+        {
+          "name": "--title",
+          "value_hint": "TITLE"
+        },
+        {
+          "name": "--trigger-name",
+          "value_hint": "NAME"
+        },
+        {
+          "name": "--replace-trigger",
+          "value_hint": "N"
+        },
+        {
+          "name": "--append"
+        },
+        {
+          "name": "--keep-attachment"
+        }
+      ],
+      "positional": [
+        "\u003cin.aoe2scenario\u003e",
+        "\u003cout.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "xs",
+        "extract"
+      ],
+      "name": "scen xs extract",
+      "group": "scen",
+      "usage": "kit scen xs extract \u003cfile.aoe2scenario\u003e --out file.xs [--carrier N|--trigger N] [--force] [--text|--json]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "file.xs",
+          "required": true
+        },
+        {
+          "name": "--carrier",
+          "value_hint": "N|--trigger"
+        },
+        {
+          "name": "--force"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "summary"
+      ],
+      "name": "summary",
+      "usage": "kit summary [folder]",
+      "positional": [
+        "folder"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "summary",
+        "."
+      ],
+      "probe_note": "root: ."
+    },
+    {
+      "path": [
+        "swatch",
+        "patterns"
+      ],
+      "name": "swatch patterns",
+      "group": "swatch",
+      "usage": "kit swatch patterns \u003clist|summary|validate|json\u003e",
+      "subcommands": [
+        "list",
+        "summary",
+        "validate",
+        "json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "verify"
+      ],
+      "name": "verify",
+      "usage": "kit verify [folder] [--go-checks]",
+      "flags": [
+        {
+          "name": "--go-checks"
+        }
+      ],
+      "positional": [
+        "folder"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "ok",
+      "probe_args": [
+        "verify",
+        "."
+      ],
+      "probe_exit_code": 1,
+      "output_top_level_keys": [
+        "artifacts_ok",
+        "docs_ok",
+        "errors",
+        "go_available",
+        "inventory_ok",
+        "manifest_ok",
+        "profile",
+        "root",
+        "source_build_ok",
+        "verification",
+        "version"
+      ],
+      "response_type": "kit.VerifyReport",
+      "verification": "structure_failed"
+    },
+    {
+      "path": [
+        "verify-run"
+      ],
+      "name": "verify-run",
+      "usage": "kit verify-run \u003creplay.aoe2record|replay.zip\u003e --contract contract.json [--text]",
+      "flags": [
+        {
+          "name": "--contract",
+          "value_hint": "contract.json",
+          "required": true
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003creplay.aoe2record|replay.zip\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "requires_additional_input",
+      "probe_note": "required --contract must be supplied by the caller"
+    },
+    {
+      "path": [
+        "version"
+      ],
+      "name": "version",
+      "usage": "kit version",
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "none",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "version"
+      ],
+      "probe_note": "0.1.0"
+    },
+    {
+      "path": [
+        "xs",
+        "bridge"
+      ],
+      "name": "xs bridge",
+      "group": "xs",
+      "usage": "kit xs bridge \u003cvariables.json\u003e [--out-dir DIR]",
+      "flags": [
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR"
+        }
+      ],
+      "positional": [
+        "\u003cvariables.json\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "xs",
+        "datagen"
+      ],
+      "name": "xs datagen",
+      "group": "xs",
+      "usage": "kit xs datagen \u003carrays.json\u003e [--out module.xs]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "module.xs"
+        }
+      ],
+      "positional": [
+        "\u003carrays.json\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "xs",
+        "harness"
+      ],
+      "name": "xs harness",
+      "group": "xs",
+      "usage": "kit xs harness --out-dir DIR [--batch safe|six-arm|trig-long|attr-sweep|long-v2|long-v3] [--name TEXT] [--timestamp UNIX]",
+      "flags": [
+        {
+          "name": "--out-dir",
+          "value_hint": "DIR",
+          "required": true
+        },
+        {
+          "name": "--batch",
+          "value_hint": "safe|six-arm|trig-long|attr-sweep|long-v2|long-v3"
+        },
+        {
+          "name": "--name",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--timestamp",
+          "value_hint": "UNIX"
+        }
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "xs",
+        "inspect"
+      ],
+      "name": "xs inspect",
+      "group": "xs",
+      "usage": "kit xs inspect \u003cfile.xsdat\u003e [--types string,int,...] [--text]",
+      "flags": [
+        {
+          "name": "--types",
+          "value_hint": "string,int,..."
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.xsdat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "xsdat",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "xs",
+        "shims"
+      ],
+      "name": "xs shims",
+      "group": "xs",
+      "usage": "kit xs shims \u003cfile-or-dir\u003e... [--out recipe.json] [--prefix TEXT] [--enabled] [--include-params]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "recipe.json"
+        },
+        {
+          "name": "--prefix",
+          "value_hint": "TEXT"
+        },
+        {
+          "name": "--enabled"
+        },
+        {
+          "name": "--include-params"
+        }
+      ],
+      "positional": [
+        "\u003cfile-or-dir\u003e..."
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "other",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "xsdat",
+        "decode"
+      ],
+      "name": "xsdat decode",
+      "group": "xsdat",
+      "usage": "kit xsdat decode \u003cfile.xsdat\u003e [--types string,int,...] [--ledger expected.json] [--schema rtv12|rtv13|rtv14|rtv141|rtv142|rtv15|rtv16|rtv17|a2ksem2|customstore|engine-harness|long-v3] [--text]",
+      "flags": [
+        {
+          "name": "--types",
+          "value_hint": "string,int,..."
+        },
+        {
+          "name": "--ledger",
+          "value_hint": "expected.json"
+        },
+        {
+          "name": "--schema",
+          "value_hint": "rtv12|rtv13|rtv14|rtv141|rtv142|rtv15|rtv16|rtv17|a2ksem2|customstore|engine-harness|long-v3"
+        },
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.xsdat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "xsdat",
+      "probe_status": "skipped_no_fixture"
+    }
+  ]
+}

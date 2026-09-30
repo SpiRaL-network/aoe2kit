@@ -1,0 +1,41 @@
+{
+  "130dad0d7cdbf80f45e5253f258a405d9a05f0eca67269d76c360da13473b3f3": {
+    "name": "CBA Mini Castle Blood",
+    "family": "CBA",
+    "description": "Castle Blood Arena community map variant. Compact CBA ruleset with fixed castles/spawns and trigger-driven kill/combat progression; useful as a known common-map identity anchor.",
+    "trigger_count": 721,
+    "notes": "Seeded from Python mgz/header/triggers.py canonical hash validation."
+  },
+  "172fa04c719615257ecc7991a2605c8f7ac45c05bdd72a8758c759687f2dd28c": {
+    "name": "CBA Requiem V292 (host-copy B)",
+    "family": "CBA Requiem",
+    "tier": "trigger_graph",
+    "fingerprint": "172fa04c719615257ecc7991a2605c8f7ac45c05bdd72a8758c759687f2dd28c",
+    "trigger_count": 3218,
+    "notes": "Embedded scenario filename = CBA_=REQUIEM=_V292 (verified via clean header filename token, NOT lobby substring). trg=3218. Same-named standard scenario as 81e9fad7 (trg 3170) but a different host copy; both are the community-standard V292. Earlier 'V293' label was a settings-substring misread."
+  },
+  "81b35da0067fe21ae58c43fc20052067d9c78bcced95300d71c954546d1fad09": {
+    "name": "CBA Requiem V293 Team Free",
+    "family": "CBA Requiem V293 TF",
+    "tier": "trigger_graph",
+    "fingerprint": "81b35da0067fe21ae58c43fc20052067d9c78bcced95300d71c954546d1fad09",
+    "trigger_count": 2979,
+    "notes": "V293 Team Free -- custom teams allowed; flaky but hosted. trg~3848."
+  },
+  "81e9fad757c2bc0239c2a4987bcc8d09b7eed5cca2dd759e9faf5a9b719aad3f": {
+    "name": "CBA Requiem V292",
+    "family": "CBA Requiem",
+    "tier": "trigger_graph",
+    "fingerprint": "81e9fad757c2bc0239c2a4987bcc8d09b7eed5cca2dd759e9faf5a9b719aad3f",
+    "trigger_count": 3170,
+    "notes": "Official CBA_=REQUIEM=_V292 loaded from USER:SCENARIOS (unmodified). Replay-embedded trigger-graph reference for the current meta CBA ladder. trg=3170."
+  },
+  "ab8a719798cb04f8be4822c58d43658947a2b373935f4ad2d58ac4b1a81ce29b": {
+    "name": "CBA Requiem V293 Random Position",
+    "family": "CBA Requiem V293 RP",
+    "tier": "trigger_graph",
+    "fingerprint": "ab8a719798cb04f8be4822c58d43658947a2b373935f4ad2d58ac4b1a81ce29b",
+    "trigger_count": 3848,
+    "notes": "V293 Random Position -- pros' anti-stacking default; players slotted randomly. trg~2979. Second-ladder scenario."
+  }
+}
