@@ -2941,7 +2941,7 @@ kit scen palette-usage <file.aoe2scenario> --dat <empires*.dat> [--json|--text]
 ### `scen patch`
 
 ```
-kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json
+kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]
 ```
 
 | flag | value |

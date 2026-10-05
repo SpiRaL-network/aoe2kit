@@ -3718,9 +3718,23 @@ func runScen(args []string) {
 		}
 		printJSON(plan)
 	case "patch":
-		if len(args) != 5 || args[3] != "--recipe" {
-			fmt.Fprintln(os.Stderr, "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json")
+		const patchUsage = "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]"
+		if len(args) < 5 || args[3] != "--recipe" {
+			fmt.Fprintln(os.Stderr, patchUsage)
 			os.Exit(2)
+		}
+		text := false
+		for _, arg := range args[5:] {
+			switch arg {
+			case "--text":
+				text = true
+			case "--json":
+				text = false
+			default:
+				fmt.Fprintf(os.Stderr, "kit scen patch: unknown flag %q\n", arg)
+				fmt.Fprintln(os.Stderr, patchUsage)
+				os.Exit(2)
+			}
 		}
 		recipe, err := scenario.LoadRecipe(args[4])
 		if err != nil {
@@ -3729,6 +3743,10 @@ func runScen(args []string) {
 		report, err := scenario.PatchRecipeFile(args[1], args[2], recipe)
 		if err != nil {
 			die("kit scen", err)
+		}
+		if text {
+			printScenarioPatch(report)
+			return
 		}
 		printJSON(report)
 	default:
@@ -5336,6 +5354,22 @@ func parseScenarioBlankPair(raw string) (float64, float64, error) {
 		return 0, 0, fmt.Errorf("invalid Y in %q", raw)
 	}
 	return x, y, nil
+}
+
+func printScenarioPatch(report scenario.PatchReport) {
+	fmt.Printf("input: %s\n", report.Input)
+	fmt.Printf("output: %s\n", report.Output)
+	fmt.Printf("verification: %s\n", report.Verification.Label)
+	fmt.Printf("triggers: %d -> %d units: %d -> %d rebuild_ok=%t invariant_ok=%t\n",
+		report.TriggerCountBefore, report.TriggerCountAfter,
+		report.UnitCountBefore, report.UnitCountAfter,
+		report.RebuildOK, report.InvariantOK)
+	if report.MapTilesChanged > 0 {
+		fmt.Printf("map_tiles_changed: %d\n", report.MapTilesChanged)
+	}
+	if report.TimestampOfLastSave > 0 {
+		fmt.Printf("timestamp_of_last_save: %d\n", report.TimestampOfLastSave)
+	}
 }
 
 func printScenarioBlank(report scenario.BlankReport) {
@@ -21505,7 +21539,7 @@ func usage() {
   kit scen write-check <before.aoe2scenario> <after.aoe2scenario> [--text|--json] [--include-provisional]
   kit scen dump-body --inflated <file.aoe2scenario>
   kit scen plan <in.aoe2scenario> --recipe recipe.json
-  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json
+  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]
   kit scen shop-catalog <catalog.json> --out recipe.json [--text|--json]
   kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]
   kit scen smoke <in.aoe2scenario> <out.aoe2scenario> [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]

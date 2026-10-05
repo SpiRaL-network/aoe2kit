@@ -6044,7 +6044,7 @@
       ],
       "name": "scen patch",
       "group": "scen",
-      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json",
+      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--text|--json]",
       "flags": [
         {
           "name": "--recipe",
@@ -6054,7 +6054,8 @@
       ],
       "positional": [
         "\u003cin.aoe2scenario\u003e",
-        "\u003cout.aoe2scenario\u003e"
+        "\u003cout.aoe2scenario\u003e",
+        "--text|--json"
       ],
       "mutates": true,
       "network": false,
