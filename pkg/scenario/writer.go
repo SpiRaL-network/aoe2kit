@@ -917,10 +917,10 @@ func (f *File) Plan(recipe Recipe) (Plan, error) {
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_global_victory", Name: recipe.Victory.summary()})
 	}
 	for _, player := range recipe.Players {
-		plan.Operations = append(plan.Operations, PlanOp{Op: "set_player", Name: fmt.Sprintf("P%d", player.Player)})
+		plan.Operations = append(plan.Operations, PlanOp{Op: "set_player", Name: playerLabel(player.Player)})
 	}
 	for _, diplomacy := range recipe.Diplomacy {
-		plan.Operations = append(plan.Operations, PlanOp{Op: "set_diplomacy", Name: fmt.Sprintf("P%d->P%d=%d", diplomacy.From, diplomacy.To, diplomacy.Stance)})
+		plan.Operations = append(plan.Operations, PlanOp{Op: "set_diplomacy", Name: fmt.Sprintf("%s->%s=%d", playerLabel(diplomacy.From), playerLabel(diplomacy.To), diplomacy.Stance)})
 	}
 	if recipe.DiplomacyOptions != nil {
 		if err := f.validateDiplomacyOptions(*recipe.DiplomacyOptions); err != nil {
@@ -929,7 +929,7 @@ func (f *File) Plan(recipe Recipe) (Plan, error) {
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_diplomacy_options", Name: recipe.DiplomacyOptions.summary()})
 	}
 	for _, resource := range recipe.Resources {
-		plan.Operations = append(plan.Operations, PlanOp{Op: "set_resources", Name: fmt.Sprintf("P%d", resource.Player)})
+		plan.Operations = append(plan.Operations, PlanOp{Op: "set_resources", Name: playerLabel(resource.Player)})
 	}
 	for _, stringRecipe := range recipe.Strings {
 		switch stringRecipe.Op {

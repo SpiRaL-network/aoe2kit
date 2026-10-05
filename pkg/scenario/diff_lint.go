@@ -431,7 +431,7 @@ func (f *File) LintWithOptions(opts LintOptions) LintReport {
 	}
 	for _, player := range f.Players {
 		if player.Active && !player.Human && player.AIName == "" && player.AIType != 0 {
-			report.addIssue("warning", "active_ai_without_name", fmt.Sprintf("P%d is active non-human with ai_type=%d and no AI name", player.Player, player.AIType))
+			report.addIssue("warning", "active_ai_without_name", fmt.Sprintf("%s is active non-human with ai_type=%d and no AI name", playerLabel(player.Player), player.AIType))
 		}
 	}
 	for _, ai := range f.AI {
