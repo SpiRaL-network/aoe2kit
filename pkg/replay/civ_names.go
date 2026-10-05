@@ -64,4 +64,7 @@ var knownCivNames = map[int]string{
 	57: "Muisca",
 	58: "Mapuche",
 	59: "Tupi",
+	60: "Saxons",
+	61: "Varangians",
+	62: "Danes",
 }

@@ -76,7 +76,11 @@ type chatWire struct {
 }
 
 func ExtractFeedback(path string) (*FeedbackReport, error) {
-	eventReport, err := ExtractEvents(path, EventOptions{})
+	return ExtractFeedbackWithOptions(path, EventOptions{})
+}
+
+func ExtractFeedbackWithOptions(path string, opts EventOptions) (*FeedbackReport, error) {
+	eventReport, err := ExtractEvents(path, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -718,7 +722,11 @@ func feedbackPlayers(slots []PlayerSlot, chatNames map[int]string, events []Feed
 		seenIDs[id] = true
 		player := byID[id]
 		player.PlayerID = id
-		player.Name = name
+		// The scenario roster is authoritative when it has a name. Chat
+		// metadata can be stale or mis-associated across recorded sessions.
+		if strings.TrimSpace(player.Name) == "" {
+			player.Name = name
+		}
 		if player.Kind == "" {
 			player.Kind = "seen"
 		}

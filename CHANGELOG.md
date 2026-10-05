@@ -1,5 +1,35 @@
 # Changelog
 
+## Fixes & Panel Text Alignment — 2026-10-05
+
+### Changed (breaking)
+- **Recipe player numbering is now P1..P8 everywhere.** In scenario recipes,
+  `players`, `diplomacy`, and `resources` use 1-8 for the eight players, the
+  same as the editor. Before, these three sections counted from 0, so
+  `"player": 1` edited the second player. A recipe that still uses 0 there now
+  fails with a clear error instead of editing the wrong player. To update an
+  older recipe, add 1 to every player number in those three sections. Units are
+  unchanged: 0 is Gaia and 1-8 are the players.
+- `kit scen settings` and diffs label players P1-P8, matching the editor and
+  `kit scen lint`.
+
+### Added
+- **Panel text alignment** (`pkg/text`): measure a string with the game's
+  per-character font widths and generate an XS helper that measures runtime
+  text, so text in the timer and instruction panels can be lined up in
+  proportional fonts. Technique credited to SpiRaL. Structure-verified; you
+  supply the font metric data. See `docs/TEXT_API.md`.
+- `kit replay feedback --prior <earlier recording>` tags chat carried over from
+  a previous game, even when it has its own timestamp.
+- Civ names for Saxons, Varangians, and Danes (ids 60-62).
+- The command catalog and `docs/API_REFERENCE.md` now cover `dat info`,
+  `dat check`, `dat roundtrip`, `replay health`, `replay postgame-corpus`,
+  and `replay opaque-target`.
+
+### Fixed
+- `kit replay feedback` could show the wrong player name; it now uses the
+  replay's roster.
+
 ## Own Codecs & DE 1.59 — 2026-09-30
 
 AoE2Kit now decodes scenarios entirely with its own typed codecs, reads and

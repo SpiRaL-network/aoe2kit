@@ -211,20 +211,20 @@ func BuildRyanScratchAB2(basePath, dir string, timestamp int) (*Report, error) {
 	recipe := scenario.Recipe{
 		Scenario: &scenario.ScenarioRecipe{PlayerCount: intPtr(5), TimestampOfLastSave: &timestamp, StartingAge: &startAge},
 		Players: []scenario.PlayerRecipe{
-			{Player: 0, Active: &active, Human: &active},
-			{Player: 1, Active: &active, Human: &human, AIType: intPtr(0)},
+			{Player: 1, Active: &active, Human: &active},
 			{Player: 2, Active: &active, Human: &human, AIType: intPtr(0)},
 			{Player: 3, Active: &active, Human: &human, AIType: intPtr(0)},
 			{Player: 4, Active: &active, Human: &human, AIType: intPtr(0)},
-			{Player: 5, Active: &inactive, Human: &human, AIType: intPtr(0)},
+			{Player: 5, Active: &active, Human: &human, AIType: intPtr(0)},
+			{Player: 6, Active: &inactive, Human: &human, AIType: intPtr(0)},
 		},
-		Resources: []scenario.ResourceRecipe{{Player: 0, Wood: &wood}},
+		Resources: []scenario.ResourceRecipe{{Player: 1, Wood: &wood}},
 		XS: &scenario.XSRecipe{Mode: "inline_runtime", Name: filepath.Base(xsPath), ContentFile: xsPath,
 			CarrierTitle: "XS string", CarrierTriggerName: "A2K RyanScratch AB2 telemetry"},
 	}
 	for player := 2; player <= 5; player++ {
-		from := player - 2
-		to := player - 1
+		from := player - 1
+		to := player
 		recipe.Diplomacy = append(recipe.Diplomacy,
 			scenario.DiplomacyRecipe{From: from, To: to, Stance: 3},
 			scenario.DiplomacyRecipe{From: to, To: from, Stance: 3})
@@ -319,7 +319,7 @@ func barracksWallRecipe(timestamp int) scenario.Recipe {
 	recipe := scenario.Recipe{
 		Scenario: &scenario.ScenarioRecipe{PlayerCount: &playerCount, TimestampOfLastSave: &timestamp, StartingAge: &startAge},
 	}
-	recipe.Players = append(recipe.Players, scenario.PlayerRecipe{Player: 0, Active: &active, Human: boolPtr(true), AIType: intPtr(0)})
+	recipe.Players = append(recipe.Players, scenario.PlayerRecipe{Player: 1, Active: &active, Human: boolPtr(true), AIType: intPtr(0)})
 	for player := 1; player <= 5; player++ {
 		recipe.Players = append(recipe.Players, scenario.PlayerRecipe{Player: player, Active: &active, Human: &human, AIType: intPtr(0)})
 		recipe.Diplomacy = append(recipe.Diplomacy,

@@ -143,6 +143,24 @@ AoE2Kit's replay work benefits from the aoc-mgz ecosystem and keeps replay claim
 
 AoE2Kit uses the UGC Guide as a public reference point for scenario, trigger, XS, and modding concepts, then validates critical behavior against real files and engine runs.
 
+### SpiRaL
+
+- Authors: SpiRaL
+- Permission: permission granted to use the technique; no direct code copied
+- Gave: The font-metric alignment technique: per-character game font widths, runtime string measurement, and right-edge padding across the three DE panel fonts.
+- Role: Runtime font-metrics alignment technique source
+- Relationship: technique_oracle
+- Rung earned: credited
+- Thanks status: owed
+- Correction state: open_to_correction
+
+AoE2Kit's runtime font-metrics alignment capability was independently re-implemented from SpiRaL's permitted technique, with the game's metric files and build recorded when the data is imported.
+
+Notes:
+- No SpiRaL code is copied or redistributed.
+- Smooth Serif's rendered-space correction remains an explicitly calibrated value, not an assumed metric.
+- Personal thanks to SpiRaL is a human action and remains owed until it is actually given.
+
 ### CB Front Towers OG Enhanced
 
 - Authors: SpiRaL

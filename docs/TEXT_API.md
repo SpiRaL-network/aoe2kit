@@ -111,3 +111,35 @@ Kit can structurally parse, embed, patch, lint, and cost-check the script. The
 game/editor is still the oracle for XS compilation, material availability,
 rendering, passability, and runtime behavior. Treat Kit reports as
 structure-verified until a live engine run confirms the result.
+
+## Panel text alignment (font metrics)
+
+Separately from the Gaia text library, `pkg/text` supports aligning text shown
+in the game's timer and instruction panels, whose fonts are proportional. The
+technique, credited to SpiRaL: measure each string with the game's own
+per-character font widths, then fill the gap with invisible space characters of
+different widths so the text lines up. A metric document records the game build
+and source file, then stores per-codepoint widths for each panel font:
+
+```json
+{
+  "schema": "aoe2kit.font-metrics.v1",
+  "build": "101.103.54800.0",
+  "source": "<game metric file>",
+  "fonts": {
+    "serif": { "space_width": 1.0, "widths": { "65": 2.0 } },
+    "smooth_serif": { "space_width": 1.0, "rendered_space_width": 1.08, "widths": {} },
+    "sans": { "space_width": 1.0, "widths": {} }
+  }
+}
+```
+
+`LoadMetrics`, `Measure`, and `AlignRight` are pure Go operations. The
+`GenerateXSWidthHelper` method emits the small runtime function that measures
+the supplied string with `strLen`, `ord`, and `strCharAt`; the caller chooses
+which invisible space characters realize the returned padding. In Smooth Serif
+the game draws the space wider than its metric file says; that correction is
+`rendered_space_width` and must be calibrated against the target game build.
+Kit does not ship the game's font files or metric data, and has no extractor
+yet: supply the metric document yourself. Structure-verified until an engine
+run confirms the alignment.

@@ -7275,6 +7275,9 @@ type EventOptions struct {
 	IncludeRaw           bool
 	IncludeObjectIndex   bool
 	TelemetryPrefixes    []string
+	// PriorPaths supplies recordings whose early chat is evidence for DE's
+	// carry-over backlog. It is intentionally opt-in.
+	PriorPaths []string
 }
 
 type EventReport struct {
@@ -7358,6 +7361,8 @@ type FeedbackReport struct {
 }
 
 func ExtractFeedback(path string) (*FeedbackReport, error)
+
+func ExtractFeedbackWithOptions(path string, opts EventOptions) (*FeedbackReport, error)
 
 type File struct {
 	Path             string               `json:"path,omitempty"`
@@ -13031,6 +13036,14 @@ runtime path; this package is Kit's optional document/cost convenience layer.
 
 TYPES
 
+type Alignment struct {
+	Font        string  `json:"font"`
+	Text        string  `json:"text"`
+	TargetWidth float64 `json:"target_width"`
+	TextWidth   float64 `json:"text_width"`
+	Padding     float64 `json:"padding"`
+}
+
 type Behavior string
 
 const (
@@ -13046,6 +13059,12 @@ type Document struct {
 }
 
 func Compile(source, alphabet string) (Document, error)
+
+type FontMetrics struct {
+	Widths             map[string]float64 `json:"widths"`
+	SpaceWidth         float64            `json:"space_width"`
+	RenderedSpaceWidth float64            `json:"rendered_space_width,omitempty"`
+}
 
 type Intent struct {
 	Style     Style
@@ -13065,6 +13084,25 @@ const (
 	LifecycleWhileVariable  Lifecycle = "while_variable"
 	LifecycleReadingTime    Lifecycle = "reading_time"
 )
+type MetricDocument struct {
+	Schema string                 `json:"schema"`
+	Build  string                 `json:"build"`
+	Source string                 `json:"source"`
+	Fonts  map[string]FontMetrics `json:"fonts"`
+}
+    MetricDocument is the auditable data contract for extracted game font
+    metrics. Kit does not ship the game's atlases or private extraction tool.
+
+func LoadMetrics(data []byte) (MetricDocument, error)
+
+func (doc MetricDocument) AlignRight(fontName, value string, targetWidth float64) (Alignment, error)
+
+func (doc MetricDocument) GenerateXSWidthHelper(fontName, functionName string) (string, error)
+    GenerateXSWidthHelper emits the runtime width function while baking only the
+    measured table. Callers choose the invisible-space glyphs separately.
+
+func (doc MetricDocument) Measure(fontName, value string) (float64, error)
+
 type Renderer string
 
 const (

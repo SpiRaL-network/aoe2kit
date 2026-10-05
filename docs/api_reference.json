@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "generated_by": "cmd/apiref (usage parsed from the kit binary; output contracts probed against fixtures)",
   "probe_fixtures": {},
-  "command_count": 238,
+  "command_count": 245,
   "probed_count": 17,
   "commands": [
     {
@@ -869,6 +869,23 @@
     {
       "path": [
         "dat",
+        "check"
+      ],
+      "name": "dat check",
+      "group": "dat",
+      "usage": "kit dat check \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "not_probed"
+    },
+    {
+      "path": [
+        "dat",
         "civ-patch"
       ],
       "name": "dat civ-patch",
@@ -1538,6 +1555,23 @@
     {
       "path": [
         "dat",
+        "info"
+      ],
+      "name": "dat info",
+      "group": "dat",
+      "usage": "kit dat info \u003cempires*.dat\u003e",
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "not_probed"
+    },
+    {
+      "path": [
+        "dat",
         "palette"
       ],
       "name": "dat palette",
@@ -1803,6 +1837,28 @@
       "trait": "read_only",
       "input": "dat",
       "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "dat",
+        "roundtrip"
+      ],
+      "name": "dat roundtrip",
+      "group": "dat",
+      "usage": "kit dat roundtrip \u003cempires*.dat\u003e [--full]",
+      "flags": [
+        {
+          "name": "--full"
+        }
+      ],
+      "positional": [
+        "\u003cempires*.dat\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "dat",
+      "probe_status": "not_probed"
     },
     {
       "path": [
@@ -3630,6 +3686,34 @@
     {
       "path": [
         "replay",
+        "camera"
+      ],
+      "name": "replay camera",
+      "group": "replay",
+      "usage": "kit replay camera \u003cfile.aoe2record\u003e [--limit N] [--tail N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--tail",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "not_probed"
+    },
+    {
+      "path": [
+        "replay",
         "carrier"
       ],
       "name": "replay carrier",
@@ -4128,13 +4212,17 @@
       ],
       "name": "replay feedback",
       "group": "replay",
-      "usage": "kit replay feedback \u003cfile.aoe2record\u003e [--text]",
+      "usage": "kit replay feedback \u003cfile.aoe2record\u003e [--prior \u003cfile.aoe2record\u003e] [--text]",
       "flags": [
+        {
+          "name": "--prior"
+        },
         {
           "name": "--text"
         }
       ],
       "positional": [
+        "\u003cfile.aoe2record\u003e",
         "\u003cfile.aoe2record\u003e"
       ],
       "mutates": false,
@@ -4560,6 +4648,28 @@
     {
       "path": [
         "replay",
+        "opaque-target"
+      ],
+      "name": "replay opaque-target",
+      "group": "replay",
+      "usage": "kit replay opaque-target \u003cfile.aoe2record\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "not_probed"
+    },
+    {
+      "path": [
+        "replay",
         "player-events"
       ],
       "name": "replay player-events",
@@ -4731,6 +4841,28 @@
       "trait": "read_only",
       "input": "replay",
       "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "replay",
+        "postgame-corpus"
+      ],
+      "name": "replay postgame-corpus",
+      "group": "replay",
+      "usage": "kit replay postgame-corpus \u003cfolder\u003e [--text]",
+      "flags": [
+        {
+          "name": "--text"
+        }
+      ],
+      "positional": [
+        "\u003cfolder\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "folder",
+      "probe_status": "not_probed"
     },
     {
       "path": [
@@ -5066,6 +5198,34 @@
         "root"
       ],
       "response_type": "replay.UnknownsReport"
+    },
+    {
+      "path": [
+        "replay",
+        "viewlock"
+      ],
+      "name": "replay viewlock",
+      "group": "replay",
+      "usage": "kit replay viewlock \u003cfile.aoe2record\u003e [--limit N] [--tail N] [--text|--json]",
+      "flags": [
+        {
+          "name": "--limit",
+          "value_hint": "N"
+        },
+        {
+          "name": "--tail",
+          "value_hint": "N"
+        }
+      ],
+      "positional": [
+        "\u003cfile.aoe2record\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "replay",
+      "probe_status": "not_probed"
     },
     {
       "path": [

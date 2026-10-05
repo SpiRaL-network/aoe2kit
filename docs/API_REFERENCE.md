@@ -50,7 +50,7 @@ go run ./cmd/apiref --kit ./kit \
 Flags marked **required** in the tables below appear unbracketed in the tool's own
 usage line and must be supplied.
 
-Tool version `0.1.0` — 238 commands, 17 probed.
+Tool version `0.1.0` — 245 commands, 17 probed.
 
 ## Command index
 
@@ -59,7 +59,7 @@ Tool version `0.1.0` — 238 commands, 17 probed.
 - **campaign** — `campaign extract`, `campaign generate`
 - **cba** — `cba archive`, `cba axes`, `cba balance`, `cba export`, `cba ingest`, `cba phase-facts`, `cba registry`, `cba replay`, `cba sidechannels`, `cba trigger-razes`, `cba trigger-spawns`
 - **ci** — `ci check`, `ci init`
-- **dat** — `dat abilities`, `dat ability`, `dat ability-create`, `dat ability-delete`, `dat ability-disable`, `dat ability-patch`, `dat availability`, `dat availability-set`, `dat civ-patch`, `dat civs`, `dat codec-patch`, `dat codec-plan`, `dat command-matrix`, `dat delete`, `dat delete-plan`, `dat diff`, `dat disconnect`, `dat effect`, `dat effect-command-delete`, `dat effect-create`, `dat effect-delete`, `dat effect-disable`, `dat effect-explain`, `dat effect-patch`, `dat effects`, `dat facts`, `dat facts effect-command`, `dat graphic`, `dat graphic-angle-sound-delete`, `dat graphic-create`, `dat graphic-delete`, `dat graphic-delta-delete`, `dat graphic-patch`, `dat graphics`, `dat palette`, `dat patch`, `dat patch-graphic`, `dat patch-unit`, `dat plan`, `dat player-colour-create`, `dat player-colour-delete`, `dat player-colour-patch`, `dat player-colours`, `dat random-maps`, `dat refs`, `dat semantic-priors`, `dat semantics-pack`, `dat semantics-readback`, `dat sound`, `dat sound-create`, `dat sound-delete`, `dat sound-item-delete`, `dat sound-patch`, `dat sounds`, `dat spans`, `dat sprite`, `dat sql`, `dat tech`, `dat tech-create`, `dat tech-delete`, `dat tech-explain`, `dat tech-patch`, `dat tech-tree`, `dat tech-tree-connection-create`, `dat tech-tree-connection-delete`, `dat tech-tree-connection-patch`, `dat techs`, `dat terrain`, `dat terrain-patch`, `dat terrain-restriction-patch`, `dat terrain-restrictions`, `dat terrains`, `dat unit`, `dat unit-child-delete`, `dat unit-create`, `dat unit-delete`, `dat unit-header`, `dat unit-header-task-delete`, `dat unit-headers`, `dat units`
+- **dat** — `dat abilities`, `dat ability`, `dat ability-create`, `dat ability-delete`, `dat ability-disable`, `dat ability-patch`, `dat availability`, `dat availability-set`, `dat check`, `dat civ-patch`, `dat civs`, `dat codec-patch`, `dat codec-plan`, `dat command-matrix`, `dat delete`, `dat delete-plan`, `dat diff`, `dat disconnect`, `dat effect`, `dat effect-command-delete`, `dat effect-create`, `dat effect-delete`, `dat effect-disable`, `dat effect-explain`, `dat effect-patch`, `dat effects`, `dat facts`, `dat facts effect-command`, `dat graphic`, `dat graphic-angle-sound-delete`, `dat graphic-create`, `dat graphic-delete`, `dat graphic-delta-delete`, `dat graphic-patch`, `dat graphics`, `dat info`, `dat palette`, `dat patch`, `dat patch-graphic`, `dat patch-unit`, `dat plan`, `dat player-colour-create`, `dat player-colour-delete`, `dat player-colour-patch`, `dat player-colours`, `dat random-maps`, `dat refs`, `dat roundtrip`, `dat semantic-priors`, `dat semantics-pack`, `dat semantics-readback`, `dat sound`, `dat sound-create`, `dat sound-delete`, `dat sound-item-delete`, `dat sound-patch`, `dat sounds`, `dat spans`, `dat sprite`, `dat sql`, `dat tech`, `dat tech-create`, `dat tech-delete`, `dat tech-explain`, `dat tech-patch`, `dat tech-tree`, `dat tech-tree-connection-create`, `dat tech-tree-connection-delete`, `dat tech-tree-connection-patch`, `dat techs`, `dat terrain`, `dat terrain-patch`, `dat terrain-restriction-patch`, `dat terrain-restrictions`, `dat terrains`, `dat unit`, `dat unit-child-delete`, `dat unit-create`, `dat unit-delete`, `dat unit-header`, `dat unit-header-task-delete`, `dat unit-headers`, `dat units`
 - **docs** — `docs lint`
 - **font** — `font glyphs`
 - **fx** — `fx bind`, `fx lint`, `fx new`
@@ -68,7 +68,7 @@ Tool version `0.1.0` — 238 commands, 17 probed.
 - **player** — `player stats`
 - **project** — `project diff`, `project inspect`, `project lineage`, `project snapshot`
 - **recipe** — `recipe export`, `recipe list`, `recipe show`
-- **replay** — `replay actions`, `replay ai-manifest`, `replay carrier`, `replay chat`, `replay checksum-phase`, `replay checksum-probe`, `replay combat`, `replay corpus`, `replay coverage`, `replay datamod-check`, `replay deaths`, `replay diff-state`, `replay diff-triggers`, `replay effective-data`, `replay effective-units`, `replay events`, `replay feedback`, `replay fetch`, `replay frontier`, `replay header-anchors`, `replay health`, `replay inbox`, `replay info`, `replay issues`, `replay lifecycle`, `replay object-shapes`, `replay object-state`, `replay objects`, `replay opaque-clusters`, `replay opaque-spans`, `replay player-events`, `replay player-profile`, `replay player-series`, `replay playtest`, `replay postgame`, `replay scan-value`, `replay sidecar-sync`, `replay spawns`, `replay story`, `replay sync`, `replay sync-log`, `replay telemetry`, `replay trigger-neighborhood`, `replay triggers`, `replay unknowns`, `replay xs-telemetry`
+- **replay** — `replay actions`, `replay ai-manifest`, `replay camera`, `replay carrier`, `replay chat`, `replay checksum-phase`, `replay checksum-probe`, `replay combat`, `replay corpus`, `replay coverage`, `replay datamod-check`, `replay deaths`, `replay diff-state`, `replay diff-triggers`, `replay effective-data`, `replay effective-units`, `replay events`, `replay feedback`, `replay fetch`, `replay frontier`, `replay header-anchors`, `replay health`, `replay inbox`, `replay info`, `replay issues`, `replay lifecycle`, `replay object-shapes`, `replay object-state`, `replay objects`, `replay opaque-clusters`, `replay opaque-spans`, `replay opaque-target`, `replay player-events`, `replay player-profile`, `replay player-series`, `replay playtest`, `replay postgame`, `replay postgame-corpus`, `replay scan-value`, `replay sidecar-sync`, `replay spawns`, `replay story`, `replay sync`, `replay sync-log`, `replay telemetry`, `replay trigger-neighborhood`, `replay triggers`, `replay unknowns`, `replay viewlock`, `replay xs-telemetry`
 - **roadmap** — `roadmap crud`, `roadmap dark`, `roadmap rwd`
 - **rpg** — `rpg custom-store`, `rpg shop-demo`
 - **scen** — `scen analyze`, `scen audit-player-coverage`, `scen blank`, `scen bytediff`, `scen coverage`, `scen delete`, `scen delete-plan`, `scen deploycheck`, `scen describe`, `scen diff`, `scen diff-effects`, `scen diff-triggers`, `scen disconnect`, `scen dump-body`, `scen effects`, `scen field`, `scen glossary`, `scen idioms`, `scen import-triggers`, `scen lint`, `scen mechanic`, `scen palette-usage`, `scen patch`, `scen plan`, `scen refs`, `scen settings`, `scen shop-catalog`, `scen smoke`, `scen smoke-recipe`, `scen strings`, `scen terrain`, `scen trigger-flow`, `scen trigger-neighborhood`, `scen triggers`, `scen units`, `scen write-check`, `scen xs`, `scen xs attach`, `scen xs compare`, `scen xs deploy`, `scen xs embed`, `scen xs extract`
@@ -738,6 +738,14 @@ kit dat availability-set <in.dat> <out.dat> <unit_id> (--civ N|--all-civs) --ena
 
 - probe: `skipped_mutating`
 
+### `dat check`
+
+```
+kit dat check <empires*.dat>
+```
+
+- probe: `not_probed`
+
 ### `dat civ-patch`
 
 ```
@@ -1050,6 +1058,14 @@ kit dat graphics <empires*.dat> [--limit N|--all] [--particle] [--name-contains 
 
 - probe: `skipped_no_fixture`
 
+### `dat info`
+
+```
+kit dat info <empires*.dat>
+```
+
+- probe: `not_probed`
+
 ### `dat palette`
 
 ```
@@ -1181,6 +1197,18 @@ kit dat refs <in.dat> <section> <id> [--class CLASS] [--confidence NAME] [--sour
 | `--limit` | `N|--all` |
 
 - probe: `skipped_no_fixture`
+
+### `dat roundtrip`
+
+```
+kit dat roundtrip <empires*.dat> [--full]
+```
+
+| flag | value |
+| --- | --- |
+| `--full` | _(boolean)_ |
+
+- probe: `not_probed`
 
 ### `dat semantic-priors`
 
@@ -1888,6 +1916,19 @@ kit replay ai-manifest <file.aoe2record> [--promisory-root DIR] [--text]
 
 - probe: `skipped_no_fixture`
 
+### `replay camera`
+
+```
+kit replay camera <file.aoe2record> [--limit N] [--tail N] [--text|--json]
+```
+
+| flag | value |
+| --- | --- |
+| `--limit` | `N` |
+| `--tail` | `N` |
+
+- probe: `not_probed`
+
 ### `replay carrier`
 
 ```
@@ -2102,11 +2143,12 @@ kit replay events <file.aoe2record> [--all] [--system] [--untyped-actions] [--ob
 ### `replay feedback`
 
 ```
-kit replay feedback <file.aoe2record> [--text]
+kit replay feedback <file.aoe2record> [--prior <file.aoe2record>] [--text]
 ```
 
 | flag | value |
 | --- | --- |
+| `--prior` | _(boolean)_ |
 | `--text` | _(boolean)_ |
 
 - probe: `skipped_no_fixture`
@@ -2300,6 +2342,18 @@ kit replay opaque-spans <file.aoe2record> [--space inflated_header|body] [--min-
 
 - probe: `skipped_no_fixture`
 
+### `replay opaque-target`
+
+```
+kit replay opaque-target <file.aoe2record> [--text]
+```
+
+| flag | value |
+| --- | --- |
+| `--text` | _(boolean)_ |
+
+- probe: `not_probed`
+
 ### `replay player-events`
 
 ```
@@ -2375,6 +2429,18 @@ kit replay postgame <file.aoe2record> [--text]
 | `--text` | _(boolean)_ |
 
 - probe: `skipped_no_fixture`
+
+### `replay postgame-corpus`
+
+```
+kit replay postgame-corpus <folder> [--text]
+```
+
+| flag | value |
+| --- | --- |
+| `--text` | _(boolean)_ |
+
+- probe: `not_probed`
 
 ### `replay scan-value`
 
@@ -2523,6 +2589,19 @@ kit replay unknowns <folder> [--text]
 - probe: `ok`
 - JSON top-level keys: `replays`, `root`
 - response type: `replay.UnknownsReport` (full nested shape in `api_schemas.json`)
+
+### `replay viewlock`
+
+```
+kit replay viewlock <file.aoe2record> [--limit N] [--tail N] [--text|--json]
+```
+
+| flag | value |
+| --- | --- |
+| `--limit` | `N` |
+| `--tail` | `N` |
+
+- probe: `not_probed`
 
 ### `replay xs-telemetry`
 

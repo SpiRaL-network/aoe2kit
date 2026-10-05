@@ -917,18 +917,31 @@ func (f *File) Plan(recipe Recipe) (Plan, error) {
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_global_victory", Name: recipe.Victory.summary()})
 	}
 	for _, player := range recipe.Players {
+		if _, err := normalizePlayerRecipe(player); err != nil {
+			return Plan{}, err
+		}
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_player", Name: fmt.Sprintf("P%d", player.Player)})
 	}
 	for _, diplomacy := range recipe.Diplomacy {
+		if _, err := normalizeDiplomacyRecipe(diplomacy); err != nil {
+			return Plan{}, err
+		}
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_diplomacy", Name: fmt.Sprintf("P%d->P%d=%d", diplomacy.From, diplomacy.To, diplomacy.Stance)})
 	}
 	if recipe.DiplomacyOptions != nil {
-		if err := f.validateDiplomacyOptions(*recipe.DiplomacyOptions); err != nil {
+		normalized, err := normalizeDiplomacyOptionsRecipe(*recipe.DiplomacyOptions)
+		if err != nil {
+			return Plan{}, err
+		}
+		if err := f.validateDiplomacyOptions(normalized); err != nil {
 			return Plan{}, err
 		}
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_diplomacy_options", Name: recipe.DiplomacyOptions.summary()})
 	}
 	for _, resource := range recipe.Resources {
+		if _, err := normalizeResourceRecipe(resource); err != nil {
+			return Plan{}, err
+		}
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_resources", Name: fmt.Sprintf("P%d", resource.Player)})
 	}
 	for _, stringRecipe := range recipe.Strings {
@@ -1132,22 +1145,38 @@ func (f *File) ApplyRecipe(recipe Recipe) error {
 		}
 	}
 	for _, player := range recipe.Players {
-		if err := f.SetPlayer(player); err != nil {
+		normalized, err := normalizePlayerRecipe(player)
+		if err != nil {
+			return err
+		}
+		if err := f.SetPlayer(normalized); err != nil {
 			return err
 		}
 	}
 	for _, diplomacy := range recipe.Diplomacy {
-		if err := f.SetDiplomacy(diplomacy); err != nil {
+		normalized, err := normalizeDiplomacyRecipe(diplomacy)
+		if err != nil {
+			return err
+		}
+		if err := f.SetDiplomacy(normalized); err != nil {
 			return err
 		}
 	}
 	if recipe.DiplomacyOptions != nil {
-		if err := f.SetDiplomacyOptions(*recipe.DiplomacyOptions); err != nil {
+		normalized, err := normalizeDiplomacyOptionsRecipe(*recipe.DiplomacyOptions)
+		if err != nil {
+			return err
+		}
+		if err := f.SetDiplomacyOptions(normalized); err != nil {
 			return err
 		}
 	}
 	for _, resource := range recipe.Resources {
-		if err := f.SetResources(resource); err != nil {
+		normalized, err := normalizeResourceRecipe(resource)
+		if err != nil {
+			return err
+		}
+		if err := f.SetResources(normalized); err != nil {
 			return err
 		}
 	}
@@ -1760,6 +1789,45 @@ func normalizeXSFileName(name string) string {
 		return name
 	}
 	return name + ".xs"
+}
+
+// Recipe player references are public-facing P1..P8 values. The section
+// codecs below intentionally remain zero-based because that is the file
+// layout; units are the one exception and already use 0=Gaia, 1..8=players.
+func normalizePlayerRecipe(recipe PlayerRecipe) (PlayerRecipe, error) {
+	if recipe.Player < 1 {
+		return PlayerRecipe{}, fmt.Errorf("player %d invalid: players use 1..8 (0 is Gaia only for units)", recipe.Player)
+	}
+	recipe.Player--
+	return recipe, nil
+}
+
+func normalizeDiplomacyRecipe(recipe DiplomacyRecipe) (DiplomacyRecipe, error) {
+	if recipe.From < 1 || recipe.To < 1 {
+		return DiplomacyRecipe{}, fmt.Errorf("diplomacy P%d->P%d invalid: players use 1..8", recipe.From, recipe.To)
+	}
+	recipe.From--
+	recipe.To--
+	return recipe, nil
+}
+
+func normalizeResourceRecipe(recipe ResourceRecipe) (ResourceRecipe, error) {
+	if recipe.Player < 1 {
+		return ResourceRecipe{}, fmt.Errorf("resource player %d invalid: players use 1..8 (0 is Gaia only for units)", recipe.Player)
+	}
+	recipe.Player--
+	return recipe, nil
+}
+
+func normalizeDiplomacyOptionsRecipe(recipe DiplomacyOptionsRecipe) (DiplomacyOptionsRecipe, error) {
+	recipe.AlliedVictory = append([]AlliedVictoryRecipe(nil), recipe.AlliedVictory...)
+	for i := range recipe.AlliedVictory {
+		if recipe.AlliedVictory[i].Player < 1 {
+			return DiplomacyOptionsRecipe{}, fmt.Errorf("allied_victory player %d invalid: players use 1..8", recipe.AlliedVictory[i].Player)
+		}
+		recipe.AlliedVictory[i].Player--
+	}
+	return recipe, nil
 }
 
 func (f *File) SetPlayer(recipe PlayerRecipe) error {

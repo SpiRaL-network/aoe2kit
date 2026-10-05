@@ -16,6 +16,9 @@ type EventOptions struct {
 	IncludeRaw           bool
 	IncludeObjectIndex   bool
 	TelemetryPrefixes    []string
+	// PriorPaths supplies recordings whose early chat is evidence for DE's
+	// carry-over backlog. It is intentionally opt-in.
+	PriorPaths []string
 }
 
 type EventReport struct {
@@ -130,6 +133,26 @@ func ExtractEvents(path string, opts EventOptions) (*EventReport, error) {
 	method := "action_stream"
 	if backlog := tagInitialChatBacklogEvents(events); backlog > 0 {
 		warnings = append(warnings, fmt.Sprintf("tagged %d same-timestamp/repeated-text body chat lines as source=backlog; DE can inject prior session chat into a new recording", backlog))
+	}
+	if len(opts.PriorPaths) > 0 {
+		priorTexts := map[string]bool{}
+		for _, priorPath := range opts.PriorPaths {
+			prior, err := ExtractEvents(priorPath, EventOptions{})
+			if err != nil {
+				warnings = append(warnings, fmt.Sprintf("prior replay %q unavailable: %v", priorPath, err))
+				continue
+			}
+			for _, event := range prior.Events {
+				if event.Type == "chat" {
+					if text := normalizedBacklogText(event.Text); text != "" {
+						priorTexts[text] = true
+					}
+				}
+			}
+		}
+		if tagged := tagPriorRecordBacklogEvents(events, priorTexts); tagged > 0 {
+			warnings = append(warnings, fmt.Sprintf("tagged %d early chat lines matching --prior recordings as source=backlog", tagged))
+		}
 	}
 	players := feedbackPlayers(rec.Players, names, eventsToFeedback(events))
 	AnnotateFeedbackPhases(events)
@@ -501,6 +524,23 @@ func tagInitialChatBacklogEvents(events []ReplayEvent) int {
 		}
 		events[i].Source = "backlog"
 		events[i].Confidence = appendConfidence(events[i].Confidence, "exact_backlog_text_repeat_heuristic")
+		tagged++
+	}
+	return tagged
+}
+
+func tagPriorRecordBacklogEvents(events []ReplayEvent, priorTexts map[string]bool) int {
+	const backlogWindowMS = 120000
+	tagged := 0
+	for i := range events {
+		if events[i].Type != "chat" || events[i].Source == "backlog" || events[i].TimeMS < 0 || events[i].TimeMS > backlogWindowMS {
+			continue
+		}
+		if shouldPreserveDiagnosticChatMarker(events[i].Text, events[i].TimeMS) || !priorTexts[normalizedBacklogText(events[i].Text)] {
+			continue
+		}
+		events[i].Source = "backlog"
+		events[i].Confidence = appendConfidence(events[i].Confidence, "cross_record_backlog_heuristic")
 		tagged++
 	}
 	return tagged

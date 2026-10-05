@@ -5777,8 +5777,8 @@ func printScenarioSettings(report scenario.SettingsReport) {
 	printScenarioMessageSlot("scouts", report.Messages.Scouts)
 	fmt.Printf("cinematics: pregame=%q victory=%q loss=%q\n", report.Cinematics.Pregame, report.Cinematics.Victory, report.Cinematics.Loss)
 	for _, player := range report.Players {
-		fmt.Printf("- P%d active=%t human=%t civ=%q architecture=%q tribe=%q name_string_id=%d ai=%q ai_type=%d lock_civ=%t lock_personality=%t starting_age=%d/%q color=%d/%q base_priority=%d population_limit=%d allied_victory=%t resources=gold:%d wood:%d food:%d stone:%d trade:%d",
-			player.Player, player.Active, player.Human, player.Civilization, player.Architecture, player.TribeName, player.NameStringID,
+		fmt.Printf("- %s active=%t human=%t civ=%q architecture=%q tribe=%q name_string_id=%d ai=%q ai_type=%d lock_civ=%t lock_personality=%t starting_age=%d/%q color=%d/%q base_priority=%d population_limit=%d allied_victory=%t resources=gold:%d wood:%d food:%d stone:%d trade:%d",
+			player.PlayerLabel, player.Active, player.Human, player.Civilization, player.Architecture, player.TribeName, player.NameStringID,
 			player.AIName, player.AIType, player.LockCivilization, player.LockPersonality,
 			player.StartingAge, player.StartingAgeName, player.Color, player.ColorName, player.BasePriority, player.PopulationLimit, player.AlliedVictory,
 			player.Resources.Gold, player.Resources.Wood, player.Resources.Food, player.Resources.Stone, player.Resources.TradeGoods)
@@ -6937,7 +6937,7 @@ func printScenarioDescription(desc scenario.Description, printPath bool) {
 			if !p.Active && p.TribeName == "" && p.Civilization == "" && p.AIName == "" {
 				continue
 			}
-			fmt.Printf("- P%d active=%t human=%t civ=%q tribe=%q ai=%q ai_type=%d\n", p.Player, p.Active, p.Human, p.Civilization, p.TribeName, p.AIName, p.AIType)
+			fmt.Printf("- %s active=%t human=%t civ=%q tribe=%q ai=%q ai_type=%d\n", p.PlayerLabel, p.Active, p.Human, p.Civilization, p.TribeName, p.AIName, p.AIType)
 		}
 	}
 	if len(desc.AI) > 0 {
@@ -9861,15 +9861,22 @@ func runReplay(args []string) {
 	case "feedback":
 		checkReplayArg(args[1])
 		textOut := false
-		for _, arg := range args[2:] {
-			switch arg {
+		var prior []string
+		for i := 2; i < len(args); i++ {
+			switch args[i] {
 			case "--text":
 				textOut = true
+			case "--prior":
+				i++
+				if i >= len(args) || strings.TrimSpace(args[i]) == "" {
+					die("kit replay feedback", fmt.Errorf("--prior needs a replay path"))
+				}
+				prior = append(prior, args[i])
 			default:
-				die("kit replay feedback", fmt.Errorf("unknown option %q", arg))
+				die("kit replay feedback", fmt.Errorf("unknown option %q", args[i]))
 			}
 		}
-		report, err := replay.ExtractFeedback(args[1])
+		report, err := replay.ExtractFeedbackWithOptions(args[1], replay.EventOptions{PriorPaths: prior})
 		if err != nil {
 			die("kit replay feedback", err)
 		}
@@ -21396,6 +21403,10 @@ func usage() {
   kit replay spawns <file.aoe2record> [--text]
   kit replay lifecycle <file.aoe2record> [--text]
   kit replay postgame <file.aoe2record> [--text]
+  kit replay postgame-corpus <folder> [--text]
+  kit replay opaque-target <file.aoe2record> [--text]
+  kit replay camera <file.aoe2record> [--limit N] [--tail N] [--text|--json]
+  kit replay viewlock <file.aoe2record> [--limit N] [--tail N] [--text|--json]
   kit replay sync <file.aoe2record> [--checksums] [--raw-words] [--limit N] [--text|--json]
   kit replay health <file.aoe2record> [--window 5m] [--text|--json] [--out path]
   kit replay sync-log <p0-sync.txt> [--replay file.aoe2record] [--limit N] [--text|--json]
@@ -21412,7 +21423,7 @@ func usage() {
   kit replay actions <file.aoe2record> [--action-id N] [--limit N] [--objects] [--raw] [--text|--json]
   kit replay player-events <file.aoe2record> [--player N] [--type TYPE] [--action-id N] [--phase PHASE] [--from TIME] [--to TIME] [--limit N] [--objects] [--raw] [--text]
   kit replay chat <file.aoe2record> [--text|--json]
-  kit replay feedback <file.aoe2record> [--text]
+  kit replay feedback <file.aoe2record> [--prior <file.aoe2record>] [--text]
   kit replay story <file.aoe2record> [--context context.json] [--text|--brief]
   kit replay player-profile <file.aoe2record> [--context context.json] [--window-sec N] [--dead-gap-sec N] [--cell-size N] [--include-events] [--text|--json]
   kit replay inbox <folder> [--context context.json] [--text]
@@ -21587,6 +21598,9 @@ func usage() {
   kit dat patch-unit <in.dat> <out.dat> <civ_id> <unit_id> [scalar flags] [--type50-attack I,field=value] [--cost I,field=value] [--task I,field=value]
   kit dat unit-header-task-delete <in.dat> <out.dat> <unit_header_id> <task_index>
   kit dat refs <in.dat> <section> <id> [--class CLASS] [--confidence NAME] [--source-section SECTION] [--limit N|--all] [--text|--json]
+  kit dat info <empires*.dat>
+  kit dat check <empires*.dat>
+  kit dat roundtrip <empires*.dat> [--full]
   kit dat delete-plan <in.dat> <section|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind> <target> [--civ N|--all-civs] [--text]
   kit dat delete <in.dat> <out.dat> <section|effect-command|sound-item|graphic-row-kind|unit-header-task|unit-row-kind> <target> [--civ N|--all-civs]
   kit dat disconnect <in.dat> <out.dat> <tech|unit> <id>

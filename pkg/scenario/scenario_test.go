@@ -6932,7 +6932,7 @@ func TestScenarioSettingsReport(t *testing.T) {
 	if report.PlayerCount == 0 || len(report.Players) == 0 {
 		t.Fatalf("empty settings players: %+v", report)
 	}
-	if len(report.Resources) == 0 || report.Players[0].Resources.Player != 0 {
+	if len(report.Resources) == 0 || report.Players[0].Resources.Player != 1 {
 		t.Fatalf("settings resources not wired into players: %+v", report.Players[0])
 	}
 	if len(report.Diplomacy.Matrix) == 0 || len(report.Players[0].Diplomacy) == 0 {
