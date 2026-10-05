@@ -1,0 +1,59 @@
+package scenario
+
+import (
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+// Player records are zero-based internally (index 0 is P1); labels shown to
+// people must be one-based. Recipes use P1..P8 directly. Contributed by SpiRaL
+// (chrae/aoe2kit#1), adapted to one-based recipe player numbering.
+func TestPlayerRecordLabelsAreOneBased(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "blank.aoe2scenario")
+	report, err := WriteBlankScenarioFile(path, BlankOptions{PlayerCount: 2})
+	if err != nil {
+		t.Fatalf("WriteBlankScenarioFile: %v", err)
+	}
+	if !strings.HasPrefix(report.EditorParityNote, "P2 human=false") {
+		t.Fatalf("editor parity note names the wrong slot: %q", report.EditorParityNote)
+	}
+
+	file, err := Open(path)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	plan, err := file.Plan(Recipe{
+		Players:   []PlayerRecipe{{Player: 1}},
+		Diplomacy: []DiplomacyRecipe{{From: 1, To: 2, Stance: 3}},
+		Resources: []ResourceRecipe{{Player: 2}},
+	})
+	if err != nil {
+		t.Fatalf("Plan: %v", err)
+	}
+	want := map[string]string{"set_player": "P1", "set_diplomacy": "P1->P2=3", "set_resources": "P2"}
+	for _, op := range plan.Operations {
+		if label, ok := want[op.Op]; ok {
+			if op.Name != label {
+				t.Errorf("%s labeled %q, want %q", op.Op, op.Name, label)
+			}
+			delete(want, op.Op)
+		}
+	}
+	for op := range want {
+		t.Errorf("plan has no %s operation", op)
+	}
+
+	found := false
+	for _, issue := range file.Lint().Issues {
+		if issue.Code == "active_ai_without_name" {
+			found = true
+			if !strings.HasPrefix(issue.Message, "P2 ") {
+				t.Errorf("active_ai_without_name names the wrong slot: %q", issue.Message)
+			}
+		}
+	}
+	if !found {
+		t.Error("blank P2 computer slot raised no active_ai_without_name warning")
+	}
+}

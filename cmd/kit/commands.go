@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -100,28 +101,23 @@ func isPlainCommandToken(tok string) bool {
 }
 
 // usageText returns the help text as a string for catalog verification.
+// The pipe is drained while usage() writes: the text is larger than a Windows
+// pipe buffer, so writing it all before reading blocks forever there.
 func usageText() string {
 	read, write, err := os.Pipe()
 	if err != nil {
 		return ""
 	}
+	captured := make(chan string)
+	go func() {
+		data, _ := io.ReadAll(read)
+		read.Close()
+		captured <- string(data)
+	}()
 	saved := os.Stderr
 	os.Stderr = write
 	usage()
 	os.Stderr = saved
 	write.Close()
-
-	var b strings.Builder
-	buf := make([]byte, 4096)
-	for {
-		n, readErr := read.Read(buf)
-		if n > 0 {
-			b.Write(buf[:n])
-		}
-		if readErr != nil {
-			break
-		}
-	}
-	read.Close()
-	return b.String()
+	return <-captured
 }

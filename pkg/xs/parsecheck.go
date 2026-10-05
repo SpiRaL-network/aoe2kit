@@ -108,22 +108,37 @@ func ResolveParser(explicit string) (string, error) {
 	return found, nil
 }
 
-const pinnedXSCheckSHA256 = "b35a5fecd8512b5ac9ec5111ea5848f1f92c20958bd9d13fbe47a5f8c1149d05"
+// Release digests of the reference checker, xs-check v0.2.30, by release asset:
+// "xs-check" is the Linux binary, "xs-check.exe" the Windows one.
+const (
+	pinnedXSCheckSHA256        = "b35a5fecd8512b5ac9ec5111ea5848f1f92c20958bd9d13fbe47a5f8c1149d05"
+	pinnedXSCheckWindowsSHA256 = "dd22d0755aca35d7ad5d77989cda2b98c0caefd4a43a1d37570585e9ff53ce27"
+)
+
+// pinnedXSCheck returns the file name the pinned install uses on this OS and
+// the digest it must have.
+func pinnedXSCheck(goos string) (name, digest string) {
+	if goos == "windows" {
+		return "xs-check.exe", pinnedXSCheckWindowsSHA256
+	}
+	return "xs-check", pinnedXSCheckSHA256
+}
 
 func resolvePinnedParser() (string, error) {
+	name, want := pinnedXSCheck(runtime.GOOS)
 	candidates := []string{}
 	if local := localXSCheckPath(); local != "" {
 		candidates = append(candidates, local)
 	}
 	if root := strings.TrimSpace(os.Getenv("AOE2KIT_ROOT")); root != "" {
-		candidates = append(candidates, filepath.Join(root, "tools", "bin", "xs-check"))
+		candidates = append(candidates, filepath.Join(root, "tools", "bin", name))
 	}
 	if _, source, _, ok := runtime.Caller(0); ok {
-		candidates = append(candidates, filepath.Join(filepath.Dir(source), "..", "..", "tools", "bin", "xs-check"))
+		candidates = append(candidates, filepath.Join(filepath.Dir(source), "..", "..", "tools", "bin", name))
 	}
 	for _, base := range []string{workingDirectory(), executableDirectory()} {
 		for dir := base; dir != ""; dir = filepath.Dir(dir) {
-			candidates = append(candidates, filepath.Join(dir, "tools", "bin", "xs-check"))
+			candidates = append(candidates, filepath.Join(dir, "tools", "bin", name))
 			parent := filepath.Dir(dir)
 			if parent == dir {
 				break
@@ -145,8 +160,8 @@ func resolvePinnedParser() (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("hash pinned xs-check %q: %w", candidate, err)
 		}
-		if digest != pinnedXSCheckSHA256 {
-			return "", fmt.Errorf("pinned xs-check %q sha256=%s, want %s", candidate, digest, pinnedXSCheckSHA256)
+		if digest != want {
+			return "", fmt.Errorf("pinned xs-check %q sha256=%s, want %s", candidate, digest, want)
 		}
 		return candidate, nil
 	}
@@ -162,7 +177,8 @@ func localXSCheckPath() string {
 		}
 		dataHome = filepath.Join(home, ".local", "share")
 	}
-	return filepath.Join(dataHome, "aoe2kit", "xs-check")
+	name, _ := pinnedXSCheck(runtime.GOOS)
+	return filepath.Join(dataHome, "aoe2kit", name)
 }
 
 func workingDirectory() string {

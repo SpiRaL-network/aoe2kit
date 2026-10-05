@@ -231,10 +231,10 @@ func editorParityPlayerInit(file *File, playableSlots int) (bool, string) {
 	for _, player := range file.Players {
 		wantActive := player.Player >= 0 && player.Player < playableSlots
 		if player.Active != wantActive {
-			return false, fmt.Sprintf("P%d active=%t want %t for editor-style blank player init", player.Player, player.Active, wantActive)
+			return false, fmt.Sprintf("%s active=%t want %t for editor-style blank player init", playerLabel(player.Player), player.Active, wantActive)
 		}
 		if !player.Human {
-			return false, fmt.Sprintf("P%d human=false; editor-authored blank keeps all player records human metadata unless explicitly changed", player.Player)
+			return false, fmt.Sprintf("%s human=false; editor-authored blank keeps all player records human metadata unless explicitly changed", playerLabel(player.Player))
 		}
 	}
 	return true, "player active/human metadata matches editor-style blank baseline"

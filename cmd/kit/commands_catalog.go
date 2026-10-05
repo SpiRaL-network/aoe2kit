@@ -235,7 +235,7 @@ var commandCatalog = []CommandSpec{
 	{Name: "scen idioms", Usage: "kit scen idioms <file.aoe2scenario> [--text]", Trait: TraitReadOnly, Input: "scenario"},
 	{Name: "scen lint", Usage: "kit scen lint <file.aoe2scenario> [--text] [--include-provisional] [--load-safety] [--semantic]", Trait: TraitReadOnly, Input: "scenario"},
 	{Name: "scen mechanic", Usage: "kit scen mechanic <file.aoe2scenario> --kind garrison-token|transform-toggle|teleport-transition|refresh-cycle [--grep TEXT] [--text]", Trait: TraitReadOnly, Input: "scenario"},
-	{Name: "scen patch", Usage: "kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json", Trait: TraitWrites, Input: "scenario"},
+	{Name: "scen patch", Usage: "kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]", Trait: TraitWrites, Input: "scenario"},
 	{Name: "scen plan", Usage: "kit scen plan <in.aoe2scenario> --recipe recipe.json", Trait: TraitWrites, Input: "scenario"},
 	{Name: "scen smoke", Usage: "kit scen smoke <in.aoe2scenario> <out.aoe2scenario> [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]", Trait: TraitWrites, Input: "scenario"},
 	{Name: "scen smoke-recipe", Usage: "kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]", Trait: TraitReadOnly, Input: "none"},

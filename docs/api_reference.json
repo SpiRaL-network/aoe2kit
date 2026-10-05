@@ -4,7 +4,7 @@
   "generated_by": "cmd/apiref (usage parsed from the kit binary; output contracts probed against fixtures)",
   "probe_fixtures": {},
   "command_count": 245,
-  "probed_count": 17,
+  "probed_count": 18,
   "commands": [
     {
       "path": [
@@ -881,7 +881,7 @@
       "network": false,
       "trait": "read_only",
       "input": "dat",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -1567,7 +1567,7 @@
       "network": false,
       "trait": "read_only",
       "input": "dat",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -1858,7 +1858,7 @@
       "network": false,
       "trait": "read_only",
       "input": "dat",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -3709,7 +3709,7 @@
       "network": false,
       "trait": "read_only",
       "input": "replay",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -4665,7 +4665,7 @@
       "network": false,
       "trait": "read_only",
       "input": "replay",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -4862,7 +4862,23 @@
       "network": false,
       "trait": "read_only",
       "input": "folder",
-      "probe_status": "not_probed"
+      "probe_status": "ok",
+      "probe_args": [
+        "replay",
+        "postgame-corpus",
+        "."
+      ],
+      "output_top_level_keys": [
+        "folder",
+        "method",
+        "parse_failures",
+        "replays_scanned",
+        "summary",
+        "verification"
+      ],
+      "response_type": "replay.PostgameCorpusReport",
+      "verification": "structure_observed_scenario_and_ranked_rm_postgame_stats_not_serialized",
+      "method": "folder_scan_postgame_probe_per_replay"
     },
     {
       "path": [
@@ -5225,7 +5241,7 @@
       "network": false,
       "trait": "read_only",
       "input": "replay",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -6204,7 +6220,7 @@
       ],
       "name": "scen patch",
       "group": "scen",
-      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json",
+      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--text|--json]",
       "flags": [
         {
           "name": "--recipe",
@@ -6214,7 +6230,8 @@
       ],
       "positional": [
         "\u003cin.aoe2scenario\u003e",
-        "\u003cout.aoe2scenario\u003e"
+        "\u003cout.aoe2scenario\u003e",
+        "--text|--json"
       ],
       "mutates": true,
       "network": false,

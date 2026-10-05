@@ -161,6 +161,24 @@ Notes:
 - Smooth Serif's rendered-space correction remains an explicitly calibrated value, not an assumed metric.
 - Personal thanks to SpiRaL is a human action and remains owed until it is actually given.
 
+### SpiRaL
+
+- Authors: SpiRaL
+- URL: https://github.com/SpiRaL-network
+- Permission: contributed by pull request to chrae/aoe2kit
+- Gave: Code contributions by pull request (#1-#4, October 2026): xs-check discovery on Windows, a Windows test hang fix, --text/--json on scen patch, and one-based player labels in lint and blank output.
+- Role: Code contributor
+- Relationship: code_contributor
+- Rung earned: credited
+- Thanks status: owed
+- Correction state: open_to_correction
+
+SpiRaL contributed AoE2Kit's first external pull requests, including the Windows support that lets the pinned xs-check gate and the cmd/kit tests work on Windows.
+
+Notes:
+- PRs #2-#4 were ported as submitted; #1 was ported in part because recipe player numbering changed in the same release window.
+- Personal thanks to SpiRaL is a human action and remains owed until it is actually given.
+
 ### CB Front Towers OG Enhanced
 
 - Authors: SpiRaL
@@ -231,3 +249,4 @@ krmyth9 has personally helped the author. Personal thanks is deliberate and huma
 
 Notes:
 - Personal thanks to krmyth9 is a human action and remains owed until it is actually sent.
+

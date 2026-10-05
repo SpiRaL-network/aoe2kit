@@ -50,7 +50,7 @@ go run ./cmd/apiref --kit ./kit \
 Flags marked **required** in the tables below appear unbracketed in the tool's own
 usage line and must be supplied.
 
-Tool version `0.1.0` — 245 commands, 17 probed.
+Tool version `0.1.0` — 245 commands, 18 probed.
 
 ## Command index
 
@@ -744,7 +744,7 @@ kit dat availability-set <in.dat> <out.dat> <unit_id> (--civ N|--all-civs) --ena
 kit dat check <empires*.dat>
 ```
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `dat civ-patch`
 
@@ -1064,7 +1064,7 @@ kit dat graphics <empires*.dat> [--limit N|--all] [--particle] [--name-contains 
 kit dat info <empires*.dat>
 ```
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `dat palette`
 
@@ -1208,7 +1208,7 @@ kit dat roundtrip <empires*.dat> [--full]
 | --- | --- |
 | `--full` | _(boolean)_ |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `dat semantic-priors`
 
@@ -1927,7 +1927,7 @@ kit replay camera <file.aoe2record> [--limit N] [--tail N] [--text|--json]
 | `--limit` | `N` |
 | `--tail` | `N` |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `replay carrier`
 
@@ -2352,7 +2352,7 @@ kit replay opaque-target <file.aoe2record> [--text]
 | --- | --- |
 | `--text` | _(boolean)_ |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `replay player-events`
 
@@ -2440,7 +2440,11 @@ kit replay postgame-corpus <folder> [--text]
 | --- | --- |
 | `--text` | _(boolean)_ |
 
-- probe: `not_probed`
+- probe: `ok`
+- method: `folder_scan_postgame_probe_per_replay`
+- verification: `structure_observed_scenario_and_ranked_rm_postgame_stats_not_serialized`
+- JSON top-level keys: `folder`, `method`, `parse_failures`, `replays_scanned`, `summary`, `verification`
+- response type: `replay.PostgameCorpusReport` (full nested shape in `api_schemas.json`)
 
 ### `replay scan-value`
 
@@ -2601,7 +2605,7 @@ kit replay viewlock <file.aoe2record> [--limit N] [--tail N] [--text|--json]
 | `--limit` | `N` |
 | `--tail` | `N` |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `replay xs-telemetry`
 
@@ -3020,7 +3024,7 @@ kit scen palette-usage <file.aoe2scenario> --dat <empires*.dat> [--json|--text]
 ### `scen patch`
 
 ```
-kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json
+kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]
 ```
 
 | flag | value |

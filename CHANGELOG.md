@@ -1,5 +1,22 @@
 # Changelog
 
+## First Community Pull Requests — 2026-10-06
+
+Kit's first pull requests from outside, all from SpiRaL (#1-#4).
+
+### Fixed
+- **Windows:** the pinned xs-check is found as `xs-check.exe` and verified
+  against the Windows release digest, so the strict XS checks work on Windows
+  without setting `AOE2KIT_XS_CHECK` (#2).
+- **Windows:** `go test ./cmd/kit` no longer hangs; the help text was larger
+  than a Windows pipe buffer (#3).
+- `kit scen lint` and `kit scen blank` name players P1-P8 like the editor; they
+  used to call the second player "P1" (#1).
+
+### Added
+- `kit scen patch` accepts `--text` and `--json`, and names an unknown flag
+  instead of only printing the usage line (#4).
+
 ## Fixes & Panel Text Alignment — 2026-10-05
 
 ### Changed (breaking)
