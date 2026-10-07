@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-// Player records, diplomacy rows, and resource rows are zero-based (index 0 is P1);
-// labels shown to people must be one-based.
+// Player records are zero-based internally (index 0 is P1); labels shown to
+// people must be one-based. Recipes use P1..P8 directly. Contributed by SpiRaL
+// (chrae/aoe2kit#1), adapted to one-based recipe player numbering.
 func TestPlayerRecordLabelsAreOneBased(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "blank.aoe2scenario")
 	report, err := WriteBlankScenarioFile(path, BlankOptions{PlayerCount: 2})
@@ -23,9 +24,9 @@ func TestPlayerRecordLabelsAreOneBased(t *testing.T) {
 		t.Fatalf("Open: %v", err)
 	}
 	plan, err := file.Plan(Recipe{
-		Players:   []PlayerRecipe{{Player: 0}},
-		Diplomacy: []DiplomacyRecipe{{From: 0, To: 1, Stance: 3}},
-		Resources: []ResourceRecipe{{Player: 1}},
+		Players:   []PlayerRecipe{{Player: 1}},
+		Diplomacy: []DiplomacyRecipe{{From: 1, To: 2, Stance: 3}},
+		Resources: []ResourceRecipe{{Player: 2}},
 	})
 	if err != nil {
 		t.Fatalf("Plan: %v", err)

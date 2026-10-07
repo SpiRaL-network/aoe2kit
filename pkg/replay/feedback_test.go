@@ -34,6 +34,33 @@ func TestExtractFeedbackEventsDedupesChatJSON(t *testing.T) {
 	}
 }
 
+func TestFeedbackPlayersPrefersReplayRosterNames(t *testing.T) {
+	slots := []PlayerSlot{
+		{Number: 1, Name: "Pokaran", Human: true},
+		{Number: 3, Name: "janovillalobos789", Human: true},
+	}
+	players := feedbackPlayers(slots, map[int]string{1: "Pokaran", 3: "Pokaran"}, nil)
+	if len(players) != 2 {
+		t.Fatalf("players=%+v, want two roster players", players)
+	}
+	if players[1].Name != "janovillalobos789" {
+		t.Fatalf("P3 name=%q, want roster name", players[1].Name)
+	}
+}
+
+func TestTagPriorRecordBacklogEvents(t *testing.T) {
+	events := []ReplayEvent{
+		{Type: "chat", TimeMS: 248, Text: "and click multiple time the blue icon with an A", Source: "game", Confidence: "parsed"},
+		{Type: "chat", TimeMS: 5000, Text: "new message", Source: "game", Confidence: "parsed"},
+	}
+	if got := tagPriorRecordBacklogEvents(events, map[string]bool{"and click multiple time the blue icon with an A": true}); got != 1 {
+		t.Fatalf("tagged=%d, want 1", got)
+	}
+	if events[0].Source != "backlog" || !strings.Contains(events[0].Confidence, "cross_record_backlog_heuristic") {
+		t.Fatalf("event=%+v, want cross-record backlog annotation", events[0])
+	}
+}
+
 func TestExtractActionStreamFeedbackChatAndFlare(t *testing.T) {
 	var body bytes.Buffer
 	writeU32(&body, 5)

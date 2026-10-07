@@ -163,7 +163,7 @@ func TestBuildWritesStructureVerifiedFixture(t *testing.T) {
 	}
 	for player := 0; player < DefaultPlayerCount; player++ {
 		resources := settings.Resources[player]
-		if resources.Player != player {
+		if resources.Player != player+1 {
 			t.Fatalf("resource row %d identifies slot %d", player, resources.Player)
 		}
 		for name, value := range map[string]int{

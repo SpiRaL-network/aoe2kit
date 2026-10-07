@@ -120,10 +120,12 @@ trigger/unit/map edits:
 `scenario.player_count` writes the FileHeader player count advertised to the
 engine/lobby. It must be kept in sync with the intended active non-Gaia player
 slots. AoE2Kit also syncs the Units-section `number_of_players` field to
-`player_count + 1` including Gaia when writing the scenario count. Player-slot
-indexes elsewhere remain `0` for Gaia and `1..8` for normal player slots.
+`player_count + 1` including Gaia when writing the scenario count. Recipe
+player, diplomacy, and resource references use `1..8` for normal players;
+`0` is rejected there. Unit ownership is the deliberate exception: units use
+`0` for Gaia and `1..8` for normal player slots.
 
-`kit scen blank` keeps P0/Gaia active by default, matching the editor-authored
+`kit scen blank` keeps Gaia active by default, matching the editor-authored
 blank baseline and normal scenario authoring expectations. Do not assume
 Gaia-inactive authoring is supported until the separate Gaia active-state field
 is decoded and write-verified. By default the blank gets one Barracks (unit 12)
@@ -142,8 +144,9 @@ Unix time by default so generated scenario forks do not keep an inherited stale
 date in the DE browser. Set `scenario.timestamp_of_last_save` explicitly in a
 recipe when a deterministic or intentionally pinned timestamp is needed.
 
-Player, diplomacy, and resource indexes use the scenario's player-slot indexes:
-`0` is Gaia, `1..8` are normal player slots. Diplomacy stance values are the raw
+Recipe player, diplomacy, and resource indexes use public player labels:
+`1..8` are normal player slots and `0` is invalid for these fields. Unit
+ownership remains `0` for Gaia and `1..8` for normal player slots. Diplomacy stance values are the raw
 scenario/editor values until a tighter portable enum table is added.
 
 Supported effect ops include `display_instructions`, `display_timer`,

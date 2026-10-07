@@ -1283,7 +1283,9 @@ func diffPlayers(before, after []PlayerSettings, add func(kind, field string, b,
 }
 
 func diffPlayer(before, after PlayerSettings, add func(kind, field string, b, a any, detail string)) {
-	prefix := fmt.Sprintf("player_%d.", before.Player)
+	// Diff's intermediate key is the zero-based section index; decoration
+	// converts it to the public P1..P8 label using PlayerLabel.
+	prefix := fmt.Sprintf("player_%d.", before.SectionIndex)
 	compare := func(field string, b, a any) {
 		if b != a {
 			add("players", prefix+field, b, a, "")

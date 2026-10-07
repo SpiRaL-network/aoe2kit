@@ -322,7 +322,7 @@ func (f *File) playerSettings() []PlayerSettings {
 	out := make([]PlayerSettings, 0, len(f.Players))
 	for _, player := range f.Players {
 		out = append(out, PlayerSettings{
-			Player:           player.Player,
+			Player:           player.Player + 1,
 			PlayerLabel:      player.PlayerLabel,
 			SectionIndex:     player.SectionIndex,
 			IndexBase:        player.IndexBase,
@@ -362,7 +362,7 @@ func (f *File) resourceSettings() []PlayerResourceValues {
 		stone, _ := resource.intValue("stone")
 		tradeGoods, _ := resource.intValue("trade_goods")
 		out = append(out, PlayerResourceValues{
-			Player:     i,
+			Player:     i + 1,
 			Gold:       gold,
 			Wood:       wood,
 			Food:       food,

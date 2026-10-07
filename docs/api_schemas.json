@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 989,
+  "type_count": 992,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -27177,6 +27177,11 @@
         {
           "name": "TelemetryPrefixes",
           "go_type": "[]string"
+        },
+        {
+          "name": "PriorPaths",
+          "go_type": "[]string",
+          "doc": "PriorPaths supplies recordings whose early chat is evidence for DE's carry-over backlog."
         }
       ]
     },
@@ -49614,6 +49619,37 @@
         }
       ]
     },
+    "text.Alignment": {
+      "package": "text",
+      "name": "Alignment",
+      "fields": [
+        {
+          "name": "Font",
+          "json": "font",
+          "go_type": "string"
+        },
+        {
+          "name": "Text",
+          "json": "text",
+          "go_type": "string"
+        },
+        {
+          "name": "TargetWidth",
+          "json": "target_width",
+          "go_type": "float64"
+        },
+        {
+          "name": "TextWidth",
+          "json": "text_width",
+          "go_type": "float64"
+        },
+        {
+          "name": "Padding",
+          "json": "padding",
+          "go_type": "float64"
+        }
+      ]
+    },
     "text.Document": {
       "package": "text",
       "name": "Document",
@@ -49625,6 +49661,28 @@
         {
           "name": "Glyphs",
           "go_type": "[]int"
+        }
+      ]
+    },
+    "text.FontMetrics": {
+      "package": "text",
+      "name": "FontMetrics",
+      "fields": [
+        {
+          "name": "Widths",
+          "json": "widths",
+          "go_type": "map[string]float64"
+        },
+        {
+          "name": "SpaceWidth",
+          "json": "space_width",
+          "go_type": "float64"
+        },
+        {
+          "name": "RenderedSpaceWidth",
+          "json": "rendered_space_width",
+          "go_type": "float64",
+          "optional": true
         }
       ]
     },
@@ -49657,6 +49715,34 @@
         {
           "name": "MaxWindow",
           "go_type": "int"
+        }
+      ]
+    },
+    "text.MetricDocument": {
+      "package": "text",
+      "name": "MetricDocument",
+      "doc": "MetricDocument is the auditable data contract for extracted game font metrics.",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Build",
+          "json": "build",
+          "go_type": "string"
+        },
+        {
+          "name": "Source",
+          "json": "source",
+          "go_type": "string"
+        },
+        {
+          "name": "Fonts",
+          "json": "fonts",
+          "go_type": "map[string]FontMetrics",
+          "ref": "text.FontMetrics"
         }
       ]
     },

@@ -163,6 +163,50 @@
       "credit_class": "reference"
     },
     {
+      "id": "spiral-font-metrics",
+      "category": "person",
+      "name": "SpiRaL",
+      "authors": [
+        "SpiRaL"
+      ],
+      "permission": "permission granted to use the technique; no direct code copied",
+      "gave": "The font-metric alignment technique: per-character game font widths, runtime string measurement, and right-edge padding across the three DE panel fonts.",
+      "role": "Runtime font-metrics alignment technique source",
+      "relationship": "technique_oracle",
+      "rung_earned": "credited",
+      "thanks_status": "owed",
+      "correction_state": "open_to_correction",
+      "credit": "AoE2Kit's runtime font-metrics alignment capability was independently re-implemented from SpiRaL's permitted technique, with the game's metric files and build recorded when the data is imported.",
+      "notes": [
+        "No SpiRaL code is copied or redistributed.",
+        "Smooth Serif's rendered-space correction remains an explicitly calibrated value, not an assumed metric.",
+        "Personal thanks to SpiRaL is a human action and remains owed until it is actually given."
+      ],
+      "credit_class": "reference"
+    },
+    {
+      "id": "spiral-code-contributions",
+      "category": "person",
+      "name": "SpiRaL",
+      "authors": [
+        "SpiRaL"
+      ],
+      "url": "https://github.com/SpiRaL-network",
+      "permission": "contributed by pull request to chrae/aoe2kit",
+      "gave": "Code contributions by pull request (#1-#4, October 2026): xs-check discovery on Windows, a Windows test hang fix, --text/--json on scen patch, and one-based player labels in lint and blank output.",
+      "role": "Code contributor",
+      "relationship": "code_contributor",
+      "rung_earned": "credited",
+      "thanks_status": "owed",
+      "correction_state": "open_to_correction",
+      "credit": "SpiRaL contributed AoE2Kit's first external pull requests, including the Windows support that lets the pinned xs-check gate and the cmd/kit tests work on Windows.",
+      "notes": [
+        "PRs #2-#4 were ported as submitted; #1 was ported in part because recipe player numbering changed in the same release window.",
+        "Personal thanks to SpiRaL is a human action and remains owed until it is actually given."
+      ],
+      "credit_class": "reference"
+    },
+    {
       "id": "cb-front-towers",
       "category": "scenario",
       "name": "CB Front Towers OG Enhanced",

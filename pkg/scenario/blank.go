@@ -286,13 +286,13 @@ func blankScenarioRecipe(opts BlankOptions) Recipe {
 	if opts.ClearTriggers {
 		recipe.Triggers = append(recipe.Triggers, TriggerRecipe{Op: "clear_triggers"})
 	}
-	for player := 0; player <= 15; player++ {
+	for player := 1; player <= 16; player++ {
 		playerActive := &inactive
-		if player < playerCount {
+		if player <= playerCount {
 			playerActive = &active
 		}
 		playerHuman := &human
-		if player < opts.PlayerCount && player >= opts.HumanSlots {
+		if player <= opts.PlayerCount && player > opts.HumanSlots {
 			playerHuman = &computer
 		}
 		recipe.Players = append(recipe.Players, PlayerRecipe{
@@ -327,7 +327,7 @@ func blankScenarioRecipe(opts BlankOptions) Recipe {
 		// PlayerDataTwo.resources is indexed by active player slot: index 0 is
 		// P1. This differs from Units, where index 0 is Gaia and playable
 		// ownership starts at 1.
-		for player := 0; player < playerCount; player++ {
+		for player := 1; player <= playerCount; player++ {
 			recipe.Resources = append(recipe.Resources, ResourceRecipe{
 				Player: player, Food: &food, Wood: &wood, Gold: &gold, Stone: &stone, TradeGoods: &tradeGoods,
 			})
