@@ -12,6 +12,40 @@ Attribution is abundant and automatic. Personal thanks is scarce, deliberate, an
 
 Published work studied, built on, or used as a reference. Attribution is abundant and automatic.
 
+### OpenStreetMap
+
+- Authors: OpenStreetMap contributors
+- URL: https://www.openstreetmap.org/copyright
+- License: ODbL 1.0
+- Gave: A community-maintained road geometry source for optional geographic tracing.
+- Role: Optional geotrace road source
+- Relationship: caller_fetched_data_source_not_vendored
+- Rung earned: credited
+- Thanks status: not_applicable_dataset_attribution
+- Correction state: open_to_correction
+
+OpenStreetMap contributors supply the road geometry used by the optional geotrace adapters. Source-backed reports preserve their attribution, data license and known or unknown query extent. AoE2Kit distributes adapter code and Kit-owned mapping policies, not OpenStreetMap datasets.
+
+Notes:
+- The data license remains separate from the software license. Callers must retain attribution and review source terms for their derived outputs.
+
+### ESA WorldCover 2021 v200
+
+- Authors: ESA WorldCover consortium, WorldCover dataset authors
+- URL: https://esa-worldcover.org/en/data-access
+- License: CC BY 4.0
+- Gave: Satellite-derived landcover observations for optional geographic tracing.
+- Role: Optional geotrace landcover source
+- Relationship: caller_fetched_data_source_not_vendored
+- Rung earned: credited
+- Thanks status: not_applicable_dataset_attribution
+- Correction state: open_to_correction
+
+ESA WorldCover and its dataset authors supply landcover derived from Copernicus Sentinel observations. AoE2Kit credits the consortium and dataset in source-backed reports, including the 2021 v200 dataset DOI. Projection, raster resampling and gameplay terrain choices are Kit's modifications; no WorldCover raster is distributed by Kit.
+
+Notes:
+- Dataset citation: https://doi.org/10.5281/zenodo.7254221. The source data's CC BY 4.0 license is separate from Kit's software license.
+
 ### AoE2ScenarioParser
 
 - Authors: KSneijders and contributors

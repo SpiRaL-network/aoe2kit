@@ -4019,6 +4019,10 @@ type TerrainRestriction struct {
 	Span        Span                        `json:"span"`
 }
 
+func ReadTerrainRestrictions(path string) (string, []TerrainRestriction, error)
+    ReadTerrainRestrictions reads the DE DAT prefix without decoding unit or
+    graphic tables. The decompressed prefix is bounded to 8 MiB.
+
 type TerrainRestrictionTerrain struct {
 	Index              int     `json:"index"`
 	Passability        float32 `json:"passability"`
@@ -4774,6 +4778,57 @@ type Rule struct {
 }
 ```
 
+## aoe2kit/pkg/fetch
+
+```go
+package fetch // import "aoe2kit/pkg/fetch"
+
+Package fetch provides bounded, resumable downloads. Callers own payload
+validation and provenance formats; a successful HTTP status alone is not proof
+that a provider returned a complete result.
+
+FUNCTIONS
+
+func AtomicWrite(path string, data []byte) error
+    AtomicWrite never publishes an unfinished part. Empty successful parts are
+    valid.
+
+func QueryKey(query []byte) string
+
+TYPES
+
+type Part struct {
+	Name             string
+	Endpoints        []string
+	Method           string
+	Body             []byte
+	Header           http.Header
+	MaxBytes         int64
+	CachePath        string
+	Validate         func([]byte) error
+	ValidateResponse func(*http.Response) error
+}
+
+type Session struct {
+	Client   *http.Client
+	Progress io.Writer
+	Attempts int
+	Backoff  time.Duration
+	// Has unexported fields.
+}
+    Session is sequential: its disabled-mirror set lasts for the entire job.
+    Supply one context with a deadline for the whole multi-part job.
+
+func (s *Session) Get(ctx context.Context, p Part) ([]byte, error)
+
+type StatusError struct {
+	Code   int
+	Detail string
+}
+
+func (e *StatusError) Error() string
+```
+
 ## aoe2kit/pkg/fx
 
 ```go
@@ -4910,6 +4965,47 @@ type UnitBindPatch struct {
 }
 ```
 
+## aoe2kit/pkg/gamestrings
+
+```go
+package gamestrings // import "aoe2kit/pkg/gamestrings"
+
+Package gamestrings reads user-provided Age of Empires II string resources.
+The game data is intentionally not bundled with Kit.
+
+FUNCTIONS
+
+func FindGameDir() (string, error)
+    FindGameDir returns the first conventional local Steam installation that
+    contains the string table. It is deliberately conservative and returns an
+    error when no local installation is discoverable.
+
+
+TYPES
+
+type Table struct {
+	Path   string
+	Values map[int]string
+}
+    Table is a best-effort view of the game's integer string table.
+
+func Load(path string) (Table, error)
+    Load parses a key-value-strings-utf8.txt file. Lines that are not integer
+    keys followed by a quoted value are ignored, allowing comments and headers.
+
+func LoadAuto(gameDir string) (Table, error)
+    LoadAuto uses an explicit directory when provided, otherwise it tries the
+    conventional local Steam locations. A missing installation is not fatal to
+    callers; they can keep numeric IDs or built-in compatibility names.
+
+func LoadFromGameDir(gameDir string) (Table, error)
+    LoadFromGameDir locates the game's string table below an installation
+    directory. It never downloads, probes a remote machine, or falls back to
+    Kit-owned data.
+
+func (t Table) Lookup(id int) (string, bool)
+```
+
 ## aoe2kit/pkg/geom
 
 ```go
@@ -5034,8 +5130,19 @@ func BuildDiamondLongitudeWrapTriggers(gridSize int, players []int, bandWidth in
 func BuildEastWestWrapTriggers(gridSize int, players []int) []scenario.TriggerRecipe
 func BuildRecipe(report Report) scenario.Recipe
 func BuildSailDemoUnits(gridSize int) []scenario.UnitRecipe
+func FinalizeNeutralResources(r *Report)
+    FinalizeNeutralResources rejects an entire pile when the terrain gate
+    rejects any member, so reported pile sizes continue to describe the written
+    file.
+
 
 TYPES
+
+type AxisDiagnostics struct {
+	Name              string  `json:"name"`
+	Visible           bool    `json:"visible"`
+	AngleFromSouthDeg float64 `json:"angle_from_south_deg"`
+}
 
 type BBox struct {
 	MinLat float64 `json:"min_lat"`
@@ -5044,7 +5151,15 @@ type BBox struct {
 	MaxLon float64 `json:"max_lon"`
 }
 
+type CalibrationAxis struct {
+	Name string   `json:"name"`
+	From GeoPoint `json:"from"`
+	To   GeoPoint `json:"to"`
+}
+
 type Cell struct {
+	CoastalLandFraction  float64         `json:"coastal_land_fraction,omitempty"`
+	SourceLandcoverClass int             `json:"source_landcover_class,omitempty"`
 	X                    int             `json:"x"`
 	Y                    int             `json:"y"`
 	Lat                  float64         `json:"lat"`
@@ -5053,6 +5168,7 @@ type Cell struct {
 	Elevation            float64         `json:"elevation_m"`
 	Land                 *bool           `json:"land,omitempty"`
 	InlandWater          bool            `json:"inland_water,omitempty"`
+	ShelteredWater       bool            `json:"sheltered_water,omitempty"`
 	WaterbodyName        string          `json:"waterbody_name,omitempty"`
 	LandcoverClass       int             `json:"landcover_class,omitempty"`
 	LandcoverKey         string          `json:"landcover_key,omitempty"`
@@ -5060,6 +5176,7 @@ type Cell struct {
 	LandcoverKeyGLC      string          `json:"landcover_key_glc,omitempty"`
 	LandcoverFraction    float64         `json:"landcover_fraction,omitempty"`
 	LandcoverHistogram   []LandcoverStat `json:"landcover_histogram,omitempty"`
+	USGSWoodySpecies     []string        `json:"usgs_woody_species,omitempty"`
 	SpeciesUnitConsts    []int           `json:"species_unit_consts,omitempty"`
 	DistanceToShoreTiles float64         `json:"distance_to_shore_tiles,omitempty"`
 	ClimateZone          string          `json:"climate_zone,omitempty"`
@@ -5067,9 +5184,14 @@ type Cell struct {
 	Standing             string          `json:"standing"`
 	TerrainID            int             `json:"terrain_id"`
 	Road                 bool            `json:"road,omitempty"`
+	RoadTerrainID        int             `json:"road_terrain_id,omitempty"`
+	RoadWidth            float64         `json:"road_width_tiles,omitempty"`
 	Roadside             bool            `json:"roadside,omitempty"`
+	PopulationCenter     bool            `json:"population_center,omitempty"`
+	BuiltUpCore          bool            `json:"built_up_core,omitempty"`
+	RoadCorridor         bool            `json:"road_corridor,omitempty"`
 	WaterBuffer          bool            `json:"water_buffer,omitempty"`
-	KeyWestCauseway      bool            `json:"key_west_causeway,omitempty"`
+	Causeway             bool            `json:"causeway,omitempty"`
 	Border               bool            `json:"border,omitempty"`
 	ShoreCrossfadeBand   string          `json:"shore_crossfade_band,omitempty"`
 	ShoreTerrainID       int             `json:"shore_terrain_id,omitempty"`
@@ -5077,6 +5199,77 @@ type Cell struct {
 	TerrainProportions   []TerrainWeight `json:"terrain_proportions,omitempty"`
 	Reason               string          `json:"reason"`
 }
+
+type CoastRefinement struct {
+	Policy         string  `json:"policy"`
+	Enabled        bool    `json:"enabled"`
+	MaxTileMeters  float64 `json:"max_tile_meters"`
+	MaxPixelMeters float64 `json:"max_pixel_meters"`
+	Eligible       int     `json:"eligible_cells"`
+	Resolved       int     `json:"resolved_cells"`
+	Fallback       int     `json:"fallback_cells"`
+	WaterToLand    int     `json:"water_to_land"`
+	LandToWater    int     `json:"land_to_water"`
+	Mode           string  `json:"mode,omitempty"`
+	MinLandPixels  int     `json:"min_land_pixels,omitempty"`
+}
+
+type DiagnosticRegion struct {
+	Name   string `json:"name"`
+	Bounds BBox   `json:"bounds"`
+}
+
+type DockConstraints struct {
+	State           string `json:"state"`
+	DATHash         string `json:"dat_sha256,omitempty"`
+	Unit            int    `json:"unit"`
+	Civ             int    `json:"civ"`
+	Table           int    `json:"terrain_table"`
+	AllowedTerrains []int  `json:"allowed_terrains,omitempty"`
+	FootprintTiles  int    `json:"footprint_tiles,omitempty"`
+	Note            string `json:"note"`
+}
+
+type EcologyFaunaProfile struct {
+	Deer    int `json:"deer,omitempty"`
+	Boar    int `json:"boar,omitempty"`
+	Wetland int `json:"wetland,omitempty"`
+	Forest  int `json:"forest,omitempty"`
+	Swamp   int `json:"swamp,omitempty"`
+}
+
+type EcologyProfile struct {
+	EnableUnvalidatedUrban bool                     `json:"enable_unvalidated_urban,omitempty"`
+	PlayerStarts           *PlayerStartProfile      `json:"player_starts,omitempty"`
+	NeutralResources       []NeutralResourceProfile `json:"neutral_resources,omitempty"`
+	// Explicit exceptions to the land-flora rule; DAT eligibility still applies.
+	FloraWaterTerrains map[int][]int `json:"flora_water_terrains,omitempty"`
+	// Notes preserve author intent and provenance; they never affect generation.
+	Notes               map[string]json.RawMessage `json:"notes,omitempty"`
+	Schema              string                     `json:"schema"`
+	Name                string                     `json:"name"`
+	CompendiumSHA256    string                     `json:"compendium_sha256,omitempty"`
+	ResourceTreeUnits   []int                      `json:"resource_tree_units,omitempty"`
+	DecorativeFloraUnit int                        `json:"decorative_flora_unit,omitempty"`
+	WaterFloraUnit      int                        `json:"water_flora_unit,omitempty"`
+	Fauna               EcologyFaunaProfile        `json:"fauna,omitempty"`
+	FishByBand          map[string][]int           `json:"fish_by_band,omitempty"`
+	Biome               string                     `json:"biome,omitempty"`
+	Palettes            map[string][]WeightedUnit  `json:"palettes,omitempty"`
+	SpeciesUnits        map[string][]int           `json:"species_units,omitempty"`
+	Overlays            []GeographicOverlay        `json:"overlays,omitempty"`
+	Landmarks           []LandmarkCluster          `json:"landmarks,omitempty"`
+	CalibrationAxes     []CalibrationAxis          `json:"calibration_axes,omitempty"`
+	DiagnosticRegions   []DiagnosticRegion         `json:"diagnostic_regions,omitempty"`
+	Layers              []HabitatLayer             `json:"layers"`
+	DockUnit            int                        `json:"dock_unit"`
+	DockCiv             int                        `json:"dock_civ"`
+	TerrainByLandcover  map[string][]int           `json:"terrain_by_landcover,omitempty"`
+}
+    EcologyProfile contains game-facing choices, while geography providers
+    supply the evidence that selects where those choices apply. It is generic by
+    design: a location profile can replace these palettes without changing the
+    geotrace pipeline.
 
 type FeltMapping struct {
 	Schema                      string                                        `json:"schema"`
@@ -5092,6 +5285,16 @@ type FeltMapping struct {
 	SpeciesResolutions          []SpeciesResolution                           `json:"-"`
 }
 
+type FeltSelection struct {
+	Functions []string `json:"functions"`
+	Tags      []string `json:"tags,omitempty"`
+	Materials []string `json:"materials,omitempty"`
+	Units     []int    `json:"unit_consts,omitempty"`
+	Weight    float64  `json:"weight"`
+}
+    Each selector has a total weight, divided between its matching artworks.
+    Large families therefore do not overwhelm smaller ones merely by size.
+
 type FeltTerrainChoice struct {
 	Proportions      []TerrainWeight                    `json:"proportions"`
 	Confidence       string                             `json:"confidence"`
@@ -5101,18 +5304,66 @@ type FeltTerrainChoice struct {
 	WetlandCandidate *FeltTerrainChoice                 `json:"wetland_candidate,omitempty"`
 }
 
+type GeoPoint struct {
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
+}
+
+type GeographicOverlay struct {
+	Name          string     `json:"name"`
+	Kind          string     `json:"kind"` // inferred_corridor or admin_line
+	Provenance    string     `json:"provenance"`
+	Points        []GeoPoint `json:"points"`
+	Radius        int        `json:"radius,omitempty"`
+	RequireBounds *BBox      `json:"require_bounds,omitempty"`
+}
+    Overlays are explicit design additions, not observations from landcover.
+
+type HabitatLayer struct {
+	Name                  string            `json:"name"`
+	Role                  string            `json:"role"`
+	EcologyRole           string            `json:"ecology_role,omitempty"`
+	Bounds                *BBox             `json:"bounds,omitempty"`
+	MinShoreDistance      float64           `json:"min_shore_distance,omitempty"`
+	MaxShoreDistance      float64           `json:"max_shore_distance,omitempty"`
+	AllowWaterBuffer      bool              `json:"allow_water_buffer,omitempty"`
+	LandcoverKeys         []string          `json:"landcover_keys,omitempty"`
+	Climates              []string          `json:"climates,omitempty"`
+	WaterBand             string            `json:"water_band,omitempty"`
+	TerrainIDs            []int             `json:"terrain_ids,omitempty"`
+	Units                 []WeightedUnit    `json:"units"`
+	Felt                  []FeltSelection   `json:"felt,omitempty"`
+	FeltEntries           map[int]feltEntry `json:"felt_entries,omitempty"`
+	Rate                  float64           `json:"rate"`
+	Limit                 int               `json:"limit"`
+	Spacing               float64           `json:"spacing,omitempty"`
+	PatchScale            float64           `json:"patch_scale,omitempty"`
+	PopulationCenterOnly  bool              `json:"population_center_only,omitempty"`
+	PopulationCenterLayer string            `json:"population_center_layer,omitempty"`
+	ClusterCount          int               `json:"cluster_count,omitempty"`
+	ClusterSize           int               `json:"cluster_size,omitempty"`
+	ClusterRadius         float64           `json:"cluster_radius,omitempty"`
+	ClusterSpacing        float64           `json:"cluster_spacing,omitempty"`
+	FootprintRadius       int               `json:"footprint_radius,omitempty"`
+}
+    Layers describe habitat and density independently of a particular region.
+    Rate is objects per eligible tile, scaled by the corresponding CLI density.
+
 type LandcoverClassMapping struct {
 	ByClass map[string]FeltTerrainChoice `json:"by_class"`
 }
 
 type LandcoverSample struct {
-	Valid     bool
-	Class     int
-	Key       string
-	GLCClass  int
-	GLCKey    string
-	Fraction  float64
-	Histogram []LandcoverStat
+	MissingTile         string
+	CoastalLandFraction float64
+	PixelMeters         float64
+	Valid               bool
+	Class               int
+	Key                 string
+	GLCClass            int
+	GLCKey              string
+	Fraction            float64
+	Histogram           []LandcoverStat
 }
 
 type LandcoverStat struct {
@@ -5121,37 +5372,156 @@ type LandcoverStat struct {
 	Weight float64 `json:"weight"`
 }
 
-type Options struct {
-	BBox                BBox
-	GridSize            int
-	Provider            string
-	LandmaskProvider    string
-	LandmaskPath        string
-	InlandWaterProvider string
-	InlandWaterPath     string
-	LandcoverProvider   string
-	LandcoverCacheDir   string
-	LandcoverPath       string
-	LandcoverDir        string
-	ClimateZone         string
-	FeltMappingPath     string
-	Orient              string
-	TargetWaterFraction float64
-	SeamWaterColumns    int
-	FloraDensity        float64
-	LandFaunaDensity    float64
-	FishDensity         float64
-	ShoreFishDensity    float64
-	OceanFishDensity    float64
-	ShoreBandWidth      float64
-	WaterBandWidth      float64
-	RoadsProvider       string
-	RoadsPath           string
-	RoadsCacheDir       string
-	RoadSimplifyTiles   float64
-	AdminBorders        bool
-	Client              *http.Client
+type LandmarkCluster struct {
+	Name              string   `json:"name"`
+	Provenance        string   `json:"provenance"`
+	Bounds            BBox     `json:"bounds"`
+	RequireBounds     *BBox    `json:"require_bounds,omitempty"`
+	UnitConst         int      `json:"unit_const"`
+	LandcoverKeys     []string `json:"landcover_keys,omitempty"`
+	TerrainIDs        []int    `json:"terrain_ids,omitempty"`
+	AllowedTerrainIDs []int    `json:"allowed_terrain_ids"`
+	MinCount          int      `json:"min_count,omitempty"`
+	MaxCount          int      `json:"max_count"`
+	CellsPerUnit      float64  `json:"cells_per_unit"`
+	Density           float64  `json:"density"`
+	CenterLimit       int      `json:"center_limit"`
+	Spread            float64  `json:"spread"`
+	MinDistance       float64  `json:"min_distance"`
 }
+
+type LayerDiagnostics struct {
+	Name                    string         `json:"name"`
+	Role                    string         `json:"role"`
+	EligibleCells           int            `json:"eligible_cells"`
+	Requested               int            `json:"requested"`
+	Emitted                 int            `json:"emitted"`
+	TruncatedBySpacing      int            `json:"truncated_by_spacing"`
+	UnitCounts              map[int]int    `json:"unit_counts"`
+	FamilyCounts            map[string]int `json:"family_counts,omitempty"`
+	AmphibiousEligibleCells int            `json:"amphibious_eligible_cells,omitempty"`
+	AmphibiousEmitted       int            `json:"amphibious_emitted,omitempty"`
+	ClustersEmitted         int            `json:"clusters_emitted,omitempty"`
+	FootprintTiles          int            `json:"footprint_tiles,omitempty"`
+}
+
+type MapDiagnostics struct {
+	SourceLandComponents       int             `json:"source_land_components"`
+	LargestLandComponent       int             `json:"largest_land_component"`
+	EdgeConnectedLandCells     int             `json:"edge_connected_land_cells"`
+	SourceWaterComponents      int             `json:"source_water_components"`
+	LandBoundsFill             float64         `json:"land_bounds_fill"`
+	ShorePairs                 []ShorePair     `json:"shore_pairs"`
+	DATCandidateDockFootprints int             `json:"dat_candidate_dock_footprints"`
+	Dock                       DockConstraints `json:"dock"`
+}
+
+type NeutralPile struct {
+	Centre  scenario.PointRecipe `json:"centre"`
+	Objects []StartObject        `json:"objects"`
+}
+
+type NeutralResourceProfile struct {
+	Name           string  `json:"name"`
+	Unit           int     `json:"unit"`
+	PileSize       int     `json:"pile_size"`
+	GroupsPer10000 float64 `json:"groups_per_10000"`
+	Spacing        float64 `json:"spacing"`
+	StartDistance  float64 `json:"start_distance"`
+	Provenance     string  `json:"provenance"`
+}
+
+type NeutralResourceReport struct {
+	Config          NeutralResourceProfile `json:"config"`
+	AreaScale       float64                `json:"area_scale"`
+	RequestedGroups int                    `json:"requested_groups"`
+	EmittedGroups   int                    `json:"emitted_groups"`
+	CandidateGroups int                    `json:"candidate_groups"`
+	RejectedGroups  int                    `json:"rejected_groups"`
+	Objects         int                    `json:"objects"`
+	Centres         []scenario.PointRecipe `json:"centres"`
+	Piles           []NeutralPile          `json:"piles"`
+}
+
+type Options struct {
+	Seed                 int
+	BBox                 BBox
+	GridSize             int
+	Provider             string
+	LandmaskProvider     string
+	LandmaskPath         string
+	InlandWaterProvider  string
+	InlandWaterPath      string
+	LandcoverProvider    string
+	LandcoverCacheDir    string
+	LandcoverPath        string
+	LandcoverDir         string
+	ClimateZone          string
+	FeltMappingPath      string
+	ProfilePath          string
+	CompendiumPath       string
+	USGSWoodyPath        string
+	DatPath              string
+	ProjectionAspect     float64
+	ProjectionNorthScale float64
+	Orient               string
+	TargetWaterFraction  float64
+	SeamWaterColumns     int
+	FloraDensity         float64
+	LandFaunaDensity     float64
+	FishDensity          float64
+	ShoreFishDensity     float64
+	OceanFishDensity     float64
+	ShoreBandWidth       float64
+	WaterBandWidth       float64
+	RoadsProvider        string
+	RoadsPath            string
+	RoadsCacheDir        string
+	RoadsTimeout         time.Duration
+	Progress             io.Writer
+
+	RoadSimplifyTiles float64
+	RoadWidthTiles    float64
+	AdminBorders      bool
+	Client            *http.Client
+	// Has unexported fields.
+}
+
+type PlacementAudit struct {
+	State                            string      `json:"state"`
+	DATHash                          string      `json:"dat_sha256,omitempty"`
+	Checked                          int         `json:"checked_objects"`
+	FloraTerrain                     int         `json:"flora_invalid_terrain"`
+	FaunaTerrain                     int         `json:"fauna_invalid_terrain"`
+	FaunaBlockers                    int         `json:"fauna_overlapping_blockers"`
+	Removed                          int         `json:"sweep_removed_objects"`
+	Rejected                         int         `json:"rejected_candidates"`
+	UnitCounts                       map[int]int `json:"unit_counts,omitempty"`
+	InvalidByUnit                    map[int]int `json:"invalid_by_unit,omitempty"`
+	Deferred                         int         `json:"deferred_operations,omitempty"`
+	ResourceTerrain                  int         `json:"resource_invalid_terrain"`
+	ResourceBlockers                 int         `json:"resource_overlapping_blockers"`
+	BuildingTerrain                  int         `json:"building_invalid_terrain"`
+	BuildingBlockers                 int         `json:"building_overlapping_blockers"`
+	BuildingConnectivity             string      `json:"building_static_connectivity,omitempty"`
+	LandComponentsBefore             int         `json:"land_components_before_buildings,omitempty"`
+	LandComponentsAfter              int         `json:"land_components_after_buildings,omitempty"`
+	BuildingsRejectedForConnectivity int         `json:"buildings_rejected_for_connectivity,omitempty"`
+	FloraAmphibiousObjects           int         `json:"flora_amphibious_objects,omitempty"`
+}
+    PlacementAudit describes a static DAT/terrain check, not an engine pathing
+    test.
+
+func AuditPlacement(path, datPath string, p EcologyProfile, starts *PlayerStartReport) (PlacementAudit, []scenario.UnitRecipe, error)
+    AuditPlacement checks actual serialized positions against actual final
+    tiles. Returned removals are suitable for the named post-processing sweep.
+    Required start inventory is never silently repaired: its invalid placement
+    is an error.
+
+func GateRecipePlacement(path, datPath string, p EcologyProfile, starts *PlayerStartReport, units []scenario.UnitRecipe) (PlacementAudit, []scenario.UnitRecipe, error)
+    GateRecipePlacement checks individual additions against already-painted
+    terrain before serialization. Expanded scatter operations remain covered by
+    the final audit.
 
 type PlacementGuard struct {
 	Policy                 string         `json:"policy"`
@@ -5162,6 +5532,38 @@ type PlacementGuard struct {
 	AllowedTerrainPrunes   map[string]int `json:"allowed_terrain_prunes,omitempty"`
 }
 
+type PlayerStartProfile struct {
+	Mode                string          `json:"mode,omitempty"` // explicit, engine, none, calibration
+	Count               int             `json:"count,omitempty"`
+	TownCenter          int             `json:"town_center,omitempty"`
+	Villager            int             `json:"villager,omitempty"`
+	Scout               int             `json:"scout,omitempty"`
+	Civ                 int             `json:"civ,omitempty"`
+	MinSeparation       float64         `json:"min_separation,omitempty"`
+	ClearRadius         int             `json:"clear_radius,omitempty"`
+	FloraClearance      int             `json:"flora_clearance,omitempty"`
+	TownCenterFootprint int             `json:"town_center_footprint,omitempty"`
+	Inventory           []StartResource `json:"inventory,omitempty"`
+}
+
+type PlayerStartReport struct {
+	Mode           string             `json:"mode"`
+	Config         PlayerStartProfile `json:"config"`
+	Evidence       string             `json:"evidence"`
+	Provenance     []string           `json:"provenance"`
+	Positions      []StartPosition    `json:"positions"`
+	RemovedAmbient int                `json:"removed_ambient_objects"`
+	AmbientBefore  map[string]int     `json:"ambient_before"`
+	AmbientAfter   map[string]int     `json:"ambient_after"`
+	Budget         map[string]float64 `json:"budget_comparison"`
+	BudgetNote     string             `json:"budget_note"`
+}
+
+type ProjectionOptions struct {
+	Aspect     float64 `json:"aspect,omitempty"`
+	NorthScale float64 `json:"north_scale,omitempty"`
+}
+
 type ProjectionSelfCheck struct {
 	DueEastScreenDX  float64 `json:"due_east_screen_dx"`
 	DueEastScreenDY  float64 `json:"due_east_screen_dy"`
@@ -5169,76 +5571,141 @@ type ProjectionSelfCheck struct {
 	DueNorthScreenDY float64 `json:"due_north_screen_dy"`
 }
 
+type RegionDiagnostics struct {
+	Name        string `json:"name"`
+	RoadCells   int    `json:"road_cells"`
+	BorderCells int    `json:"border_cells"`
+}
+
 type Report struct {
-	BBox                  BBox                 `json:"bbox"`
-	OverlayBBox           BBox                 `json:"overlay_bbox,omitempty"`
-	GridSize              int                  `json:"grid_size"`
-	Provider              string               `json:"provider"`
-	LandmaskProvider      string               `json:"landmask_provider,omitempty"`
-	InlandWaterProvider   string               `json:"inland_water_provider,omitempty"`
-	LandcoverProvider     string               `json:"landcover_provider,omitempty"`
-	FeltMappingSchema     string               `json:"felt_mapping_schema,omitempty"`
-	ClimateZone           string               `json:"climate_zone,omitempty"`
-	Orient                string               `json:"orient"`
-	ApproxTileMeters      float64              `json:"approx_tile_meters"`
-	CoastlineConfidence   string               `json:"coastline_confidence"`
-	CoastlineReason       string               `json:"coastline_reason"`
-	StandingLadder        []string             `json:"standing_ladder"`
-	Warnings              []string             `json:"warnings,omitempty"`
-	Cells                 []Cell               `json:"cells"`
-	TerrainCounts         map[int]int          `json:"terrain_counts"`
-	LandcoverCounts       map[string]int       `json:"landcover_counts,omitempty"`
-	LandcoverGLCCounts    map[string]int       `json:"landcover_glc_counts,omitempty"`
-	SpeciesResolutions    []SpeciesResolution  `json:"species_resolutions,omitempty"`
-	LandCells             int                  `json:"land_cells"`
-	WaterCells            int                  `json:"water_cells"`
-	LandFraction          float64              `json:"land_fraction"`
-	WaterFraction         float64              `json:"water_fraction"`
-	TargetWaterFraction   float64              `json:"target_water_fraction,omitempty"`
-	LandEmphasisApplied   bool                 `json:"land_emphasis_applied,omitempty"`
-	FloraDensity          float64              `json:"flora_density,omitempty"`
-	LandFaunaDensity      float64              `json:"land_fauna_density,omitempty"`
-	FishDensity           float64              `json:"fish_density,omitempty"`
-	ShoreFishDensity      float64              `json:"shore_fish_density,omitempty"`
-	OceanFishDensity      float64              `json:"ocean_fish_density,omitempty"`
-	ShoreBandWidth        float64              `json:"shore_band_width,omitempty"`
-	WaterBandWidth        float64              `json:"water_band_width,omitempty"`
-	ShoreCrossfadeCells   int                  `json:"shore_crossfade_cells,omitempty"`
-	ShoreCrossfadeCounts  map[string]int       `json:"shore_crossfade_counts,omitempty"`
-	ShoreTerrainCounts    map[int]int          `json:"shore_terrain_counts,omitempty"`
-	UnbuildableTerrainIDs []int                `json:"unbuildable_terrain_ids,omitempty"`
-	UnbuildableCells      int                  `json:"unbuildable_cells,omitempty"`
-	PlacementGuard        *PlacementGuard      `json:"placement_guard,omitempty"`
-	RoadsProvider         string               `json:"roads_provider,omitempty"`
-	RoadWayCount          int                  `json:"road_way_count,omitempty"`
-	RoadVertexCountRaw    int                  `json:"road_vertex_count_raw,omitempty"`
-	RoadVertexCount       int                  `json:"road_vertex_count,omitempty"`
-	RoadSimplifyTiles     float64              `json:"road_simplify_tiles,omitempty"`
-	RoadCells             int                  `json:"road_cells,omitempty"`
-	RoadsideCells         int                  `json:"roadside_cells,omitempty"`
-	WaterBufferCells      int                  `json:"water_buffer_cells,omitempty"`
-	KeyWestCausewayCells  int                  `json:"key_west_causeway_cells,omitempty"`
-	BorderCells           int                  `json:"border_cells,omitempty"`
-	BorderWayCount        int                  `json:"border_way_count,omitempty"`
-	RoadCellsNorthOf31    int                  `json:"road_cells_north_of_31,omitempty"`
-	BorderCellsNorthOf31  int                  `json:"border_cells_north_of_31,omitempty"`
-	RoadRefs              []string             `json:"road_refs,omitempty"`
-	LandExtentXTiles      int                  `json:"land_extent_x_tiles,omitempty"`
-	LandExtentYTiles      int                  `json:"land_extent_y_tiles,omitempty"`
-	LandExtentRatio       float64              `json:"land_extent_y_to_x_ratio,omitempty"`
-	LandExtentWHRatio     float64              `json:"land_extent_w_to_h_ratio,omitempty"`
-	ScreenWHRatio         float64              `json:"estimated_screen_w_to_h_ratio,omitempty"`
-	ViewportTileWHRatio   float64              `json:"viewport_tile_w_to_h_ratio,omitempty"`
-	ViewportScreenWHRatio float64              `json:"viewport_screen_w_to_h_ratio,omitempty"`
-	PeninsulaAxisAngleDeg float64              `json:"peninsula_axis_angle_deg,omitempty"`
-	ProjectionSelfCheck   *ProjectionSelfCheck `json:"projection_self_check,omitempty"`
-	MinElevation          float64              `json:"min_elevation"`
-	MaxElevation          float64              `json:"max_elevation"`
-	MeanElevation         float64              `json:"mean_elevation"`
-	Recipe                *scenario.Recipe     `json:"recipe,omitempty"`
+	Experimental                     bool                         `json:"experimental"`
+	Attribution                      map[string]SourceAttribution `json:"attribution,omitempty"`
+	PlayerStarts                     *PlayerStartReport           `json:"player_starts,omitempty"`
+	PlacementSweep                   *PlacementAudit              `json:"placement_sweep,omitempty"`
+	PlacementGate                    *PlacementAudit              `json:"placement_gate,omitempty"`
+	NeutralResources                 []NeutralResourceReport      `json:"neutral_resources,omitempty"`
+	WrittenPlacementAudit            *PlacementAudit              `json:"written_placement_audit,omitempty"`
+	PlacementSweepRecipe             *scenario.Recipe             `json:"placement_sweep_recipe,omitempty"`
+	CoastRefinement                  CoastRefinement              `json:"coast_refinement"`
+	Seed                             int                          `json:"seed"`
+	EcologyLayers                    []LayerDiagnostics           `json:"ecology_layers,omitempty"`
+	Diagnostics                      *MapDiagnostics              `json:"diagnostics,omitempty"`
+	SourceCoverage                   map[string]SourceCoverage    `json:"source_coverage"`
+	BBox                             BBox                         `json:"bbox"`
+	OverlayBBox                      BBox                         `json:"overlay_bbox,omitempty"`
+	GridSize                         int                          `json:"grid_size"`
+	Provider                         string                       `json:"provider"`
+	LandmaskProvider                 string                       `json:"landmask_provider,omitempty"`
+	InlandWaterProvider              string                       `json:"inland_water_provider,omitempty"`
+	LandcoverProvider                string                       `json:"landcover_provider,omitempty"`
+	FeltMappingSchema                string                       `json:"felt_mapping_schema,omitempty"`
+	EcologyProfile                   EcologyProfile               `json:"ecology_profile,omitempty"`
+	USGSWoodyProvider                string                       `json:"usgs_woody_provider,omitempty"`
+	USGSWoodyPointCount              int                          `json:"usgs_woody_point_count,omitempty"`
+	USGSWoodySpeciesCount            int                          `json:"usgs_woody_species_count,omitempty"`
+	USGSWoodySHA256                  string                       `json:"usgs_woody_sha256,omitempty"`
+	USGSWoodyMaxDistanceKM           float64                      `json:"usgs_woody_max_distance_km,omitempty"`
+	DatPath                          string                       `json:"dat_path,omitempty"`
+	ClimateZone                      string                       `json:"climate_zone,omitempty"`
+	Orient                           string                       `json:"orient"`
+	ApproxTileMeters                 float64                      `json:"approx_tile_meters"`
+	CoastlineConfidence              string                       `json:"coastline_confidence"`
+	CoastlineReason                  string                       `json:"coastline_reason"`
+	StandingLadder                   []string                     `json:"standing_ladder"`
+	Warnings                         []string                     `json:"warnings,omitempty"`
+	Cells                            []Cell                       `json:"cells"`
+	TerrainCounts                    map[int]int                  `json:"terrain_counts"`
+	LandcoverCounts                  map[string]int               `json:"landcover_counts,omitempty"`
+	LandcoverMissingTiles            map[string]int               `json:"landcover_missing_tiles,omitempty"`
+	LandcoverGLCCounts               map[string]int               `json:"landcover_glc_counts,omitempty"`
+	SpeciesResolutions               []SpeciesResolution          `json:"species_resolutions,omitempty"`
+	LandCells                        int                          `json:"land_cells"`
+	WaterCells                       int                          `json:"water_cells"`
+	LandFraction                     float64                      `json:"land_fraction"`
+	WaterFraction                    float64                      `json:"water_fraction"`
+	TargetWaterFraction              float64                      `json:"target_water_fraction,omitempty"`
+	LandEmphasisApplied              bool                         `json:"land_emphasis_applied,omitempty"`
+	FloraDensity                     float64                      `json:"flora_density,omitempty"`
+	LandFaunaDensity                 float64                      `json:"land_fauna_density,omitempty"`
+	FishDensity                      float64                      `json:"fish_density,omitempty"`
+	ShoreFishDensity                 float64                      `json:"shore_fish_density,omitempty"`
+	OceanFishDensity                 float64                      `json:"ocean_fish_density,omitempty"`
+	ShoreBandWidth                   float64                      `json:"shore_band_width,omitempty"`
+	WaterBandWidth                   float64                      `json:"water_band_width,omitempty"`
+	ShoreCrossfadeCells              int                          `json:"shore_crossfade_cells,omitempty"`
+	ShoreCrossfadeCounts             map[string]int               `json:"shore_crossfade_counts,omitempty"`
+	ShoreTerrainCounts               map[int]int                  `json:"shore_terrain_counts,omitempty"`
+	DockableShoreCells               int                          `json:"dockable_shore_cells,omitempty"`
+	UnbuildableTerrainIDs            []int                        `json:"unbuildable_terrain_ids,omitempty"`
+	UnbuildableCells                 int                          `json:"unbuildable_cells,omitempty"`
+	PlacementGuard                   *PlacementGuard              `json:"placement_guard,omitempty"`
+	RoadsProvider                    string                       `json:"roads_provider,omitempty"`
+	RoadWayCount                     int                          `json:"road_way_count,omitempty"`
+	RoadVertexCountRaw               int                          `json:"road_vertex_count_raw,omitempty"`
+	RoadVertexCount                  int                          `json:"road_vertex_count,omitempty"`
+	RoadSimplifyTiles                float64                      `json:"road_simplify_tiles,omitempty"`
+	RoadWidthTiles                   float64                      `json:"road_width_tiles,omitempty"`
+	RoadCells                        int                          `json:"road_cells,omitempty"`
+	PopulationCenterCells            int                          `json:"population_center_cells,omitempty"`
+	PopulationCenterBuiltUpCells     int                          `json:"population_center_built_up_cells,omitempty"`
+	PopulationCenterRoadDensityCells int                          `json:"population_center_road_density_cells,omitempty"`
+	RoadsideCells                    int                          `json:"roadside_cells,omitempty"`
+	WaterBufferCells                 int                          `json:"water_buffer_cells,omitempty"`
+	CausewayCells                    int                          `json:"causeway_cells,omitempty"`
+	BorderCells                      int                          `json:"border_cells,omitempty"`
+	BorderWayCount                   int                          `json:"border_way_count,omitempty"`
+	RegionDiagnostics                []RegionDiagnostics          `json:"region_diagnostics,omitempty"`
+	RoadRefs                         []string                     `json:"road_refs,omitempty"`
+	LandExtentXTiles                 int                          `json:"land_extent_x_tiles,omitempty"`
+	LandExtentYTiles                 int                          `json:"land_extent_y_tiles,omitempty"`
+	LandExtentRatio                  float64                      `json:"land_extent_y_to_x_ratio,omitempty"`
+	LandExtentWHRatio                float64                      `json:"land_extent_w_to_h_ratio,omitempty"`
+	ScreenWHRatio                    float64                      `json:"estimated_screen_w_to_h_ratio,omitempty"`
+	ViewportTileWHRatio              float64                      `json:"viewport_tile_w_to_h_ratio,omitempty"`
+	ViewportScreenWHRatio            float64                      `json:"viewport_screen_w_to_h_ratio,omitempty"`
+	CalibrationAxes                  []AxisDiagnostics            `json:"calibration_axes,omitempty"`
+	ProjectionSelfCheck              *ProjectionSelfCheck         `json:"projection_self_check,omitempty"`
+	ProjectionAspect                 float64                      `json:"projection_aspect,omitempty"`
+	ProjectionNorthScale             float64                      `json:"projection_north_scale,omitempty"`
+	MinElevation                     float64                      `json:"min_elevation"`
+	MaxElevation                     float64                      `json:"max_elevation"`
+	MeanElevation                    float64                      `json:"mean_elevation"`
+	Recipe                           *scenario.Recipe             `json:"recipe,omitempty"`
 }
 
 func TraceDEM(opts Options) (Report, error)
+
+type ShorePair struct {
+	LandTerrain  int  `json:"land_terrain"`
+	WaterTerrain int  `json:"water_terrain"`
+	Edges        int  `json:"edges"`
+	AllowedByDAT bool `json:"allowed_by_dat"`
+}
+
+type SourceAttribution struct {
+	Source      string `json:"source"`
+	Text        string `json:"attribution"`
+	License     string `json:"license"`
+	URL         string `json:"url"`
+	Dataset     string `json:"dataset,omitempty"`
+	QueryBounds *BBox  `json:"query_bounds"`
+	ExtentState string `json:"query_extent_state"`
+}
+    SourceAttribution travels with reports, including unknown local query
+    extents.
+
+type SourceCoverage struct {
+	State                 string `json:"state"`
+	EligibleCells         int    `json:"eligible_cells"`
+	CoveredCells          int    `json:"covered_cells"`
+	MissingCells          int    `json:"missing_cells"`
+	OutsideNominalCells   int    `json:"outside_nominal_cells"`
+	OutsideNominalCovered int    `json:"outside_nominal_covered"`
+	QueryBounds           *BBox  `json:"query_bounds,omitempty"`
+	GeometryBounds        *BBox  `json:"geometry_bounds,omitempty"`
+	Note                  string `json:"note,omitempty"`
+}
+    Observed coverage is not a claim that a source contains every real feature.
 
 type SpeciesRecommendation struct {
 	UnitConst int    `json:"c"`
@@ -5252,10 +5719,56 @@ type SpeciesResolution struct {
 	Resolution string `json:"resolution"`
 }
 
+type StartObject struct {
+	Player int     `json:"player"`
+	Unit   int     `json:"unit"`
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+}
+
+type StartPlacement struct {
+	Role         string  `json:"role"`
+	Unit         int     `json:"unit"`
+	Count        int     `json:"count"`
+	Distance     float64 `json:"distance"`
+	X            float64 `json:"x"`
+	Y            float64 `json:"y"`
+	SpeciesUnits []int   `json:"species_units,omitempty"`
+}
+
+type StartPosition struct {
+	Player               int              `json:"player"`
+	X                    float64          `json:"x"`
+	Y                    float64          `json:"y"`
+	Lat                  float64          `json:"lat"`
+	Lon                  float64          `json:"lon"`
+	Reason               string           `json:"reason"`
+	Inventory            map[int]int      `json:"inventory"`
+	Resources            []StartPlacement `json:"resources"`
+	Objects              []StartObject    `json:"objects,omitempty"`
+	NaturalWoodlineTrees int              `json:"natural_woodline_trees,omitempty"`
+}
+
+type StartResource struct {
+	Role     string `json:"role"`
+	Unit     int    `json:"unit,omitempty"`
+	Count    int    `json:"count"`
+	Distance int    `json:"distance"`
+}
+
 type TerrainWeight struct {
 	TerrainID int     `json:"t"`
 	Weight    float64 `json:"w"`
 }
+
+type USGSWoodyPoint struct {
+	Lat     float64
+	Lon     float64
+	Species []string
+}
+    USGSWoodyPoint is one approximately 25 km atlas grid point. The release is
+    presence/absence data, so it selects a regional tree palette rather than
+    claiming an individual tree location.
 
 type WaterDistanceBucket struct {
 	MaxDistanceTiles float64                    `json:"max_dist_tiles"`
@@ -5266,6 +5779,11 @@ type WaterDistanceBucket struct {
 
 type WaterDistanceMapping struct {
 	Buckets []WaterDistanceBucket `json:"buckets"`
+}
+
+type WeightedUnit struct {
+	UnitConst int     `json:"unit_const"`
+	Weight    float64 `json:"weight"`
 }
 ```
 
@@ -10297,6 +10815,10 @@ var DE158Layout = Layout{
 FUNCTIONS
 
 func BlankScenarioSeedBytes() ([]byte, error)
+func CollisionFootprintBlocks(x, y, z float32) bool
+    CollisionFootprintBlocks is the shared DAT collision gate for object
+    placement.
+
 func ConditionTypeForName(name string) (int, bool)
 func ConditionTypeName(t int) string
     ConditionTypeName maps trigger condition type ids to names (DE editor
@@ -11397,6 +11919,10 @@ func (f *File) RemoveTrigger(recipe TriggerRecipe) error
 func (f *File) RemoveTriggers(recipe TriggerRecipe) error
 
 func (f *File) RemoveUnit(recipe UnitRecipe) error
+
+func (f *File) RemoveUnits(referenceIDs []int) error
+    RemoveUnits removes a batch by stable reference ID, preserving all retained
+    records. Reference validation completes before any mutation.
 
 func (f *File) RemoveUnitsForPlayer(recipe UnitRecipe) (int, error)
 

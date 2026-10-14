@@ -343,7 +343,14 @@ func runGeo(args []string) {
 		landcoverDir := ""
 		climateZone := ""
 		feltMappingPath := ""
+		profilePath := ""
+		compendiumPath := ""
+		usgsWoodyPath := ""
+		datPath := ""
 		orient := ""
+		projectionAspect := 0.0
+		projectionNorthScale := 0.0
+		seed := 0
 		outPath := ""
 		recipeOutPath := ""
 		scenarioOutPath := ""
@@ -361,14 +368,26 @@ func runGeo(args []string) {
 		waterBandWidth := 2.0
 		roadsProvider := ""
 		roadsPath := ""
+		roadsTimeout := 10 * time.Minute
 		roadsCacheDir := ""
 		roadSimplifyTiles := 0.0
+		roadWidthTiles := 0.0
 		adminBorders := false
 		wrapEW := false
 		wrapPlayers := []int{1}
 		sailDemo := false
 		for i := 1; i < len(args); i++ {
 			switch args[i] {
+			case "--seed":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--seed needs an integer"))
+				}
+				var err error
+				seed, err = strconv.Atoi(args[i])
+				if err != nil {
+					die("kit geo trace-dem", err)
+				}
 			case "--bbox":
 				i++
 				if i >= len(args) {
@@ -470,6 +489,60 @@ func runGeo(args []string) {
 					die("kit geo trace-dem", fmt.Errorf("--felt-mapping needs a path"))
 				}
 				feltMappingPath = args[i]
+			case "--profile":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--profile needs a path"))
+				}
+				profilePath = args[i]
+			case "--compendium":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--compendium needs a path"))
+				}
+				compendiumPath = args[i]
+			case "--roads-timeout":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--roads-timeout needs a duration"))
+				}
+				var err error
+				roadsTimeout, err = time.ParseDuration(args[i])
+				if err != nil || roadsTimeout <= 0 {
+					die("kit geo trace-dem", fmt.Errorf("--roads-timeout must be a positive duration, e.g. 10m"))
+				}
+			case "--usgs-woody-file":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--usgs-woody-file needs a CSV path"))
+				}
+				usgsWoodyPath = args[i]
+			case "--dat":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--dat needs a path"))
+				}
+				datPath = args[i]
+			case "--projection-aspect":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--projection-aspect needs a positive number"))
+				}
+				value, err := strconv.ParseFloat(args[i], 64)
+				if err != nil || value <= 0 {
+					die("kit geo trace-dem", fmt.Errorf("invalid --projection-aspect %q", args[i]))
+				}
+				projectionAspect = value
+			case "--projection-north-scale":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--projection-north-scale needs a positive number"))
+				}
+				value, err := strconv.ParseFloat(args[i], 64)
+				if err != nil || value <= 0 {
+					die("kit geo trace-dem", fmt.Errorf("invalid --projection-north-scale %q", args[i]))
+				}
+				projectionNorthScale = value
 			case "--orient":
 				i++
 				if i >= len(args) {
@@ -632,6 +705,16 @@ func runGeo(args []string) {
 					die("kit geo trace-dem", fmt.Errorf("--road-simplify-tiles needs a non-negative tile tolerance"))
 				}
 				roadSimplifyTiles = value
+			case "--road-width-tiles":
+				i++
+				if i >= len(args) {
+					die("kit geo trace-dem", fmt.Errorf("--road-width-tiles needs a positive tile width"))
+				}
+				value, err := strconv.ParseFloat(args[i], 64)
+				if err != nil || value <= 0 || value > 32 || math.IsNaN(value) || math.IsInf(value, 0) {
+					die("kit geo trace-dem", fmt.Errorf("--road-width-tiles needs a positive finite width no greater than 32 tiles"))
+				}
+				roadWidthTiles = value
 			case "--admin-borders":
 				adminBorders = true
 			case "--wrap-ew":
@@ -648,6 +731,10 @@ func runGeo(args []string) {
 				wrapPlayers = value
 			case "--sail-demo":
 				sailDemo = true
+			case "--help", "-h":
+				fmt.Println(geoTraceUsage())
+				fmt.Println("EXPERIMENTAL: cartographic scenario generation; static checks do not prove engine behavior. See docs/GEOTRACE.md.")
+				return
 			default:
 				die("kit geo trace-dem", fmt.Errorf("unknown arg %q", args[i]))
 			}
@@ -686,35 +773,48 @@ func runGeo(args []string) {
 		if oceanFishDensity <= 0 {
 			oceanFishDensity = fishDensity
 		}
+		if scenarioOutPath != "" && datPath == "" {
+			die("kit geo trace-dem", fmt.Errorf("--scenario-out requires --dat for the final placement audit"))
+		}
 		report, err := geotrace.TraceDEM(geotrace.Options{
-			BBox:                bbox,
-			GridSize:            gridSize,
-			Provider:            provider,
-			LandmaskProvider:    landmaskProvider,
-			LandmaskPath:        landmaskPath,
-			InlandWaterProvider: inlandWaterProvider,
-			InlandWaterPath:     inlandWaterPath,
-			LandcoverProvider:   landcoverProvider,
-			LandcoverCacheDir:   landcoverCacheDir,
-			LandcoverPath:       landcoverPath,
-			LandcoverDir:        landcoverDir,
-			ClimateZone:         climateZone,
-			FeltMappingPath:     feltMappingPath,
-			Orient:              orient,
-			TargetWaterFraction: waterFraction,
-			SeamWaterColumns:    seamWaterColumns,
-			FloraDensity:        floraDensity,
-			LandFaunaDensity:    landFaunaDensity,
-			FishDensity:         fishDensity,
-			ShoreFishDensity:    shoreFishDensity,
-			OceanFishDensity:    oceanFishDensity,
-			ShoreBandWidth:      shoreBandWidth,
-			WaterBandWidth:      waterBandWidth,
-			RoadsProvider:       roadsProvider,
-			RoadsPath:           roadsPath,
-			RoadsCacheDir:       roadsCacheDir,
-			RoadSimplifyTiles:   roadSimplifyTiles,
-			AdminBorders:        adminBorders,
+			Seed:                 seed,
+			BBox:                 bbox,
+			GridSize:             gridSize,
+			Provider:             provider,
+			LandmaskProvider:     landmaskProvider,
+			LandmaskPath:         landmaskPath,
+			InlandWaterProvider:  inlandWaterProvider,
+			InlandWaterPath:      inlandWaterPath,
+			LandcoverProvider:    landcoverProvider,
+			LandcoverCacheDir:    landcoverCacheDir,
+			LandcoverPath:        landcoverPath,
+			LandcoverDir:         landcoverDir,
+			ClimateZone:          climateZone,
+			FeltMappingPath:      feltMappingPath,
+			ProfilePath:          profilePath,
+			CompendiumPath:       compendiumPath,
+			RoadsTimeout:         roadsTimeout,
+			Progress:             os.Stderr,
+			USGSWoodyPath:        usgsWoodyPath,
+			DatPath:              datPath,
+			ProjectionAspect:     projectionAspect,
+			ProjectionNorthScale: projectionNorthScale,
+			Orient:               orient,
+			TargetWaterFraction:  waterFraction,
+			SeamWaterColumns:     seamWaterColumns,
+			FloraDensity:         floraDensity,
+			LandFaunaDensity:     landFaunaDensity,
+			FishDensity:          fishDensity,
+			ShoreFishDensity:     shoreFishDensity,
+			OceanFishDensity:     oceanFishDensity,
+			ShoreBandWidth:       shoreBandWidth,
+			WaterBandWidth:       waterBandWidth,
+			RoadsProvider:        roadsProvider,
+			RoadsPath:            roadsPath,
+			RoadsCacheDir:        roadsCacheDir,
+			RoadSimplifyTiles:    roadSimplifyTiles,
+			RoadWidthTiles:       roadWidthTiles,
+			AdminBorders:         adminBorders,
 		})
 		if err != nil {
 			die("kit geo trace-dem", err)
@@ -735,7 +835,7 @@ func runGeo(args []string) {
 				report.Recipe.Victory = &scenario.VictoryRecipe{ConquestRequired: &zero}
 			}
 		}
-		if recipeOutPath != "" {
+		if recipeOutPath != "" && scenarioOutPath == "" {
 			if report.Recipe == nil {
 				die("kit geo trace-dem", fmt.Errorf("--recipe-out requires a landmask so the emitted recipe has explicit land/water masks"))
 			}
@@ -747,8 +847,13 @@ func runGeo(args []string) {
 			if report.Recipe == nil {
 				die("kit geo trace-dem", fmt.Errorf("--scenario-out requires a landmask so the emitted scenario has explicit land/water masks"))
 			}
-			if err := writeGeoTraceScenario(scenarioOutPath, gridSize, *report.Recipe); err != nil {
+			if err := writeGeoTraceScenario(scenarioOutPath, gridSize, *report.Recipe, &report); err != nil {
 				die("kit geo trace-dem", err)
+			}
+			if recipeOutPath != "" {
+				if err := writeJSONFile(recipeOutPath, report.Recipe); err != nil {
+					die("kit geo trace-dem", err)
+				}
 			}
 		}
 		reportForJSON := report
@@ -773,7 +878,7 @@ func runGeo(args []string) {
 			}
 			fmt.Printf("wrote %s cells=%d coastline=%s tile_m=%.0f", outPath, len(report.Cells), report.CoastlineConfidence, report.ApproxTileMeters)
 			if report.RoadCells > 0 {
-				fmt.Printf(" roads=%d ways=%d vertices=%d/%d simplify_tiles=%.2f", report.RoadCells, report.RoadWayCount, report.RoadVertexCount, report.RoadVertexCountRaw, report.RoadSimplifyTiles)
+				fmt.Printf(" roads=%d ways=%d vertices=%d/%d simplify_tiles=%.2f width_tiles=%.2f", report.RoadCells, report.RoadWayCount, report.RoadVertexCount, report.RoadVertexCountRaw, report.RoadSimplifyTiles, report.RoadWidthTiles)
 			}
 			if recipeOutPath != "" {
 				fmt.Printf(" recipe=%s", recipeOutPath)
@@ -794,10 +899,13 @@ func runGeo(args []string) {
 }
 
 func geoTraceUsage() string {
-	return "usage: kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--provider opentopodata|flat] [--landmask naturalearth|geojson] [--landmask-file path] [--inland-water naturalearth|geojson] [--inland-water-file path] [--landcover worldcover|glc-fcs30d] [--landcover-cache dir] [--landcover-dir dir] [--landcover-file path] [--climate zone] [--felt-mapping path] [--orient iso|iso-cw|iso-ccw|iso-ccw-screen|grid|diamond] [--water-fraction 0..1] [--flora-density 1..10] [--land-fauna-density 1..10] [--fish-density 1..10] [--shore-fish-density 1..10] [--ocean-fish-density 1..10] [--shore-band-width tiles] [--water-band-width tiles] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--roads-file roads.json] [--roads-cache dir] [--road-simplify-tiles N] [--admin-borders] [--seam-water-cols N] [--wrap-ew] [--wrap-players 1,2] [--sail-demo] [--omit-report-cells] [--omit-report-recipe] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]"
+	return "usage: kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--seed N] [--provider opentopodata|flat] [--landmask naturalearth|geojson] [--landmask-file path] [--inland-water naturalearth|geojson] [--inland-water-file path] [--landcover worldcover|glc-fcs30d] [--landcover-cache dir] [--landcover-dir dir] [--landcover-file path] [--climate zone] [--felt-mapping path] [--profile path] [--compendium path] [--usgs-woody-file csv] [--dat path] [--orient iso|iso-cw|iso-ccw|iso-ccw-screen|grid|diamond] [--projection-aspect N] [--projection-north-scale N] [--water-fraction 0..1] [--flora-density 1..10] [--land-fauna-density 1..10] [--fish-density 1..10] [--shore-fish-density 1..10] [--ocean-fish-density 1..10] [--shore-band-width tiles] [--water-band-width tiles] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--roads-file roads.json] [--roads-cache dir] [--roads-timeout duration] [--road-simplify-tiles N] [--road-width-tiles N] [--admin-borders] [--seam-water-cols N] [--wrap-ew] [--wrap-players 1,2] [--sail-demo] [--omit-report-cells] [--omit-report-recipe] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario] [--help]"
 }
 
-func writeGeoTraceScenario(outPath string, gridSize int, recipe scenario.Recipe) error {
+func writeGeoTraceScenario(outPath string, gridSize int, recipe scenario.Recipe, r *geotrace.Report) error {
+	if r == nil {
+		return fmt.Errorf("geotrace scenario writing requires placement audit context")
+	}
 	dir := filepath.Dir(outPath)
 	if dir != "." && dir != "" {
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -813,9 +921,14 @@ func writeGeoTraceScenario(outPath string, gridSize int, recipe scenario.Recipe)
 		return err
 	}
 	defer os.Remove(tmpPath)
+	players := 2
+	if recipe.Scenario != nil && recipe.Scenario.PlayerCount != nil {
+		players = *recipe.Scenario.PlayerCount
+	}
 	if _, err := scenario.WriteBlankScenarioFile(tmpPath, scenario.BlankOptions{
-		PlayerCount: 1,
+		PlayerCount: players,
 		HumanSlots:  1,
+		NoStarters:  true,
 		MapWidth:    gridSize,
 		MapHeight:   gridSize,
 	}); err != nil {
@@ -828,9 +941,60 @@ func writeGeoTraceScenario(outPath string, gridSize int, recipe scenario.Recipe)
 	if _, err := scenario.PatchRecipeFile(tmpPath, terrainPath, terrainRecipe); err != nil {
 		return err
 	}
-	unitRecipe := scenario.Recipe{Units: recipe.Units}
-	_, err = scenario.PatchRecipeFile(terrainPath, outPath, unitRecipe)
-	return err
+	unitRecipe := scenario.Recipe{DatPath: recipe.DatPath, Units: recipe.Units}
+	gate, units, err := geotrace.GateRecipePlacement(terrainPath, recipe.DatPath, r.EcologyProfile, r.PlayerStarts, unitRecipe.Units)
+	if err != nil {
+		return err
+	}
+	r.PlacementGate = &gate
+	unitRecipe.Units = units
+	r.Recipe.Units = units
+	geotrace.FinalizeNeutralResources(r)
+	unitRecipe.Units = r.Recipe.Units
+	placedPath := tmpPath + ".placed.aoe2scenario"
+	defer os.Remove(placedPath)
+	if _, err = scenario.PatchRecipeFile(terrainPath, placedPath, unitRecipe); err != nil {
+		return err
+	}
+	sweep, removals, err := geotrace.AuditPlacement(placedPath, recipe.DatPath, r.EcologyProfile, r.PlayerStarts)
+	if err != nil {
+		return err
+	}
+	sweep.Removed = len(removals)
+	r.PlacementSweep = &sweep
+	checkedPath := tmpPath + ".checked.aoe2scenario"
+	defer os.Remove(checkedPath)
+	f, err := scenario.Open(placedPath)
+	if err != nil {
+		return err
+	}
+	ids := make([]int, 0, len(removals))
+	for _, u := range removals {
+		ids = append(ids, *u.ReferenceID)
+	}
+	if err = f.RemoveUnits(ids); err != nil {
+		return err
+	}
+	if err = f.Write(checkedPath); err != nil {
+		return err
+	}
+	verified, err := scenario.Open(checkedPath)
+	if err != nil {
+		return err
+	}
+	if err = verified.VerifyRebuild(); err != nil {
+		return err
+	}
+	audit, remaining, err := geotrace.AuditPlacement(checkedPath, recipe.DatPath, r.EcologyProfile, r.PlayerStarts)
+	if err != nil {
+		return err
+	}
+	r.WrittenPlacementAudit = &audit
+	if len(remaining) != 0 {
+		return fmt.Errorf("written placement audit: %d violations remain", len(remaining))
+	}
+	r.PlacementSweepRecipe = &scenario.Recipe{Units: removals}
+	return os.Rename(checkedPath, outPath)
 }
 
 func writeJSONFile(path string, value any) error {
@@ -21785,7 +21949,8 @@ func usage() {
   kit rpg shop-demo [--out-dir DIR] [--name TEXT] [--timestamp UNIX] [--text|--json]
   kit rpg custom-store [--out-dir DIR] [--name TEXT] [--unit N] [--instances N] [--players N] [--timestamp UNIX] [--xs-check PATH] [--text|--json]
   kit font glyphs <font.ttf> [--chars TEXT] [--material N] [--rotation DEGREES] [--out FILE]
-  kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
+  kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--road-width-tiles N] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
+    EXPERIMENTAL geography: cartographic exaggeration; static placement checks are not engine verification.
   kit identify <file.aoe2scenario|file.aoe2record> [--registry known_scenarios.json] [--ai-registry known_ais.json] [--register NAME] [--family FAMILY] [--description TEXT]
   kit collect <folder> [--registry known_scenarios.json] [--dry-run]
   kit player stats <profileId> [--match-type N] [--cache-dir DIR] [--force] [--text]

@@ -1,5 +1,29 @@
 # Changelog
 
+## Experimental Geotrace — 2026-10-14
+
+### Added
+- Experimental geographic scenario generation: shared projection framing,
+  caller profiles, ecology roles and optional user-supplied felt metadata.
+- Fine coastline refinement and coarse thin-island preservation, explicitly
+  labeled cartographic exaggeration rather than geographic accuracy.
+- Stroked vector roads, deduplicated road-chunk merging, bounded resumable fetch integration,
+  and reported WorldCover 404 coverage gaps.
+- Preplacement terrain/collision checks, final sweep and zero-violation written
+  audit; opt-in player starts and atomic neutral resource piles; sheltered-bay
+  fish habitat.
+- OSM/ODbL and ESA WorldCover/CC BY 4.0 attribution in source-backed reports,
+  including known or unknown road-query extents; focused geotrace documentation.
+- Gaia buildings and urban accents are available only through an explicit
+  unvalidated-feature opt-in, disabled by default. No engine success claim.
+
+### Fixed
+- Empty, complete Overpass road files remain valid empty sources instead of
+  being misclassified as GeoJSON; source attribution is retained.
+
+No regional profiles, game art, geographic datasets, official RMS sources or
+run outputs are included. Static checks do not prove engine behavior.
+
 ## DAT, Fetch, and Scenario Writer Fixes — 2026-10-14
 
 ### Fixed

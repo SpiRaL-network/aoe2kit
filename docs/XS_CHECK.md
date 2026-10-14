@@ -7,10 +7,10 @@ generated XS fail closed when it is unavailable.
 The reference checker is [Divy1211/xs-check](https://github.com/Divy1211/xs-check),
 version 0.2.30. That project is licensed under GPL-3.0. AoE2Kit therefore does
 not redistribute its executable and does not link to it. Install or build the
-checker separately at `~/.local/share/aoe2kit/xs-check` (on Windows,
+checker separately in the user data directory at `aoe2kit/xs-check` (on Windows,
 `%USERPROFILE%\.local\share\aoe2kit\xs-check.exe`); Kit discovers and
 SHA-verifies that location automatically. `XDG_DATA_HOME` relocates the
-`~/.local/share` portion. `AOE2KIT_XS_CHECK=/path/to/xs-check` or
+user data directory. `AOE2KIT_XS_CHECK=/path/to/xs-check` or
 `--xs-check /path/to/xs-check` remains available for explicit installations.
 
 The reference build's SHA256 is

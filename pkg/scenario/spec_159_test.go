@@ -35,11 +35,11 @@ func TestScenario159AddsAnonymousUnitByteBeforeCaptionID(t *testing.T) {
 
 func TestScenario159ByteRoundTripExternalFixtures(t *testing.T) {
 	fixtures := []string{
-		scenarioProjectPath("Mandala", "ring_work", "ryanscratch", "RyanScratch.original.aoe2scenario"),
-		scenarioProjectPath("Mandala", "ring_work", "gate_footprint", "gate_footprint.aoe2scenario"),
-		// Editor save of RyanScratch AB2: +74 inflated bytes versus the
+		scenarioProjectPath("External", "ring_work", "editor-sample", "EditorSample.original.aoe2scenario"),
+		scenarioProjectPath("External", "ring_work", "gate_footprint", "gate_footprint.aoe2scenario"),
+		// Editor save of EditorSample AB2: +74 inflated bytes versus the
 		// kit-authored copy, including one opaque s32 per non-empty condition.
-		scenarioProjectPath("Mandala", "ring_work", "ryanscratch", "AB2_as_run.aoe2scenario"),
+		scenarioProjectPath("External", "ring_work", "editor-sample", "AB2_as_run.aoe2scenario"),
 	}
 	for _, input := range fixtures {
 		original, err := os.ReadFile(input)
@@ -151,7 +151,7 @@ func TestScenario159PlayerVictoryConditionRepeatFixture(t *testing.T) {
 }
 
 func TestScenario159ConditionLayoutFixtures(t *testing.T) {
-	for _, name := range []string{"RyanScratch AB2.aoe2scenario", "Clean v159.12.aoe2scenario"} {
+	for _, name := range []string{"EditorSample AB2.aoe2scenario", "Clean v159.12.aoe2scenario"} {
 		path := filepath.Join("testdata", name)
 		requireFixture(t, path)
 		file, err := Open(path)
@@ -189,7 +189,7 @@ func byteAt(data []byte, index int) byte {
 }
 
 func TestScenario159PatchAddsUnitsAndTriggers(t *testing.T) {
-	input := scenarioProjectPath("Mandala", "ring_work", "ryanscratch", "RyanScratch.original.aoe2scenario")
+	input := scenarioProjectPath("External", "ring_work", "editor-sample", "EditorSample.original.aoe2scenario")
 	if _, err := os.Stat(input); os.IsNotExist(err) {
 		t.Skip("external 1.59 fixture unavailable")
 	}

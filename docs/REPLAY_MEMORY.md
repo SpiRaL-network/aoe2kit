@@ -2,7 +2,7 @@
 
 The migrated path hashes the recording with a fixed buffer, streams its inflated
 header to disk, and parses body framing once into `ops.jsonl`. Cache root:
-`~/.cache/aoe2kit/replay-cache/<record-sha256>/`, overridden by
+`aoe2kit/replay-cache/<record-sha256>/` under the user's cache directory, overridden by
 `AOE2KIT_REPLAY_CACHE`. ZIP inputs use the extracted recording's hash. Completed
 manifests are published atomically; size-invalid entries are rebuilt and kept
 under `.invalid-*` for diagnosis. Caches contain replay data, including chat;

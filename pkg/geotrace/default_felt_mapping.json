@@ -1,6 +1,6 @@
 {
   "schema": "geotrace-felt-mapping.v1",
-  "purpose": "The Earth->AoE2 translation table geo-trace's classifier consumes. Per cell (climate_zone x elevation_band x distance_to_shore) -> AoE2 terrain_id PROPORTIONS + confidence + reason, plus species per (climate x band) for cluster_scatter. This is the felt project's payoff for tracing, and the SHARED PALETTE every trace-worm uses so no bird re-derives it. Consumes Dex's interface: {x,y,lat,lon,elevation_m,land,distance_to_shore_tiles,elevation_band in [water,beach,lowland,upland,highland],climate_zone}.",
+  "purpose": "Generic Earth-to-AoE2 terrain and species palette, selected by climate, landcover, elevation and distance to shore. Regional choices belong in caller-supplied profiles.",
   "confidence_ladder": [
     "from_data",
     "inferred",
@@ -236,7 +236,7 @@
             }
           ],
           "confidence": "inferred",
-          "reason": "near-sea-level flat = possible Everglades/marsh, but DEM+landmask cannot confirm dry-vs-wet; HELD at inferred until a land-cover provider supplies wetland extent"
+          "reason": "Near-sea-level flat terrain may be marsh, but DEM and landmask cannot establish wetland extent without landcover evidence."
         }
       },
       "upland": {
@@ -679,7 +679,7 @@
   },
   "for_the_village": "This table is climate x band x distance -> terrain proportions + species. Any bird tracing ANY place picks a climate_zone (or per-cell from latitude/Koppen) and the mapping is done. A land-cover provider will later REPLACE the inferred wetland/forest guesses with from_data biome classes; until then, wetland/forest are held at 'inferred'. For NON-map tracing (images/art), a sibling color-mapping table maps source COLOR -> terrain instead of elevation_band -> terrain; same proportions+confidence shape.",
   "landcover_class_mapping": {
-    "note": "ESA WorldCover class -> AoE2 terrain proportions + species, by climate. Land-cover is AUTHORITATIVE so confidence=from_data. THIS RETIRES the held `inferred` wetland: classes 90/95 paint the real Everglades/mangrove where they are. Also supplies inland water (class 80 = Lake Okeechobee, rivers). Distinct from the elevation-band mapping (that's the DEM-only fallback); when land-cover is present, it WINS over the band default.",
+    "note": "Landcover classes supply observed habitat extent; use climate-specific palettes for the game translation. Elevation-band mapping remains the fallback where landcover is absent.",
     "source": "ESA WorldCover 10m (global) or NLCD (US, finer). classes: 10 tree,20 shrub,30 grass,40 crop,50 built,60 bare,70 snow,80 water,90 herb-wetland,95 mangrove,100 moss",
     "by_class": {
       "10_tree_cover": {
@@ -892,7 +892,7 @@
           }
         ],
         "confidence": "from_data",
-        "note": "INLAND water = Lake Okeechobee, rivers. Grade by size/distance-to-edge like sea; freshwater tint (no azure/deep-ocean unless large). reeds+lily at edges via species",
+        "note": "Inland lakes and rivers: grade by size and distance to edge, with freshwater tint and suitable edge vegetation.",
         "species_by_climate": {
           "_any": [
             {
@@ -926,7 +926,7 @@
           }
         ],
         "confidence": "from_data",
-        "note": "THE EVERGLADES - from_data now, retires the inferred hold. swamp/mangrove-floor/bog/green-water mosaic",
+        "note": "Wetland habitat represented by a swamp, mangrove-floor, bog and green-water mosaic.",
         "species_by_climate": {
           "_any": [
             {
@@ -987,64 +987,23 @@
     },
     "precedence": "When a cell has land-cover, use by_class (from_data). Fall back to elevation-band mapping only where land-cover is absent/no-data. Water depth (sea) still graded by distance_to_shore; inland water (class 80) graded by size."
   },
-  "florida_region_favoring": {
-    "note": "chrae 2026-09-15: FL is palm-dominant by raw population BUT is KNOWN for wetlands — favor the signature species over the merely-numerous. Bias weights when a cell could plausibly host several.",
-    "coast": {
-      "favor": [
-        "mangrove-beach",
-        "sandy-beach"
-      ],
-      "rule": "chrae v3: coast is STILL green-meets-water in places; it should be ALMOST UNIVERSALLY SAND (or mangrove where brackish). Widen the sand band so no green terrain touches open water, and palms have a shore to sit on."
-    },
-    "interior_deep": {
-      "favor": [
-        {
-          "c": 2567,
-          "s": "live oak"
-        },
-        {
-          "c": 349,
-          "s": "oak"
-        }
-      ],
-      "note": "OAK FOREST deep in the state — favor oak hammock inland, not palm"
-    },
-    "wetland": {
-      "favor": [
-        {
-          "c": 1144,
-          "s": "mangrove"
-        },
-        {
-          "c": 1350,
-          "s": "reeds/sawgrass"
-        }
-      ],
-      "note": "mangrove + sawgrass carry the Everglades — the soul of FL"
-    },
-    "palm_downweight": {
-      "factor": 0.8,
-      "note": "chrae 2026-09-15 v3: x0.5 overshot -> ZERO palms visible. Palms are the SIGNATURE of the sandy barrier coast; keep them THERE (just not inland-dominant). x0.8, and ensure sandy coast is broad enough to host them."
-    }
-  },
-  "coast_type_rule": "EVERY coast cell resolves to SANDY-BEACH (warm/open) or MANGROVE-BEACH (brackish/sheltered) — never bare/rock/other. Mangrove-beach = mangrove-floor(55) + mangrove(1144) in the fringing water; sandy-beach = white/tan beach + tide-gated palms.",
-  "water_isolation_rule": "chrae 2026-09-15: WATER must touch NO other terrain or vegetation directly — always a beach/shallow BUFFER band between open water and any land terrain or land vegetation. NO tree on a water tile (except mangrove on mangrove-floor). The 'trees in the middle of the water' flare = this rule violated.",
+  "water_isolation_rule": "Keep a suitable beach or shallow buffer between open water and land terrain or vegetation. Place water-tolerant flora only on compatible terrain.",
   "fish_density": {
     "ocean_factor": 0.30,
-    "note": "chrae 2026-09-15 v3-replay: density is now UNEVEN — 'every tile over here has fish' in one spot, 'no fish out here' in another. Even it out: ocean SPARSE but never fully empty (a few schools always visible per open-water region); inland DENSE; shore CONTINUOUS.",
+    "note": "Distribute sparse ocean schools across open-water regions rather than concentrating all fish in a few patches.",
     "inland_water": "PURE FISH, dense — Perch/Salmon. Every landlocked waterbody fills; none empty.",
     "shore": "continuous ring, near-shore species, whole coast",
     "ocean": "sparse (0.30x) but distributed — no fully-empty open-water region, and no over-full patch either"
   },
-  "water_fauna_diversity_rule": "chrae 2026-09-15: fish are ANIMATED, so 'rotation' gives NO diversity — diversity must come from DISTINCT SPECIES CONSTS. Assign a DIFFERENT const per water band (shore / shallow-reef / medium / deep) and DO NOT repeat one const across the ocean. Dex: pull the full water-fauna const roster from the felt compendium and spread distinct species across the bands (deep especially needs its own species, not the shore fish).",
+  "water_fauna_diversity_rule": "Use distinct species per water band; rotation alone does not diversify animated fish.",
   "water_fauna_by_band": {
-    "note": "chrae 2026-09-15 v3-replay: fish read MONOTONOUS and variety POOR — animated so rotation gives nothing; diversity MUST come from distinct species per band. Near-shore species were MISSING. Dex: resolve these species NAMES to consts from the scrape and place per band. Every band a DIFFERENT visible species.",
+    "note": "Select distinct visible species for different water bands.",
     "inland_lake": {
       "species": [
         "Fish (Perch)",
         "Fish (Salmon)"
       ],
-      "rule": "ALWAYS pure fish — Perch is the freshwater/pond fish, the signature inland species. The flagged landlocked lakes (~367,91 & ~428,49) had NO fish; fix the classifier so every inland waterbody fills. This is the ONE place density stays HIGH."
+      "rule": "Use freshwater species for inland lakes."
     },
     "shore_nearshore": {
       "species": [
@@ -1077,7 +1036,7 @@
     }
   },
   "landcover_species_by_class": {
-    "_note": "chrae 2026-09-15: maps GLC_FCS30D forest-TYPE classes -> AoE2 species, gated by climate (Koppen). Replaces the latitude-only guess. Dex: resolve species NAMES to consts from the scrape; species with a const are set, names marked (resolve) need the scrape. Focus climates: subtropical (FL), humid_continental (WI). 'general' = fallback.",
+    "_note": "Maps forest and landcover classes to game species by climate. The general palette is the fallback; regional profiles may supply explicit species mappings.",
     "closed_evergreen_broadleaf_forest": {
       "subtropical": [
         {
@@ -1187,7 +1146,7 @@
       "subtropical": [
         {
           "c": 350,
-          "s": "slash pine (FL flatwoods)"
+          "s": "pine"
         }
       ],
       "humid_continental": [

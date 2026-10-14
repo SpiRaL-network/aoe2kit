@@ -217,7 +217,7 @@ func TestVER94ConsolidatedTriggerGraphGolden(t *testing.T) {
 }
 
 func TestCurrent159EmbeddedReplayTriggerGraph(t *testing.T) {
-	path := filepath.Join("..", "..", "..", "..", "Mandala", "ring_work", "ryanscratch", "scratch.aoe2record")
+	path := filepath.Join("..", "..", "..", "..", "External", "ring_work", "editor-sample", "scratch.aoe2record")
 	if _, err := os.Stat(path); err != nil {
 		t.Skipf("external current 1.59 replay unavailable: %v", err)
 	}

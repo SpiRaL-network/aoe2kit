@@ -2953,7 +2953,7 @@
       ],
       "name": "geo trace-dem",
       "group": "geo",
-      "usage": "kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]",
+      "usage": "kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--road-width-tiles N] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]",
       "flags": [
         {
           "name": "--bbox",
@@ -2982,6 +2982,10 @@
         {
           "name": "--roads",
           "value_hint": "osm-interstate|osm-motorway|osm-major|nhpn-interstate"
+        },
+        {
+          "name": "--road-width-tiles",
+          "value_hint": "N"
         },
         {
           "name": "--out",
@@ -5933,7 +5937,7 @@
       "network": false,
       "trait": "read_only",
       "input": "scenario",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [
@@ -6687,7 +6691,7 @@
       "network": false,
       "trait": "read_only",
       "input": "scenario",
-      "probe_status": "not_probed"
+      "probe_status": "skipped_no_fixture"
     },
     {
       "path": [

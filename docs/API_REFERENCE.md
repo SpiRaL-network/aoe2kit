@@ -1710,7 +1710,7 @@ kit fx new <name> --preset trail|explosion|aura|projectile-fire [--grid RxC] [de
 ### `geo trace-dem`
 
 ```
-kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
+kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--road-width-tiles N] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
 ```
 
 | flag | value |
@@ -1722,6 +1722,7 @@ kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--spa
 | `--landmask` | `naturalearth|geojson` |
 | `--landcover` | `worldcover|glc-fcs30d` |
 | `--roads` | `osm-interstate|osm-motorway|osm-major|nhpn-interstate` |
+| `--road-width-tiles` | `N` |
 | `--out` | `report.json` |
 | `--recipe-out` | `recipe.json` |
 | `--scenario-out` | `out.aoe2scenario` |
@@ -2882,7 +2883,7 @@ kit scen diff-series <files...|directory> [--all-fields] [--game-dir D] [--text|
 | `--all-fields` | _(boolean)_ |
 | `--game-dir` | `D` |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `scen diff-triggers`
 
@@ -3234,7 +3235,7 @@ kit scen watch <file.aoe2scenario> [--snapshot-dir D] [--interval 1s] [--once] [
 | `--once` | _(boolean)_ |
 | `--game-dir` | `D` |
 
-- probe: `not_probed`
+- probe: `skipped_no_fixture`
 
 ### `scen write-check`
 

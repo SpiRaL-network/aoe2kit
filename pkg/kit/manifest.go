@@ -48,6 +48,7 @@ func CurrentManifest() Manifest {
 			"START_HERE.md",
 			"AI_GUIDE.md",
 			"docs/GO_AOE2KIT.md",
+			"docs/GEOTRACE.md",
 			"docs/AOE_MS_REPLAY_API.md",
 			"docs/REPLAY_GUIDE.md",
 			"docs/REPLAY_CORPUS.md",
@@ -72,6 +73,7 @@ func CurrentManifest() Manifest {
 			"KIT_MANIFEST.json",
 		},
 		Commands: []Command{
+			{Name: "kit geo", Summary: "experimental geographic scenario generation; cartographic interpretation, not engine verification", Subcommands: []string{"trace-dem"}},
 			{Name: "kit", Summary: "AoE2Kit CLI source with profile-aware release packing, portability checks, and explicit credit/provenance reporting", Subcommands: []string{"version", "doctor", "docs", "summary", "inventory", "scan", "manifest", "credits", "verify", "pack", "portable-check", "project", "recipe", "release-check", "verify-run", "ci", "campaign", "roadmap", "facts", "identify", "collect", "player", "replay", "ai", "scen", "dat", "gfx", "fx", "xs", "xsdat", "cba", "mod", "swatch"}},
 			{Name: "kit credits", Summary: "human and machine-readable attribution ledger for tools, docs, data, and upstream references that shaped the kit", Subcommands: []string{"notice", "--text", "--json"}},
 			{Name: "kit docs", Summary: "documentation hygiene checks against the live command catalog", Subcommands: []string{"lint", "--text", "--json"}},
@@ -144,6 +146,7 @@ func CurrentManifest() Manifest {
 			"release_checks",
 		},
 		Limitations: []string{
+			"geotrace is experimental: thin-land preservation exaggerates geography, static placement checks do not prove engine behavior, and urban features are disabled unless explicitly opted into as unvalidated",
 			"AoE2Kit reports structural verification explicitly; green structural checks are not in-engine load/render/play proof",
 			"scenario patching currently supports append triggers, narrow existing-trigger edits, add/edit/remove unit recipes, terrain rectangle/circle/line edits, and XS entry-script attachment plus script_call effects",
 			"dat patching targets current AoE2DE dat layouts; graphic/unit new-record creation is supported, but broader DAT table creation remains scoped to explicitly implemented record families",

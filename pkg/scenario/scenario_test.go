@@ -2152,10 +2152,10 @@ func TestTerrainFileAggregatesAndFilteredTiles(t *testing.T) {
 }
 
 func TestScenarioUnitsReadRotationFromFixture(t *testing.T) {
-	input := testfixtures.Path(t, "save-analysis/diagnostics/Mandala Foundry.aoe2scenario")
+	input := testfixtures.Path(t, "save-analysis/diagnostics/External Foundry.aoe2scenario")
 	file, err := Open(input)
 	if err != nil {
-		t.Fatalf("Open Mandala: %v", err)
+		t.Fatalf("Open External: %v", err)
 	}
 	found := false
 	for _, section := range file.Units.Sections {
@@ -2166,7 +2166,7 @@ func TestScenarioUnitsReadRotationFromFixture(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Fatal("expected Mandala fixture to contain IndianStatues with rotation index 5")
+		t.Fatal("expected External fixture to contain IndianStatues with rotation index 5")
 	}
 }
 
@@ -6996,7 +6996,7 @@ func TestScenarioSettingsExposeStartingAgeAndColor(t *testing.T) {
 }
 
 func TestScenarioSettingsCalibrationFixtures(t *testing.T) {
-	dir := scenarioProjectPath("Mandala", "felt-compendium", "kit_settings_calibration")
+	dir := scenarioProjectPath("External", "felt-compendium", "kit_settings_calibration")
 	baseline := filepath.Join(dir, "rof_p1_postimperial.aoe2scenario")
 	castle := filepath.Join(dir, "rof_p1_castle.aoe2scenario")
 	architecture := filepath.Join(dir, "rof_p2_magyar_architecture.aoe2scenario")
@@ -7106,7 +7106,7 @@ func TestScenarioSettingsCalibrationFixtures(t *testing.T) {
 }
 
 func TestScenarioSettingsOptionsDiplomacyFixtures(t *testing.T) {
-	dir := scenarioProjectPath("Mandala", "felt-compendium", "kit_settings_calibration")
+	dir := scenarioProjectPath("External", "felt-compendium", "kit_settings_calibration")
 	path := func(name string) string {
 		return filepath.Join(dir, name+".aoe2scenario")
 	}
@@ -7327,7 +7327,7 @@ func TestSecondaryGameModesAreNamedAndDiffed(t *testing.T) {
 }
 
 func TestScenarioSettingsMessagesCinematicsFixtures(t *testing.T) {
-	dir := scenarioProjectPath("Mandala", "felt-compendium", "kit_settings_calibration")
+	dir := scenarioProjectPath("External", "felt-compendium", "kit_settings_calibration")
 	path := func(name string) string {
 		return filepath.Join(dir, name+".aoe2scenario")
 	}
@@ -7477,7 +7477,7 @@ func TestInflatedBodyFile(t *testing.T) {
 }
 
 func TestScenarioByteDiffCalibrationFixtures(t *testing.T) {
-	dir := scenarioProjectPath("Mandala", "felt-compendium", "kit_settings_calibration")
+	dir := scenarioProjectPath("External", "felt-compendium", "kit_settings_calibration")
 	postImp := filepath.Join(dir, "rof_p1_postimperial.aoe2scenario")
 	castle := filepath.Join(dir, "rof_p1_castle.aoe2scenario")
 	for _, path := range []string{postImp, castle} {
@@ -7514,7 +7514,7 @@ func TestScenarioByteDiffCalibrationFixtures(t *testing.T) {
 }
 
 func TestScenarioByteDiffDoesNotSuppressTriggerSectionChanges(t *testing.T) {
-	dir := scenarioProjectPath("Mandala", "felt-compendium", "kit_settings_calibration")
+	dir := scenarioProjectPath("External", "felt-compendium", "kit_settings_calibration")
 	before := filepath.Join(dir, "md_t21_trigger0_added.aoe2scenario")
 	after := filepath.Join(dir, "md_t22_trigger_make_header.aoe2scenario")
 	for _, path := range []string{before, after} {

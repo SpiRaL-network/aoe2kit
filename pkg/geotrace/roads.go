@@ -1,12 +1,12 @@
 package geotrace
 
 import (
-	"bytes"
+	"aoe2kit/pkg/fetch"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"math"
 	"net/http"
 	"net/url"
@@ -21,12 +21,26 @@ const roadTerrainID = 75
 const roadsideTerrainID = 6
 const borderTerrainID = 129
 
+type roadFetchState struct{ session *fetch.Session }
+
+func completeRoadPayload(data []byte) bool {
+	var root struct {
+		Elements []json.RawMessage `json:"elements"`
+		Remark   string            `json:"remark"`
+	}
+	return json.Unmarshal(data, &root) == nil && root.Elements != nil && root.Remark == ""
+}
+
+func writeRoadCache(path string, data []byte) error { return fetch.AtomicWrite(path, data) }
+
 type roadStats struct {
+	Coverage       SourceCoverage
 	Provider       string
 	WayCount       int
 	VertexCountRaw int
 	VertexCount    int
 	SimplifyTiles  float64
+	WidthTiles     float64
 	CellCount      int
 	Refs           []string
 }
@@ -50,14 +64,19 @@ func applyRoadLayer(report *Report, opts Options) (roadStats, error) {
 	}
 	if len(ways) == 0 {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("road provider %s returned no ways", effectiveProvider))
-		return roadStats{Provider: effectiveProvider}, nil
+		return roadStats{Provider: effectiveProvider, Coverage: roadSourceCoverage(ways, opts)}, nil
 	}
 	rawVertexCount := roadVertexCount(ways)
+	coverage := roadSourceCoverage(ways, opts)
 	simplifyTiles := roadSimplifyTiles(opts)
 	ways = simplifyRoadWaysForViewport(ways, report.BBox, report.GridSize, simplifyTiles)
 	vertexCount := roadVertexCount(ways)
-	n := report.GridSize
-	roadMask := make(map[int]bool)
+	proj := report.projection()
+	type roadStyle struct {
+		terrainID int
+		width     float64
+	}
+	roadMask := make(map[int]roadStyle)
 	refSet := map[string]bool{}
 	for _, way := range ways {
 		for _, key := range []string{"ref", "name"} {
@@ -65,19 +84,18 @@ func applyRoadLayer(report *Report, opts Options) (roadStats, error) {
 				refSet[value] = true
 			}
 		}
-		for i := 1; i < len(way.Geometry); i++ {
-			for _, idx := range geoSegmentIndices(report.BBox, n, report.Orient, way.Geometry[i-1], way.Geometry[i]) {
-				if idx < 0 || idx >= len(report.Cells) {
-					continue
-				}
-				if roadCellAllowed(report.Cells[idx]) {
-					roadMask[idx] = true
-				}
+		terrainID := roadTerrainForWay(way.Tags)
+		widthTiles := roadWidthForHighway(way.Tags["highway"], roadWidthTiles(opts))
+		for _, idx := range strokeRoadPolyline(report, proj, way.Geometry, widthTiles) {
+			if previous, ok := roadMask[idx]; !ok || widthTiles > previous.width || (widthTiles == previous.width && terrainID < previous.terrainID) {
+				roadMask[idx] = roadStyle{terrainID: terrainID, width: widthTiles}
 			}
 		}
 	}
-	for idx := range roadMask {
+	for idx, style := range roadMask {
 		report.Cells[idx].Road = true
+		report.Cells[idx].RoadTerrainID = style.terrainID
+		report.Cells[idx].RoadWidth = style.width
 	}
 	refs := make([]string, 0, len(refSet))
 	for ref := range refSet {
@@ -85,14 +103,104 @@ func applyRoadLayer(report *Report, opts Options) (roadStats, error) {
 	}
 	sort.Strings(refs)
 	return roadStats{
+		Coverage:       coverage,
 		Provider:       effectiveProvider,
 		WayCount:       len(ways),
 		VertexCountRaw: rawVertexCount,
 		VertexCount:    vertexCount,
 		SimplifyTiles:  simplifyTiles,
+		WidthTiles:     roadWidthTiles(opts),
 		CellCount:      len(roadMask),
 		Refs:           refs,
 	}, nil
+}
+
+func roadWidthTiles(opts Options) float64 {
+	if opts.RoadWidthTiles > 0 {
+		return opts.RoadWidthTiles
+	}
+	return 1
+}
+
+// strokeRoadPolyline buffers the source vector path with round caps and joins,
+// then rasterizes cells whose tile squares intersect the stroke. Sampling at
+// four points per grid tile bounds the approximation error to a quarter tile.
+func strokeRoadPolyline(report *Report, proj geoProjection, points []point, widthTiles float64) []int {
+	if report == nil || report.GridSize <= 0 || len(points) < 2 || widthTiles <= 0 {
+		return nil
+	}
+	n := report.GridSize
+	radius := widthTiles / 2
+	seen := map[int]bool{}
+	for i := 1; i < len(points); i++ {
+		x0, y0 := roadPointToGrid(proj, n, points[i-1])
+		x1, y1 := roadPointToGrid(proj, n, points[i])
+		length := math.Hypot(x1-x0, y1-y0)
+		steps := maxInt(1, int(math.Ceil(length*4)))
+		for step := 0; step <= steps; step++ {
+			t := float64(step) / float64(steps)
+			x := x0 + (x1-x0)*t
+			y := y0 + (y1-y0)*t
+			extent := int(math.Ceil(radius + 0.5))
+			for cy := maxInt(0, int(math.Floor(y))-extent); cy <= minInt(n-1, int(math.Floor(y))+extent); cy++ {
+				for cx := maxInt(0, int(math.Floor(x))-extent); cx <= minInt(n-1, int(math.Floor(x))+extent); cx++ {
+					dx := math.Max(0, math.Abs(x-float64(cx))-0.5)
+					dy := math.Max(0, math.Abs(y-float64(cy))-0.5)
+					if dx*dx+dy*dy > radius*radius+1e-12 {
+						continue
+					}
+					idx := cy*n + cx
+					if roadCellAllowed(report.Cells[idx]) {
+						seen[idx] = true
+					}
+				}
+			}
+		}
+	}
+	out := make([]int, 0, len(seen))
+	for idx := range seen {
+		out = append(out, idx)
+	}
+	sort.Ints(out)
+	return out
+}
+
+func roadPointToGrid(proj geoProjection, n int, p point) (float64, float64) {
+	if proj.orient == "grid" {
+		u := (p.Lon - proj.midLon) / (proj.b.MaxLon - proj.b.MinLon)
+		v := -(p.Lat - proj.midLat) / (proj.b.MaxLat - proj.b.MinLat)
+		return (u + 0.5) * float64(n-1), (v + 0.5) * float64(n-1)
+	}
+	u, v, _ := proj.latLonToGridUnit(p.Lat, p.Lon)
+	return (u + 0.5) * float64(n-1), (v + 0.5) * float64(n-1)
+}
+
+func roadWidthForHighway(highway string, base float64) float64 {
+	if base <= 0 {
+		base = 1
+	}
+	factor := 1.0
+	switch strings.ToLower(strings.TrimSpace(highway)) {
+	case "motorway", "trunk":
+		factor = 1.4
+	case "primary":
+		factor = 1.25
+	case "secondary":
+		factor = 1.15
+	case "tertiary":
+		factor = 1.05
+	}
+	return math.Min(32, base*factor)
+}
+
+func roadTerrainForWay(tags map[string]string) int {
+	surface := strings.ToLower(strings.TrimSpace(tags["surface"]))
+	switch surface {
+	case "gravel", "fine_gravel", "pebblestone", "ground", "dirt", "earth", "unpaved":
+		return 78
+	default:
+		return 24
+	}
 }
 
 func roadVertexCount(ways []roadWay) int {
@@ -216,6 +324,7 @@ func sameRoadPoint(a, b point) bool {
 }
 
 func applyAdministrativeBorderLayer(report *Report, opts Options) (int, error) {
+	proj := report.projection()
 	if strings.TrimSpace(opts.RoadsProvider) == "" && strings.TrimSpace(opts.RoadsPath) == "" {
 		return 0, nil
 	}
@@ -226,7 +335,7 @@ func applyAdministrativeBorderLayer(report *Report, opts Options) (int, error) {
 	}
 	for _, way := range ways {
 		for i := 1; i < len(way.Geometry); i++ {
-			for _, idx := range geoSegmentIndices(report.BBox, report.GridSize, report.Orient, way.Geometry[i-1], way.Geometry[i]) {
+			for _, idx := range proj.geoSegmentIndices(report.GridSize, way.Geometry[i-1], way.Geometry[i]) {
 				if idx < 0 || idx >= len(report.Cells) {
 					continue
 				}
@@ -237,7 +346,8 @@ func applyAdministrativeBorderLayer(report *Report, opts Options) (int, error) {
 	return len(ways), nil
 }
 
-func geoSegmentIndices(b BBox, n int, orient string, a, z point) []int {
+func (proj geoProjection) geoSegmentIndices(n int, a, z point) []int {
+	b := proj.b
 	if n <= 0 {
 		return nil
 	}
@@ -253,7 +363,7 @@ func geoSegmentIndices(b BBox, n int, orient string, a, z point) []int {
 		t := float64(s) / float64(steps)
 		lat := a.Lat + (z.Lat-a.Lat)*t
 		lon := a.Lon + (z.Lon-a.Lon)*t
-		x, y, ok := gridCellForLatLon(b, n, orient, lat, lon)
+		x, y, ok := proj.gridCellForLatLon(n, lat, lon)
 		if !ok {
 			havePrev = false
 			continue
@@ -309,13 +419,13 @@ func applyDerivedFeatureMasks(report *Report) {
 	if report == nil || report.GridSize <= 0 || len(report.Cells) != report.GridSize*report.GridSize {
 		return
 	}
-	addFloridaKeysCauseway(report)
+	applyProfileOverlays(report)
 	markRoadsideCells(report)
 	markWaterBufferCells(report)
 	report.RoadCells = 0
 	report.RoadsideCells = 0
 	report.WaterBufferCells = 0
-	report.KeyWestCausewayCells = 0
+	report.CausewayCells = 0
 	report.BorderCells = 0
 	for i := range report.Cells {
 		if report.Cells[i].Road {
@@ -327,118 +437,12 @@ func applyDerivedFeatureMasks(report *Report) {
 		if report.Cells[i].WaterBuffer {
 			report.WaterBufferCells++
 		}
-		if report.Cells[i].KeyWestCauseway {
-			report.KeyWestCausewayCells++
+		if report.Cells[i].Causeway {
+			report.CausewayCells++
 		}
 		if report.Cells[i].Border {
 			report.BorderCells++
 		}
-	}
-}
-
-func addFloridaKeysCauseway(report *Report) {
-	if !bboxContains(report.BBox, 24.56, -81.78) || !bboxContains(report.BBox, 25.47, -80.45) {
-		return
-	}
-	route := []point{
-		{Lat: 25.47, Lon: -80.45},
-		{Lat: 25.10, Lon: -80.45},
-		{Lat: 24.92, Lon: -80.64},
-		{Lat: 24.71, Lon: -81.09},
-		{Lat: 24.67, Lon: -81.35},
-		{Lat: 24.56, Lon: -81.78},
-	}
-	for i := 1; i < len(route); i++ {
-		x0, y0, ok0 := gridCellForLatLon(report.BBox, report.GridSize, report.Orient, route[i-1].Lat, route[i-1].Lon)
-		x1, y1, ok1 := gridCellForLatLon(report.BBox, report.GridSize, report.Orient, route[i].Lat, route[i].Lon)
-		if !ok0 || !ok1 {
-			continue
-		}
-		for _, idx := range bresenhamIndices(x0, y0, x1, y1, report.GridSize) {
-			if idx < 0 || idx >= len(report.Cells) {
-				continue
-			}
-			report.Cells[idx].Road = true
-			report.Cells[idx].KeyWestCauseway = true
-		}
-	}
-}
-
-func addFloridaGeorgiaBorder(report *Report) {
-	if report.BBox.MinLat > 31.05 || report.BBox.MaxLat < 30.25 || report.BBox.MinLon > -81.1 || report.BBox.MaxLon < -87.7 {
-		return
-	}
-	line := floridaSharedStateBorder()
-	n := report.GridSize
-	for i := 1; i < len(line); i++ {
-		x0, y0, ok0 := gridCellForLatLon(report.BBox, report.GridSize, report.Orient, line[i-1].Lat, line[i-1].Lon)
-		x1, y1, ok1 := gridCellForLatLon(report.BBox, report.GridSize, report.Orient, line[i].Lat, line[i].Lon)
-		if !ok0 || !ok1 {
-			continue
-		}
-		for _, idx := range bresenhamIndices(x0, y0, x1, y1, report.GridSize) {
-			if idx < 0 || idx >= len(report.Cells) {
-				continue
-			}
-			x := idx % n
-			y := idx / n
-			for dy := -1; dy <= 1; dy++ {
-				for dx := -1; dx <= 1; dx++ {
-					xx := x + dx
-					yy := y + dy
-					if xx < 0 || yy < 0 || xx >= n || yy >= n {
-						continue
-					}
-					j := yy*n + xx
-					if report.Cells[j].Land != nil && *report.Cells[j].Land {
-						report.Cells[j].Border = true
-					}
-				}
-			}
-		}
-	}
-}
-
-func floridaSharedStateBorder() []point {
-	return []point{
-		{Lon: -87.447336, Lat: 30.313137},
-		{Lon: -87.426829, Lat: 30.374579},
-		{Lon: -87.378774, Lat: 30.417467},
-		{Lon: -87.387074, Lat: 30.463284},
-		{Lon: -87.439032, Lat: 30.528666},
-		{Lon: -87.411224, Lat: 30.610697},
-		{Lon: -87.405194, Lat: 30.67017},
-		{Lon: -87.525214, Lat: 30.749394},
-		{Lon: -87.625311, Lat: 30.865214},
-		{Lon: -87.599945, Lat: 30.934086},
-		{Lon: -87.593646, Lat: 30.999711},
-		{Lon: -87.23078, Lat: 30.999784},
-		{Lon: -86.754169, Lat: 30.999833},
-		{Lon: -86.277557, Lat: 30.999906},
-		{Lon: -85.800946, Lat: 31.000004},
-		{Lon: -85.324335, Lat: 31.000077},
-		{Lon: -85.006586, Lat: 31.000102},
-		{Lon: -84.966205, Lat: 30.922709},
-		{Lon: -84.920477, Lat: 30.760087},
-		{Lon: -84.780072, Lat: 30.715287},
-		{Lon: -84.48288, Lat: 30.697636},
-		{Lon: -84.114667, Lat: 30.675834},
-		{Lon: -83.682709, Lat: 30.650199},
-		{Lon: -83.235199, Lat: 30.623612},
-		{Lon: -82.037372, Lat: 30.62393},
-		{Lon: -82.047308, Lat: 30.650053},
-		{Lon: -82.038837, Lat: 30.702299},
-		{Lon: -82.034955, Lat: 30.749394},
-		{Lon: -81.998212, Lat: 30.782475},
-		{Lon: -81.953387, Lat: 30.82061},
-		{Lon: -81.886591, Lat: 30.80518},
-		{Lon: -81.781805, Lat: 30.766191},
-		{Lon: -81.708759, Lat: 30.741069},
-		{Lon: -81.608588, Lat: 30.71746},
-		{Lon: -81.525262, Lat: 30.718144},
-		{Lon: -81.46935, Lat: 30.69717},
-		{Lon: -81.437815, Lat: 30.637763},
-		{Lon: -81.489003, Lat: 30.620998},
 	}
 }
 
@@ -588,6 +592,14 @@ func roadWayLooksInterstate(way roadWay) bool {
 }
 
 func fetchOverpassRoads(provider string, opts Options) ([]byte, error) {
+	timeout := opts.RoadsTimeout
+	if timeout <= 0 {
+		timeout = 10 * time.Minute
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	opts.roadContext = ctx
+	opts.roadFetchState = &roadFetchState{}
 	cachePath := ""
 	if opts.RoadsCacheDir != "" {
 		if err := os.MkdirAll(opts.RoadsCacheDir, 0755); err != nil {
@@ -620,13 +632,29 @@ out geom tags;`, regex, refClause, opts.BBox.MinLat, opts.BBox.MinLon, opts.BBox
 	if shouldChunkOverpass(opts.BBox) {
 		data, err = fetchOverpassRoadChunks(provider, regex, opts)
 	} else {
-		data, err = fetchOverpassQuery(opts.Client, query)
+		data, err = fetchOverpassQuery(opts, query)
 	}
 	if err != nil {
 		return nil, err
 	}
+	// Keep query provenance when this cache is later supplied as --roads-file.
+	var payload map[string]json.RawMessage
+	if err := json.Unmarshal(data, &payload); err != nil {
+		return nil, err
+	}
+	if payload == nil {
+		return nil, fmt.Errorf("road provider returned a null document")
+	}
+	payload["kit_query_bbox"], err = json.Marshal(opts.BBox)
+	if err != nil {
+		return nil, err
+	}
+	data, err = json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
 	if cachePath != "" {
-		if err := os.WriteFile(cachePath, data, 0644); err != nil {
+		if err := writeRoadCache(cachePath, data); err != nil {
 			return nil, err
 		}
 	}
@@ -634,11 +662,7 @@ out geom tags;`, regex, refClause, opts.BBox.MinLat, opts.BBox.MinLon, opts.BBox
 }
 
 func overpassPayloadUsable(data []byte) bool {
-	if bytes.Contains(data, []byte(`"remark"`)) && bytes.Contains(data, []byte("runtime error")) {
-		return false
-	}
-	ways, err := parseOverpassRoadWays(data)
-	return err == nil && len(ways) > 0
+	return completeRoadPayload(data)
 }
 
 func loadAdminBorderWays(opts Options) ([]roadWay, error) {
@@ -671,7 +695,7 @@ func fetchOverpassAdminBorders(opts Options) ([]byte, error) {
 out geom tags;`,
 		opts.BBox.MinLat, opts.BBox.MinLon, opts.BBox.MaxLat, opts.BBox.MaxLon,
 		opts.BBox.MinLat, opts.BBox.MinLon, opts.BBox.MaxLat, opts.BBox.MaxLon)
-	data, err := fetchOverpassQuery(opts.Client, query)
+	data, err := fetchOverpassQuery(opts, query)
 	if err != nil {
 		return nil, err
 	}
@@ -702,6 +726,11 @@ func fetchOverpassRoadChunks(provider, regex string, opts Options) ([]byte, erro
 		minLat := opts.BBox.MinLat + (opts.BBox.MaxLat-opts.BBox.MinLat)*float64(latPart)/float64(chunks)
 		maxLat := opts.BBox.MinLat + (opts.BBox.MaxLat-opts.BBox.MinLat)*float64(latPart+1)/float64(chunks)
 		for lonPart := 0; lonPart < chunks; lonPart++ {
+			started := time.Now()
+			chunk := latPart*chunks + lonPart + 1
+			if opts.Progress != nil {
+				fmt.Fprintf(opts.Progress, "roads chunk %d/%d starting\n", chunk, chunks*chunks)
+			}
 			minLon := opts.BBox.MinLon + (opts.BBox.MaxLon-opts.BBox.MinLon)*float64(lonPart)/float64(chunks)
 			maxLon := opts.BBox.MinLon + (opts.BBox.MaxLon-opts.BBox.MinLon)*float64(lonPart+1)/float64(chunks)
 			refClause := ""
@@ -713,9 +742,26 @@ func fetchOverpassRoadChunks(provider, regex string, opts Options) ([]byte, erro
   way["highway"~%q]%s(%.7f,%.7f,%.7f,%.7f);
 );
 out geom tags;`, regex, refClause, minLat, minLon, maxLat, maxLon)
-			data, err := fetchOverpassQuery(opts.Client, query)
+			cachePath := ""
+			var data []byte
+			if opts.RoadsCacheDir != "" {
+				sum := sha256.Sum256([]byte(query))
+				cachePath = filepath.Join(opts.RoadsCacheDir, "road-chunk-"+hex.EncodeToString(sum[:])+".json")
+				cached, err := os.ReadFile(cachePath)
+				if err == nil && completeRoadPayload(cached) {
+					data = cached
+				}
+			}
+			cached := len(data) > 0
+			var err error
+			if !cached {
+				data, err = fetchOverpassQuery(opts, query)
+				if err == nil && cachePath != "" {
+					err = writeRoadCache(cachePath, data)
+				}
+			}
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("road chunk %d/%d: %w", chunk, chunks*chunks, err)
 			}
 			var rawRoot struct {
 				Elements []json.RawMessage `json:"elements"`
@@ -726,6 +772,9 @@ out geom tags;`, regex, refClause, minLat, minLon, maxLat, maxLon)
 			var root overpassRoot
 			if err := json.Unmarshal(data, &root); err != nil {
 				return nil, err
+			}
+			if opts.Progress != nil {
+				fmt.Fprintf(opts.Progress, "roads chunk %d/%d ways=%d cached=%t elapsed=%s\n", chunk, chunks*chunks, len(root.Elements), cached, time.Since(started).Round(time.Millisecond))
 			}
 			for i, element := range root.Elements {
 				key := fmt.Sprintf("id:%d", element.ID)
@@ -747,52 +796,53 @@ func shouldChunkOverpass(b BBox) bool {
 	return math.Abs(b.MaxLat-b.MinLat)*math.Abs(b.MaxLon-b.MinLon) > 25
 }
 
-func fetchOverpassQuery(client *http.Client, query string) ([]byte, error) {
-	if client == nil {
-		client = &http.Client{Timeout: 90 * time.Second}
-	}
-	form := url.Values{"data": []string{query}}
-	endpoints := []string{
-		"https://overpass-api.de/api/interpreter",
-		"https://overpass.kumi.systems/api/interpreter",
-		"https://overpass.openstreetmap.ru/api/interpreter",
-	}
-	var lastErr error
-	for _, endpoint := range endpoints {
-		for attempt := 0; attempt < 2; attempt++ {
-			req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBufferString(form.Encode()))
-			if err != nil {
-				return nil, err
-			}
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			req.Header.Set("User-Agent", "AoE2Kit geotrace road layer (https://github.com/chrae/aoe2kit)")
-			resp, err := client.Do(req)
-			if err != nil {
-				lastErr = err
-				continue
-			}
-			data, readErr := io.ReadAll(io.LimitReader(resp.Body, 64<<20))
-			closeErr := resp.Body.Close()
-			if readErr != nil {
-				lastErr = readErr
-				continue
-			}
-			if closeErr != nil {
-				lastErr = closeErr
-				continue
-			}
-			if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-				return data, nil
-			}
-			lastErr = fmt.Errorf("Overpass %s status %d: %s", endpoint, resp.StatusCode, strings.TrimSpace(string(data[:minInt(len(data), 500)])))
+func fetchOverpassQuery(opts Options, query string) ([]byte, error) {
+	ctx := opts.roadContext
+	if ctx == nil {
+		timeout := opts.RoadsTimeout
+		if timeout <= 0 {
+			timeout = 10 * time.Minute
 		}
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(context.Background(), timeout)
+		defer cancel()
 	}
-	return nil, lastErr
+	session := &fetch.Session{Client: opts.Client, Progress: opts.Progress}
+	if opts.roadFetchState != nil {
+		if opts.roadFetchState.session == nil {
+			opts.roadFetchState.session = session
+		}
+		session = opts.roadFetchState.session
+	}
+	part := fetch.Part{
+		Name: "roads", Method: http.MethodPost,
+		Endpoints: []string{"https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.openstreetmap.ru/api/interpreter"},
+		Body:      []byte(url.Values{"data": []string{query}}.Encode()),
+		Header:    http.Header{"Content-Type": []string{"application/x-www-form-urlencoded"}, "User-Agent": []string{"AoE2Kit geotrace road layer (https://github.com/chrae/aoe2kit)"}},
+		Validate: func(data []byte) error {
+			if !completeRoadPayload(data) {
+				return fmt.Errorf("incomplete or invalid Overpass response")
+			}
+			return nil
+		},
+	}
+	if opts.RoadsCacheDir != "" {
+		part.CachePath = filepath.Join(opts.RoadsCacheDir, "road-chunk-"+fetch.QueryKey([]byte(query))+".json")
+	}
+	return session.Get(ctx, part)
 }
-
 func parseRoadFile(data []byte) ([]roadWay, error) {
-	if ways, err := parseOverpassRoadWays(data); err == nil && len(ways) > 0 {
-		return ways, nil
+	var header struct {
+		Elements json.RawMessage `json:"elements"`
+	}
+	if err := json.Unmarshal(data, &header); err != nil {
+		return nil, err
+	}
+	if len(header.Elements) > 0 {
+		if !completeRoadPayload(data) {
+			return nil, fmt.Errorf("incomplete or invalid Overpass road file")
+		}
+		return parseOverpassRoadWays(data)
 	}
 	return parseGeoJSONRoadWays(data)
 }
@@ -955,7 +1005,8 @@ func parseGeoJSONLine(data json.RawMessage) ([]point, error) {
 	return out, nil
 }
 
-func gridCellForLatLon(b BBox, n int, orient string, lat, lon float64) (int, int, bool) {
+func (proj geoProjection) gridCellForLatLon(n int, lat, lon float64) (int, int, bool) {
+	b, orient := proj.b, proj.orient
 	if n <= 0 {
 		return 0, 0, false
 	}
@@ -979,7 +1030,6 @@ func gridCellForLatLon(b BBox, n int, orient string, lat, lon float64) (int, int
 		y := sum - x
 		return x, y, x >= 0 && y >= 0 && x < n && y < n
 	}
-	proj := newGeoProjection(b, orient)
 	u, v, ok := proj.latLonToGridUnit(lat, lon)
 	if !ok {
 		return 0, 0, false

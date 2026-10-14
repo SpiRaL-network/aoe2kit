@@ -35,6 +35,87 @@ func TestTraceDEMFlatProvider(t *testing.T) {
 	}
 }
 
+func TestNormalizeDockableShore(t *testing.T) {
+	land := true
+	water := false
+	report := Report{
+		LandmaskProvider: "geojson",
+		ShoreBandWidth:   1,
+		Cells: []Cell{
+			{Land: &water, DistanceToShoreTiles: 0.5, TerrainID: 58},
+			{Land: &water, InlandWater: true, DistanceToShoreTiles: 0.5, TerrainID: 23},
+			{Land: &land, DistanceToShoreTiles: 0.5, TerrainID: 53},
+		},
+	}
+	normalizeDockableShore(&report)
+	if report.DockableShoreCells != 1 {
+		t.Fatalf("dockable shore cells=%d want 1", report.DockableShoreCells)
+	}
+	if report.Cells[0].TerrainID != 1 {
+		t.Fatalf("coastal water terrain=%d want 1", report.Cells[0].TerrainID)
+	}
+	if report.Cells[1].TerrainID != 23 {
+		t.Fatalf("inland water terrain=%d want 23", report.Cells[1].TerrainID)
+	}
+	if report.Cells[2].TerrainID != 53 {
+		t.Fatalf("land terrain=%d want 53", report.Cells[2].TerrainID)
+	}
+}
+
+func TestBuildRecipeCarriesPlacementAndDockableShorePolicy(t *testing.T) {
+	land := true
+	water := false
+	report := Report{
+		DatPath:        filepath.Join(t.TempDir(), "empires2_x2_p1.dat"),
+		GridSize:       4,
+		ShoreBandWidth: 1,
+		Cells:          []Cell{{X: 0, Y: 0, Land: &water, TerrainID: 1, DistanceToShoreTiles: 0.5}, {X: 1, Y: 1, Land: &land, TerrainID: 53}},
+	}
+	recipe := BuildRecipe(report)
+	if recipe.DatPath != report.DatPath {
+		t.Fatalf("recipe dat_path=%q want %q", recipe.DatPath, report.DatPath)
+	}
+	var foundDockable bool
+	for _, mask := range recipe.Masks {
+		if mask.Name == "dockable_shore" {
+			foundDockable = true
+		}
+	}
+	if !foundDockable {
+		t.Fatal("recipe missing dockable_shore mask")
+	}
+	var foundDockableOp bool
+	for _, op := range recipe.Map {
+		if op.Op == "set_terrain_mask" && op.Mask == "dockable_shore" && op.TerrainID != nil && *op.TerrainID == 1 {
+			foundDockableOp = true
+		}
+	}
+	if !foundDockableOp {
+		t.Fatal("recipe missing dockable shoreline terrain operation")
+	}
+}
+
+func TestLoadUSGSWoodyCSV(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "woody.csv")
+	data := "ID,LATITUDE,LONGITUDE,Quercus virginiana,Pinus elliottii,Unmapped shrub\n1,27.5,-81.5,1,1,1\n2,30.0,-82.0,0,1,1\n"
+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	grid, summary, err := loadUSGSWoody(path)
+	if err != nil {
+		t.Fatalf("loadUSGSWoody: %v", err)
+	}
+	if summary.PointCount != 2 || summary.SpeciesCount != 2 {
+		t.Fatalf("summary=%+v, want two points and two mapped species", summary)
+	}
+	if got := usgsWoodyUnitChoices(grid.nearestSpecies(27.6, -81.5)); len(got) != 2 {
+		t.Fatalf("nearest mapped units=%v, want two choices", got)
+	}
+	if got := grid.nearestSpecies(29.9, -82.1); len(got) != 1 || got[0] != "Pinus elliottii" {
+		t.Fatalf("nearest species=%v, want Pinus elliottii", got)
+	}
+}
+
 func TestTraceDEMLandmaskGeoJSONEmitsRecipe(t *testing.T) {
 	dir := t.TempDir()
 	landmask := filepath.Join(dir, "land.geojson")
@@ -171,7 +252,7 @@ func TestTraceDEMScreenIsoPreservesViewportEarth(t *testing.T) {
 }
 
 func TestScreenIsoProjectionUsesSingleMatrix(t *testing.T) {
-	proj := newGeoProjection(BBox{MinLat: 23, MinLon: -87.75, MaxLat: 31.05, MaxLon: -79.55}, "iso-ccw-screen")
+	proj := newGeoProjection(BBox{MinLat: 23, MinLon: -87.75, MaxLat: 31.05, MaxLon: -79.55}, "iso-ccw-screen", ProjectionOptions{})
 	check := projectionSelfCheck(proj)
 	if check == nil {
 		t.Fatal("projection self-check is nil")
@@ -188,9 +269,44 @@ func TestScreenIsoProjectionUsesSingleMatrix(t *testing.T) {
 	if check.DueNorthScreenDY >= 0 {
 		t.Fatalf("due north dy=%g, want north-up", check.DueNorthScreenDY)
 	}
-	angle := peninsulaAxisAngleDeg(proj)
+	report := Report{BBox: proj.b, Orient: proj.orient, EcologyProfile: EcologyProfile{CalibrationAxes: []CalibrationAxis{{Name: "peninsula", From: GeoPoint{Lat: 30.3, Lon: -81.7}, To: GeoPoint{Lat: 25.4, Lon: -80.5}}}}}
+	measureCalibrationAxes(&report)
+	angle := report.CalibrationAxes[0].AngleFromSouthDeg
 	if angle < 10 || angle > 14 {
 		t.Fatalf("peninsula angle=%g, want about 12 degrees east of south", angle)
+	}
+}
+
+func TestScreenIsoProjectionAspectIsConfigurable(t *testing.T) {
+	box := BBox{MinLat: 24, MinLon: -88, MaxLat: 32, MaxLon: -79.5}
+	wide := newGeoProjection(box, "iso-ccw-screen", ProjectionOptions{Aspect: 2.4})
+	compact := newGeoProjection(box, "iso-ccw-screen", ProjectionOptions{Aspect: 1.4})
+	if wide.screenAspect != 2.4 || compact.screenAspect != 1.4 {
+		t.Fatalf("projection aspects=(%g,%g)", wide.screenAspect, compact.screenAspect)
+	}
+	if wide.matrixScale == compact.matrixScale {
+		t.Fatal("projection aspect did not change matrix scale")
+	}
+}
+
+func TestLoadEcologyProfile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "profile.json")
+	data := []byte(`{"schema":"aoe2kit-geotrace-ecology/v1","name":"test","resource_tree_units":[11,12],"decorative_flora_unit":13,"fish_by_band":{"shore":[14]}}`)
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	profile, err := loadEcologyProfile(path)
+	if err != nil {
+		t.Fatalf("loadEcologyProfile: %v", err)
+	}
+	if profile.Name != "test" || len(profile.ResourceTreeUnits) != 2 || profile.DecorativeFloraUnit != 13 {
+		t.Fatalf("profile=%+v", profile)
+	}
+	if got := profileFish(profile, "shore"); len(got) != 1 || got[0] != 14 {
+		t.Fatalf("shore fish=%v", got)
+	}
+	if got := profileFish(profile, "deep"); len(got) == 0 {
+		t.Fatal("missing bands should use defaults")
 	}
 }
 
@@ -285,6 +401,20 @@ func TestWorldCoverTileName(t *testing.T) {
 	want := "ESA_WorldCover_10m_2021_v200_N24W081_Map.tif"
 	if got != want {
 		t.Fatalf("tile=%q want %q", got, want)
+	}
+}
+
+func TestSortedLandcoverArrayStatsMatchesPixelSemantics(t *testing.T) {
+	var counts [256]int
+	counts[10] = 5
+	counts[30] = 4
+	counts[80] = 1
+	got := sortedLandcoverArrayStats(counts, 10, worldCoverClassKey)
+	if len(got) != 3 || got[0].Class != 10 || got[1].Class != 30 || got[2].Class != 80 {
+		t.Fatalf("stats=%+v", got)
+	}
+	if got[0].Weight != 0.5 || got[1].Weight != 0.4 || got[2].Weight != 0.1 {
+		t.Fatalf("weights=%+v", got)
 	}
 }
 

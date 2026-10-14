@@ -1,9 +1,12 @@
 package geotrace
 
 import (
+	"aoe2kit/pkg/fetch"
 	"bytes"
 	"compress/zlib"
+	"context"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -35,16 +38,26 @@ func sampleLandcover(opts Options, points []Cell, landmask []bool) ([]LandcoverS
 	if provider == "glc_fcs30d" {
 		provider = "glc-fcs30d"
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
 	sampler := &worldCoverSampler{
-		provider: provider,
-		client:   opts.Client,
-		cacheDir: opts.LandcoverCacheDir,
-		filePath: opts.LandcoverPath,
-		fileDir:  opts.LandcoverDir,
+		targetPixelMeters: approximateTileMeters(opts.BBox, opts.GridSize) / 3,
+		ctx:               ctx,
+		progress:          opts.Progress,
+		provider:          provider,
+		client:            opts.Client,
+		cacheDir:          opts.LandcoverCacheDir,
+		filePath:          opts.LandcoverPath,
+		fileDir:           opts.LandcoverDir,
+	}
+	tileMeters := approximateTileMeters(opts.BBox, opts.GridSize)
+	if provider == "worldcover" && tileMeters > coastRefinementMaxTileMeters && refineWorldCoverCoast(provider, tileMeters) {
+		sampler.targetPixelMeters = tileMeters / 12
+		sampler.footprintMeters = tileMeters
 	}
 	out := make([]LandcoverSample, len(points))
 	for i, p := range points {
-		if len(landmask) == len(points) && !landmask[i] {
+		if len(landmask) == len(points) && !landmask[i] && !refineWorldCoverCoast(provider, approximateTileMeters(opts.BBox, opts.GridSize)) {
 			continue
 		}
 		sample, err := sampler.sample(p.Lat, p.Lon)
@@ -57,13 +70,17 @@ func sampleLandcover(opts Options, points []Cell, landmask []bool) ([]LandcoverS
 }
 
 type worldCoverSampler struct {
-	provider string
-	client   *http.Client
-	cacheDir string
-	filePath string
-	fileDir  string
-	tiles    map[string]*worldCoverTile
-	missing  map[string]bool
+	targetPixelMeters float64
+	footprintMeters   float64
+	ctx               context.Context
+	progress          io.Writer
+	provider          string
+	client            *http.Client
+	cacheDir          string
+	filePath          string
+	fileDir           string
+	tiles             map[string]*worldCoverTile
+	missing           map[string]bool
 }
 
 func (s *worldCoverSampler) sample(lat, lon float64) (LandcoverSample, error) {
@@ -81,7 +98,7 @@ func (s *worldCoverSampler) sample(lat, lon float64) (LandcoverSample, error) {
 		s.missing = map[string]bool{}
 	}
 	if s.missing[name] {
-		return LandcoverSample{}, nil
+		return LandcoverSample{MissingTile: name}, nil
 	}
 	tile := s.tiles[name]
 	if tile == nil {
@@ -89,7 +106,7 @@ func (s *worldCoverSampler) sample(lat, lon float64) (LandcoverSample, error) {
 		if err != nil {
 			if errors.Is(err, errWorldCoverTileMissing) {
 				s.missing[name] = true
-				return LandcoverSample{}, nil
+				return LandcoverSample{MissingTile: name}, nil
 			}
 			return LandcoverSample{}, err
 		}
@@ -117,6 +134,22 @@ func (s *worldCoverSampler) sampleGLC(lat, lon float64) (LandcoverSample, error)
 }
 
 func (s *worldCoverSampler) loadTile(name string) (*worldCoverTile, error) {
+	// Only an observed 404 is negative-cached. Transport failures never mean water.
+	missingPath := ""
+	url := worldCoverBaseURL + "/" + name
+	if s.cacheDir != "" && s.filePath == "" && s.fileDir == "" {
+		missingPath = filepath.Join(s.cacheDir, "ranges", strings.TrimSuffix(name, ".tif"), "missing.json")
+		if b, err := os.ReadFile(missingPath); err == nil {
+			var m struct {
+				URL      string
+				Status   int
+				Observed time.Time
+			}
+			if json.Unmarshal(b, &m) == nil && m.URL == url && m.Status == 404 && time.Since(m.Observed) >= 0 && time.Since(m.Observed) < 24*time.Hour {
+				return nil, fmt.Errorf("%w: cached404 %s", errWorldCoverTileMissing, url)
+			}
+		}
+	}
 	src, err := s.sourceForTile(name)
 	if err != nil {
 		return nil, err
@@ -124,12 +157,29 @@ func (s *worldCoverSampler) loadTile(name string) (*worldCoverTile, error) {
 	header, err := src.readAt(0, 128<<10)
 	if err != nil {
 		src.close()
+		if missingPath != "" && errors.Is(err, errWorldCoverTileMissing) {
+			b, _ := json.Marshal(struct {
+				URL      string
+				Status   int
+				Observed time.Time
+			}{url, 404, time.Now().UTC()})
+			if e := os.MkdirAll(filepath.Dir(missingPath), 0755); e != nil {
+				return nil, e
+			}
+			if e := os.WriteFile(missingPath, b, 0644); e != nil {
+				return nil, e
+			}
+		}
 		return nil, err
 	}
-	tile, err := parseWorldCoverTile(name, src, header)
+	tile, err := parseLandcoverTileResolution(name, src, header, true, s.targetPixelMeters)
 	if err != nil {
 		src.close()
 		return nil, err
+	}
+	tile.footprintMeters = s.footprintMeters
+	if s.progress != nil {
+		fmt.Fprintf(s.progress, "WorldCover %s selected=%dx%d pixel_north_m=%.2f target_pixel_m=%.2f footprint_m=%.2f (zero uses 3x3)\n", name, tile.image.width, tile.image.height, tile.image.pixelHeight*111320, s.targetPixelMeters, s.footprintMeters)
 	}
 	return tile, nil
 }
@@ -166,6 +216,7 @@ func (s *worldCoverSampler) sourceForTile(name string) (rangeSource, error) {
 	}
 	url := worldCoverBaseURL + "/" + name
 	return &httpRangeSource{
+		ctx: s.ctx, progress: s.progress,
 		url:      url,
 		client:   s.httpClient(),
 		cacheDir: filepath.Join(s.cacheDir, "ranges", strings.TrimSuffix(name, ".tif")),
@@ -183,6 +234,7 @@ func (s *worldCoverSampler) sourceForGLC(name string) (rangeSource, error) {
 		return nil, fmt.Errorf("glc-fcs30d requires --landcover-cache, --landcover-dir, or --landcover-file")
 	}
 	return &httpRangeSource{
+		ctx: s.ctx, progress: s.progress,
 		url:      glcFCS30D2022URL,
 		client:   s.httpClient(),
 		cacheDir: filepath.Join(s.cacheDir, "ranges", "glc_fcs30d_2022"),
@@ -197,13 +249,14 @@ func (s *worldCoverSampler) httpClient() *http.Client {
 }
 
 type worldCoverTile struct {
-	name        string
-	src         rangeSource
-	image       tiffImage
-	tileCache   map[int][]byte
-	tileOrder   []int
-	classKey    func(int) string
-	glcClassKey func(int) string
+	footprintMeters float64
+	name            string
+	src             rangeSource
+	image           tiffImage
+	tileCache       map[int][]byte
+	tileOrder       []int
+	classKey        func(int) string
+	glcClassKey     func(int) string
 }
 
 const landcoverRawTileCacheLimit = 128
@@ -217,10 +270,15 @@ func (t *worldCoverTile) sample(lat, lon float64) (LandcoverSample, error) {
 	if px < 0 || py < 0 || px >= t.image.width || py >= t.image.height {
 		return LandcoverSample{}, nil
 	}
-	counts := map[int]int{}
+	var counts [256]int
 	total := 0
-	for dy := -1; dy <= 1; dy++ {
-		for dx := -1; dx <= 1; dx++ {
+	rx, ry := 1, 1
+	if t.footprintMeters > 0 {
+		rx = max(1, int(math.Floor(t.footprintMeters/(2*t.image.pixelWidth*111320*math.Abs(math.Cos(lat*math.Pi/180))))))
+		ry = max(1, int(math.Floor(t.footprintMeters/(2*t.image.pixelHeight*111320))))
+	}
+	for dy := -ry; dy <= ry; dy++ {
+		for dx := -rx; dx <= rx; dx++ {
 			xx := px + dx
 			yy := py + dy
 			if xx < 0 || yy < 0 || xx >= t.image.width || yy >= t.image.height {
@@ -233,7 +291,9 @@ func (t *worldCoverTile) sample(lat, lon float64) (LandcoverSample, error) {
 			if class == 0 {
 				continue
 			}
-			counts[class]++
+			if class >= 0 && class < len(counts) {
+				counts[class]++
+			}
 			total++
 		}
 	}
@@ -241,22 +301,47 @@ func (t *worldCoverTile) sample(lat, lon float64) (LandcoverSample, error) {
 	if keyFn == nil {
 		keyFn = worldCoverClassKey
 	}
-	hist := sortedLandcoverStats(counts, total, keyFn)
+	hist := sortedLandcoverArrayStats(counts, total, keyFn)
 	if len(hist) == 0 {
 		return LandcoverSample{}, nil
 	}
 	sample := LandcoverSample{
-		Valid:     true,
-		Class:     hist[0].Class,
-		Key:       hist[0].Key,
-		Fraction:  hist[0].Weight,
-		Histogram: hist,
+		PixelMeters: math.Max(t.image.pixelHeight, t.image.pixelWidth*math.Abs(math.Cos(lat*math.Pi/180))) * 111320,
+		Valid:       true,
+		Class:       hist[0].Class,
+		Key:         hist[0].Key,
+		Fraction:    hist[0].Weight,
+		Histogram:   hist,
 	}
 	if t.glcClassKey != nil {
 		sample.GLCClass = hist[0].Class
 		sample.GLCKey = t.glcClassKey(hist[0].Class)
 	}
 	return sample, nil
+}
+
+func sortedLandcoverArrayStats(counts [256]int, total int, keyFn func(int) string) []LandcoverStat {
+	if total <= 0 {
+		return nil
+	}
+	out := make([]LandcoverStat, 0, 4)
+	for class, count := range counts {
+		if count == 0 {
+			continue
+		}
+		out = append(out, LandcoverStat{
+			Class:  class,
+			Key:    keyFn(class),
+			Weight: float64(count) / float64(total),
+		})
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Weight == out[j].Weight {
+			return out[i].Class < out[j].Class
+		}
+		return out[i].Weight > out[j].Weight
+	})
+	return out
 }
 
 func (t *worldCoverTile) pixel(px, py int) (int, error) {
@@ -329,6 +414,10 @@ func parseWorldCoverTile(name string, src rangeSource, header []byte) (*worldCov
 }
 
 func parseLandcoverTile(name string, src rangeSource, header []byte, allowOverview bool) (*worldCoverTile, error) {
+	return parseLandcoverTileResolution(name, src, header, allowOverview, 0)
+}
+
+func parseLandcoverTileResolution(name string, src rangeSource, header []byte, allowOverview bool, targetPixelMeters float64) (*worldCoverTile, error) {
 	if len(header) < 16 || string(header[:2]) != "II" {
 		return nil, fmt.Errorf("landcover %s is not a supported little-endian TIFF", name)
 	}
@@ -370,6 +459,9 @@ func parseLandcoverTile(name string, src rangeSource, header []byte, allowOvervi
 	best := images[0]
 	if allowOverview {
 		best = chooseWorldCoverOverview(images)
+		if targetPixelMeters > 0 {
+			best = chooseWorldCoverResolution(images, geo.pixelHeight*111320, targetPixelMeters)
+		}
 	}
 	scaleFactor := float64(images[0].width) / float64(best.width)
 	best.pixelWidth = geo.pixelWidth * scaleFactor
@@ -543,6 +635,22 @@ func chooseWorldCoverOverview(images []tiffImage) tiffImage {
 	return best
 }
 
+// Pick the coarsest overview no coarser than one third of a requested game
+// tile, so the 3x3 neighborhood does not blur multiple game tiles together.
+func chooseWorldCoverResolution(images []tiffImage, nativeMeters, targetMeters float64) tiffImage {
+	best := images[0]
+	for _, img := range images {
+		if img.width <= 0 {
+			continue
+		}
+		meters := nativeMeters * float64(images[0].width) / float64(img.width)
+		if meters <= targetMeters && img.width < best.width {
+			best = img
+		}
+	}
+	return best
+}
+
 func tiffInt(tag tiffTag) int {
 	if tag.count == 0 {
 		return 0
@@ -671,49 +779,57 @@ func (s *fileRangeSource) close() error {
 }
 
 type httpRangeSource struct {
+	ctx      context.Context
+	progress io.Writer
 	url      string
 	client   *http.Client
 	cacheDir string
 }
 
 func (s *httpRangeSource) readAt(offset int64, length int64) ([]byte, error) {
-	if err := os.MkdirAll(s.cacheDir, 0o755); err != nil {
-		return nil, err
+	if offset < 0 || length <= 0 {
+		return nil, fmt.Errorf("invalid byte range")
 	}
-	cachePath := filepath.Join(s.cacheDir, fmt.Sprintf("%012d_%012d.bin", offset, length))
-	if data, err := os.ReadFile(cachePath); err == nil && int64(len(data)) == length {
-		return data, nil
+	parent := s.ctx
+	if parent == nil {
+		parent = context.Background()
 	}
-	req, err := http.NewRequest("GET", s.url, nil)
-	if err != nil {
-		return nil, err
+	ctx, cancel := context.WithTimeout(parent, 3*time.Minute)
+	defer cancel()
+	session := fetch.Session{Client: s.client, Progress: s.progress}
+	cachePath := ""
+	if s.cacheDir != "" {
+		cachePath = filepath.Join(s.cacheDir, fmt.Sprintf("%012d_%012d.bin", offset, length))
 	}
-	req.Header.Set("Range", fmt.Sprintf("bytes=%d-%d", offset, offset+length-1))
-	resp, err := s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode == http.StatusNotFound {
+	data, err := session.Get(ctx, fetch.Part{
+		Name: "WorldCover range", Endpoints: []string{s.url}, CachePath: cachePath, MaxBytes: length,
+		Header: http.Header{"Range": []string{fmt.Sprintf("bytes=%d-%d", offset, offset+length-1)}},
+		Validate: func(b []byte) error {
+			if int64(len(b)) != length {
+				return fmt.Errorf("range returned %d bytes, want %d", len(b), length)
+			}
+			return nil
+		},
+		ValidateResponse: func(r *http.Response) error {
+			if r.StatusCode == http.StatusOK && offset == 0 {
+				return nil
+			}
+			if r.StatusCode != http.StatusPartialContent {
+				return fmt.Errorf("server ignored byte range")
+			}
+			var first, last int64
+			if _, err := fmt.Sscanf(r.Header.Get("Content-Range"), "bytes %d-%d/", &first, &last); err != nil || first != offset || last != offset+length-1 {
+				return fmt.Errorf("invalid Content-Range %q", r.Header.Get("Content-Range"))
+			}
+			return nil
+		},
+	})
+	var status *fetch.StatusError
+	if errors.As(err, &status) && status.Code == http.StatusNotFound {
 		return nil, fmt.Errorf("%w: %s", errWorldCoverTileMissing, s.url)
 	}
-	if resp.StatusCode != http.StatusPartialContent && resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("WorldCover range fetch %s status %d", s.url, resp.StatusCode)
-	}
-	data, err := io.ReadAll(io.LimitReader(resp.Body, length+1))
-	if err != nil {
-		return nil, err
-	}
-	if int64(len(data)) < length {
-		return nil, fmt.Errorf("WorldCover range fetch %s returned %d byte(s), want %d", s.url, len(data), length)
-	}
-	data = data[:length]
-	if err := os.WriteFile(cachePath, data, 0o644); err != nil {
-		return nil, err
-	}
-	return data, nil
+	return data, err
 }
-
 func (s *httpRangeSource) close() error {
 	return nil
 }

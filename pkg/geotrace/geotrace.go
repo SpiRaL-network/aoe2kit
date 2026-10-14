@@ -1,6 +1,8 @@
 package geotrace
 
 import (
+	"aoe2kit/pkg/fetch"
+	"context"
 	_ "embed"
 	"encoding/json"
 	"fmt"
@@ -24,104 +26,143 @@ type BBox struct {
 }
 
 type Options struct {
-	BBox                BBox
-	GridSize            int
-	Provider            string
-	LandmaskProvider    string
-	LandmaskPath        string
-	InlandWaterProvider string
-	InlandWaterPath     string
-	LandcoverProvider   string
-	LandcoverCacheDir   string
-	LandcoverPath       string
-	LandcoverDir        string
-	ClimateZone         string
-	FeltMappingPath     string
-	Orient              string
-	TargetWaterFraction float64
-	SeamWaterColumns    int
-	FloraDensity        float64
-	LandFaunaDensity    float64
-	FishDensity         float64
-	ShoreFishDensity    float64
-	OceanFishDensity    float64
-	ShoreBandWidth      float64
-	WaterBandWidth      float64
-	RoadsProvider       string
-	RoadsPath           string
-	RoadsCacheDir       string
-	RoadSimplifyTiles   float64
-	AdminBorders        bool
-	Client              *http.Client
+	Seed                 int
+	BBox                 BBox
+	GridSize             int
+	Provider             string
+	LandmaskProvider     string
+	LandmaskPath         string
+	InlandWaterProvider  string
+	InlandWaterPath      string
+	LandcoverProvider    string
+	LandcoverCacheDir    string
+	LandcoverPath        string
+	LandcoverDir         string
+	ClimateZone          string
+	FeltMappingPath      string
+	ProfilePath          string
+	CompendiumPath       string
+	USGSWoodyPath        string
+	DatPath              string
+	ProjectionAspect     float64
+	ProjectionNorthScale float64
+	Orient               string
+	TargetWaterFraction  float64
+	SeamWaterColumns     int
+	FloraDensity         float64
+	LandFaunaDensity     float64
+	FishDensity          float64
+	ShoreFishDensity     float64
+	OceanFishDensity     float64
+	ShoreBandWidth       float64
+	WaterBandWidth       float64
+	RoadsProvider        string
+	RoadsPath            string
+	RoadsCacheDir        string
+	RoadsTimeout         time.Duration
+	Progress             io.Writer
+	roadContext          context.Context
+	roadFetchState       *roadFetchState
+	RoadSimplifyTiles    float64
+	RoadWidthTiles       float64
+	AdminBorders         bool
+	Client               *http.Client
 }
 
 type Report struct {
-	BBox                  BBox                 `json:"bbox"`
-	OverlayBBox           BBox                 `json:"overlay_bbox,omitempty"`
-	GridSize              int                  `json:"grid_size"`
-	Provider              string               `json:"provider"`
-	LandmaskProvider      string               `json:"landmask_provider,omitempty"`
-	InlandWaterProvider   string               `json:"inland_water_provider,omitempty"`
-	LandcoverProvider     string               `json:"landcover_provider,omitempty"`
-	FeltMappingSchema     string               `json:"felt_mapping_schema,omitempty"`
-	ClimateZone           string               `json:"climate_zone,omitempty"`
-	Orient                string               `json:"orient"`
-	ApproxTileMeters      float64              `json:"approx_tile_meters"`
-	CoastlineConfidence   string               `json:"coastline_confidence"`
-	CoastlineReason       string               `json:"coastline_reason"`
-	StandingLadder        []string             `json:"standing_ladder"`
-	Warnings              []string             `json:"warnings,omitempty"`
-	Cells                 []Cell               `json:"cells"`
-	TerrainCounts         map[int]int          `json:"terrain_counts"`
-	LandcoverCounts       map[string]int       `json:"landcover_counts,omitempty"`
-	LandcoverGLCCounts    map[string]int       `json:"landcover_glc_counts,omitempty"`
-	SpeciesResolutions    []SpeciesResolution  `json:"species_resolutions,omitempty"`
-	LandCells             int                  `json:"land_cells"`
-	WaterCells            int                  `json:"water_cells"`
-	LandFraction          float64              `json:"land_fraction"`
-	WaterFraction         float64              `json:"water_fraction"`
-	TargetWaterFraction   float64              `json:"target_water_fraction,omitempty"`
-	LandEmphasisApplied   bool                 `json:"land_emphasis_applied,omitempty"`
-	FloraDensity          float64              `json:"flora_density,omitempty"`
-	LandFaunaDensity      float64              `json:"land_fauna_density,omitempty"`
-	FishDensity           float64              `json:"fish_density,omitempty"`
-	ShoreFishDensity      float64              `json:"shore_fish_density,omitempty"`
-	OceanFishDensity      float64              `json:"ocean_fish_density,omitempty"`
-	ShoreBandWidth        float64              `json:"shore_band_width,omitempty"`
-	WaterBandWidth        float64              `json:"water_band_width,omitempty"`
-	ShoreCrossfadeCells   int                  `json:"shore_crossfade_cells,omitempty"`
-	ShoreCrossfadeCounts  map[string]int       `json:"shore_crossfade_counts,omitempty"`
-	ShoreTerrainCounts    map[int]int          `json:"shore_terrain_counts,omitempty"`
-	UnbuildableTerrainIDs []int                `json:"unbuildable_terrain_ids,omitempty"`
-	UnbuildableCells      int                  `json:"unbuildable_cells,omitempty"`
-	PlacementGuard        *PlacementGuard      `json:"placement_guard,omitempty"`
-	RoadsProvider         string               `json:"roads_provider,omitempty"`
-	RoadWayCount          int                  `json:"road_way_count,omitempty"`
-	RoadVertexCountRaw    int                  `json:"road_vertex_count_raw,omitempty"`
-	RoadVertexCount       int                  `json:"road_vertex_count,omitempty"`
-	RoadSimplifyTiles     float64              `json:"road_simplify_tiles,omitempty"`
-	RoadCells             int                  `json:"road_cells,omitempty"`
-	RoadsideCells         int                  `json:"roadside_cells,omitempty"`
-	WaterBufferCells      int                  `json:"water_buffer_cells,omitempty"`
-	KeyWestCausewayCells  int                  `json:"key_west_causeway_cells,omitempty"`
-	BorderCells           int                  `json:"border_cells,omitempty"`
-	BorderWayCount        int                  `json:"border_way_count,omitempty"`
-	RoadCellsNorthOf31    int                  `json:"road_cells_north_of_31,omitempty"`
-	BorderCellsNorthOf31  int                  `json:"border_cells_north_of_31,omitempty"`
-	RoadRefs              []string             `json:"road_refs,omitempty"`
-	LandExtentXTiles      int                  `json:"land_extent_x_tiles,omitempty"`
-	LandExtentYTiles      int                  `json:"land_extent_y_tiles,omitempty"`
-	LandExtentRatio       float64              `json:"land_extent_y_to_x_ratio,omitempty"`
-	LandExtentWHRatio     float64              `json:"land_extent_w_to_h_ratio,omitempty"`
-	ScreenWHRatio         float64              `json:"estimated_screen_w_to_h_ratio,omitempty"`
-	ViewportTileWHRatio   float64              `json:"viewport_tile_w_to_h_ratio,omitempty"`
-	ViewportScreenWHRatio float64              `json:"viewport_screen_w_to_h_ratio,omitempty"`
-	PeninsulaAxisAngleDeg float64              `json:"peninsula_axis_angle_deg,omitempty"`
-	ProjectionSelfCheck   *ProjectionSelfCheck `json:"projection_self_check,omitempty"`
-	MinElevation          float64              `json:"min_elevation"`
-	MaxElevation          float64              `json:"max_elevation"`
-	MeanElevation         float64              `json:"mean_elevation"`
-	Recipe                *scenario.Recipe     `json:"recipe,omitempty"`
+	Experimental                     bool                         `json:"experimental"`
+	Attribution                      map[string]SourceAttribution `json:"attribution,omitempty"`
+	PlayerStarts                     *PlayerStartReport           `json:"player_starts,omitempty"`
+	PlacementSweep                   *PlacementAudit              `json:"placement_sweep,omitempty"`
+	PlacementGate                    *PlacementAudit              `json:"placement_gate,omitempty"`
+	NeutralResources                 []NeutralResourceReport      `json:"neutral_resources,omitempty"`
+	WrittenPlacementAudit            *PlacementAudit              `json:"written_placement_audit,omitempty"`
+	PlacementSweepRecipe             *scenario.Recipe             `json:"placement_sweep_recipe,omitempty"`
+	CoastRefinement                  CoastRefinement              `json:"coast_refinement"`
+	Seed                             int                          `json:"seed"`
+	EcologyLayers                    []LayerDiagnostics           `json:"ecology_layers,omitempty"`
+	Diagnostics                      *MapDiagnostics              `json:"diagnostics,omitempty"`
+	SourceCoverage                   map[string]SourceCoverage    `json:"source_coverage"`
+	BBox                             BBox                         `json:"bbox"`
+	OverlayBBox                      BBox                         `json:"overlay_bbox,omitempty"`
+	GridSize                         int                          `json:"grid_size"`
+	Provider                         string                       `json:"provider"`
+	LandmaskProvider                 string                       `json:"landmask_provider,omitempty"`
+	InlandWaterProvider              string                       `json:"inland_water_provider,omitempty"`
+	LandcoverProvider                string                       `json:"landcover_provider,omitempty"`
+	FeltMappingSchema                string                       `json:"felt_mapping_schema,omitempty"`
+	EcologyProfile                   EcologyProfile               `json:"ecology_profile,omitempty"`
+	USGSWoodyProvider                string                       `json:"usgs_woody_provider,omitempty"`
+	USGSWoodyPointCount              int                          `json:"usgs_woody_point_count,omitempty"`
+	USGSWoodySpeciesCount            int                          `json:"usgs_woody_species_count,omitempty"`
+	USGSWoodySHA256                  string                       `json:"usgs_woody_sha256,omitempty"`
+	USGSWoodyMaxDistanceKM           float64                      `json:"usgs_woody_max_distance_km,omitempty"`
+	DatPath                          string                       `json:"dat_path,omitempty"`
+	ClimateZone                      string                       `json:"climate_zone,omitempty"`
+	Orient                           string                       `json:"orient"`
+	ApproxTileMeters                 float64                      `json:"approx_tile_meters"`
+	CoastlineConfidence              string                       `json:"coastline_confidence"`
+	CoastlineReason                  string                       `json:"coastline_reason"`
+	StandingLadder                   []string                     `json:"standing_ladder"`
+	Warnings                         []string                     `json:"warnings,omitempty"`
+	Cells                            []Cell                       `json:"cells"`
+	TerrainCounts                    map[int]int                  `json:"terrain_counts"`
+	LandcoverCounts                  map[string]int               `json:"landcover_counts,omitempty"`
+	LandcoverMissingTiles            map[string]int               `json:"landcover_missing_tiles,omitempty"`
+	LandcoverGLCCounts               map[string]int               `json:"landcover_glc_counts,omitempty"`
+	SpeciesResolutions               []SpeciesResolution          `json:"species_resolutions,omitempty"`
+	LandCells                        int                          `json:"land_cells"`
+	WaterCells                       int                          `json:"water_cells"`
+	LandFraction                     float64                      `json:"land_fraction"`
+	WaterFraction                    float64                      `json:"water_fraction"`
+	TargetWaterFraction              float64                      `json:"target_water_fraction,omitempty"`
+	LandEmphasisApplied              bool                         `json:"land_emphasis_applied,omitempty"`
+	FloraDensity                     float64                      `json:"flora_density,omitempty"`
+	LandFaunaDensity                 float64                      `json:"land_fauna_density,omitempty"`
+	FishDensity                      float64                      `json:"fish_density,omitempty"`
+	ShoreFishDensity                 float64                      `json:"shore_fish_density,omitempty"`
+	OceanFishDensity                 float64                      `json:"ocean_fish_density,omitempty"`
+	ShoreBandWidth                   float64                      `json:"shore_band_width,omitempty"`
+	WaterBandWidth                   float64                      `json:"water_band_width,omitempty"`
+	ShoreCrossfadeCells              int                          `json:"shore_crossfade_cells,omitempty"`
+	ShoreCrossfadeCounts             map[string]int               `json:"shore_crossfade_counts,omitempty"`
+	ShoreTerrainCounts               map[int]int                  `json:"shore_terrain_counts,omitempty"`
+	DockableShoreCells               int                          `json:"dockable_shore_cells,omitempty"`
+	UnbuildableTerrainIDs            []int                        `json:"unbuildable_terrain_ids,omitempty"`
+	UnbuildableCells                 int                          `json:"unbuildable_cells,omitempty"`
+	PlacementGuard                   *PlacementGuard              `json:"placement_guard,omitempty"`
+	RoadsProvider                    string                       `json:"roads_provider,omitempty"`
+	RoadWayCount                     int                          `json:"road_way_count,omitempty"`
+	RoadVertexCountRaw               int                          `json:"road_vertex_count_raw,omitempty"`
+	RoadVertexCount                  int                          `json:"road_vertex_count,omitempty"`
+	RoadSimplifyTiles                float64                      `json:"road_simplify_tiles,omitempty"`
+	RoadWidthTiles                   float64                      `json:"road_width_tiles,omitempty"`
+	RoadCells                        int                          `json:"road_cells,omitempty"`
+	PopulationCenterCells            int                          `json:"population_center_cells,omitempty"`
+	PopulationCenterBuiltUpCells     int                          `json:"population_center_built_up_cells,omitempty"`
+	PopulationCenterRoadDensityCells int                          `json:"population_center_road_density_cells,omitempty"`
+	RoadsideCells                    int                          `json:"roadside_cells,omitempty"`
+	WaterBufferCells                 int                          `json:"water_buffer_cells,omitempty"`
+	CausewayCells                    int                          `json:"causeway_cells,omitempty"`
+	BorderCells                      int                          `json:"border_cells,omitempty"`
+	BorderWayCount                   int                          `json:"border_way_count,omitempty"`
+	RegionDiagnostics                []RegionDiagnostics          `json:"region_diagnostics,omitempty"`
+	RoadRefs                         []string                     `json:"road_refs,omitempty"`
+	LandExtentXTiles                 int                          `json:"land_extent_x_tiles,omitempty"`
+	LandExtentYTiles                 int                          `json:"land_extent_y_tiles,omitempty"`
+	LandExtentRatio                  float64                      `json:"land_extent_y_to_x_ratio,omitempty"`
+	LandExtentWHRatio                float64                      `json:"land_extent_w_to_h_ratio,omitempty"`
+	ScreenWHRatio                    float64                      `json:"estimated_screen_w_to_h_ratio,omitempty"`
+	ViewportTileWHRatio              float64                      `json:"viewport_tile_w_to_h_ratio,omitempty"`
+	ViewportScreenWHRatio            float64                      `json:"viewport_screen_w_to_h_ratio,omitempty"`
+	CalibrationAxes                  []AxisDiagnostics            `json:"calibration_axes,omitempty"`
+	ProjectionSelfCheck              *ProjectionSelfCheck         `json:"projection_self_check,omitempty"`
+	ProjectionAspect                 float64                      `json:"projection_aspect,omitempty"`
+	ProjectionNorthScale             float64                      `json:"projection_north_scale,omitempty"`
+	MinElevation                     float64                      `json:"min_elevation"`
+	MaxElevation                     float64                      `json:"max_elevation"`
+	MeanElevation                    float64                      `json:"mean_elevation"`
+	Recipe                           *scenario.Recipe             `json:"recipe,omitempty"`
 }
 
 type PlacementGuard struct {
@@ -141,6 +182,8 @@ type ProjectionSelfCheck struct {
 }
 
 type Cell struct {
+	CoastalLandFraction  float64         `json:"coastal_land_fraction,omitempty"`
+	SourceLandcoverClass int             `json:"source_landcover_class,omitempty"`
 	X                    int             `json:"x"`
 	Y                    int             `json:"y"`
 	Lat                  float64         `json:"lat"`
@@ -149,6 +192,7 @@ type Cell struct {
 	Elevation            float64         `json:"elevation_m"`
 	Land                 *bool           `json:"land,omitempty"`
 	InlandWater          bool            `json:"inland_water,omitempty"`
+	ShelteredWater       bool            `json:"sheltered_water,omitempty"`
 	WaterbodyName        string          `json:"waterbody_name,omitempty"`
 	LandcoverClass       int             `json:"landcover_class,omitempty"`
 	LandcoverKey         string          `json:"landcover_key,omitempty"`
@@ -156,6 +200,7 @@ type Cell struct {
 	LandcoverKeyGLC      string          `json:"landcover_key_glc,omitempty"`
 	LandcoverFraction    float64         `json:"landcover_fraction,omitempty"`
 	LandcoverHistogram   []LandcoverStat `json:"landcover_histogram,omitempty"`
+	USGSWoodySpecies     []string        `json:"usgs_woody_species,omitempty"`
 	SpeciesUnitConsts    []int           `json:"species_unit_consts,omitempty"`
 	DistanceToShoreTiles float64         `json:"distance_to_shore_tiles,omitempty"`
 	ClimateZone          string          `json:"climate_zone,omitempty"`
@@ -163,9 +208,14 @@ type Cell struct {
 	Standing             string          `json:"standing"`
 	TerrainID            int             `json:"terrain_id"`
 	Road                 bool            `json:"road,omitempty"`
+	RoadTerrainID        int             `json:"road_terrain_id,omitempty"`
+	RoadWidth            float64         `json:"road_width_tiles,omitempty"`
 	Roadside             bool            `json:"roadside,omitempty"`
+	PopulationCenter     bool            `json:"population_center,omitempty"`
+	BuiltUpCore          bool            `json:"built_up_core,omitempty"`
+	RoadCorridor         bool            `json:"road_corridor,omitempty"`
 	WaterBuffer          bool            `json:"water_buffer,omitempty"`
-	KeyWestCauseway      bool            `json:"key_west_causeway,omitempty"`
+	Causeway             bool            `json:"causeway,omitempty"`
 	Border               bool            `json:"border,omitempty"`
 	ShoreCrossfadeBand   string          `json:"shore_crossfade_band,omitempty"`
 	ShoreTerrainID       int             `json:"shore_terrain_id,omitempty"`
@@ -186,13 +236,16 @@ type LandcoverStat struct {
 }
 
 type LandcoverSample struct {
-	Valid     bool
-	Class     int
-	Key       string
-	GLCClass  int
-	GLCKey    string
-	Fraction  float64
-	Histogram []LandcoverStat
+	MissingTile         string
+	CoastalLandFraction float64
+	PixelMeters         float64
+	Valid               bool
+	Class               int
+	Key                 string
+	GLCClass            int
+	GLCKey              string
+	Fraction            float64
+	Histogram           []LandcoverStat
 }
 
 //go:embed default_felt_mapping.json
@@ -249,6 +302,20 @@ type SpeciesResolution struct {
 }
 
 func TraceDEM(opts Options) (Report, error) {
+	for _, value := range []float64{opts.BBox.MinLat, opts.BBox.MaxLat, opts.BBox.MinLon, opts.BBox.MaxLon, opts.ProjectionAspect, opts.ProjectionNorthScale, opts.RoadWidthTiles} {
+		if !finite(value) {
+			return Report{}, fmt.Errorf("geographic bounds, projection settings, and road width must be finite")
+		}
+	}
+	if opts.RoadWidthTiles < 0 || opts.RoadWidthTiles > 32 {
+		return Report{}, fmt.Errorf("road width must be between 0 and 32 tiles")
+	}
+	if opts.BBox.MinLat < -90 || opts.BBox.MaxLat > 90 || opts.BBox.MinLon < -180 || opts.BBox.MaxLon > 180 {
+		return Report{}, fmt.Errorf("bounds must use latitude -90..90 and longitude -180..180")
+	}
+	if opts.ProjectionAspect < 0 || opts.ProjectionNorthScale < 0 {
+		return Report{}, fmt.Errorf("projection settings must be positive, or zero for defaults")
+	}
 	if opts.GridSize <= 0 {
 		return Report{}, fmt.Errorf("grid size must be > 0")
 	}
@@ -262,6 +329,14 @@ func TraceDEM(opts Options) (Report, error) {
 	if err != nil {
 		return Report{}, err
 	}
+	profile, err := loadEcologyProfile(opts.ProfilePath)
+	if err != nil {
+		return Report{}, err
+	}
+	ensurePopulationCenterLayer(&profile)
+	if err := resolveFeltLayers(&profile, opts.CompendiumPath); err != nil {
+		return Report{}, err
+	}
 	provider := opts.Provider
 	if provider == "" {
 		provider = "opentopodata"
@@ -270,8 +345,12 @@ func TraceDEM(opts Options) (Report, error) {
 	if err != nil {
 		return Report{}, err
 	}
-	points := gridPoints(opts.BBox, opts.GridSize, orient)
-	overlayBBox := bboxFromCells(points)
+	proj := newGeoProjection(opts.BBox, orient, ProjectionOptions{Aspect: opts.ProjectionAspect, NorthScale: opts.ProjectionNorthScale})
+	points := gridPoints(proj, opts.GridSize)
+	overlayBBox := projectionEnvelope(proj)
+	if !finite(overlayBBox.MinLat) || !finite(overlayBBox.MaxLat) || !finite(overlayBBox.MinLon) || !finite(overlayBBox.MaxLon) || overlayBBox.MinLat < -90 || overlayBBox.MaxLat > 90 || overlayBBox.MinLon < -180 || overlayBBox.MaxLon > 180 {
+		return Report{}, fmt.Errorf("projected map envelope exceeds geographic coordinates; reduce span or change orientation")
+	}
 	elevations, err := sampleElevations(provider, opts.Client, points)
 	if err != nil {
 		return Report{}, err
@@ -288,41 +367,81 @@ func TraceDEM(opts Options) (Report, error) {
 	if err != nil {
 		return Report{}, err
 	}
+	originalLandmask := append([]bool(nil), landmask...)
+	coastRefinement := refineCoastMask(landmask, landcover, landcoverProvider, approximateTileMeters(opts.BBox, opts.GridSize))
+	usgsWoody, usgsSummary, err := loadUSGSWoodyWithProfile(opts.USGSWoodyPath, profile)
+	if err != nil {
+		return Report{}, err
+	}
+	usgsWoodyProvider := ""
+	if opts.USGSWoodyPath != "" {
+		usgsWoodyProvider = "usgs-woody-csv"
+	}
 	report := Report{
-		BBox:                opts.BBox,
-		OverlayBBox:         overlayBBox,
-		GridSize:            opts.GridSize,
-		Provider:            provider,
-		LandmaskProvider:    landmaskProvider,
-		InlandWaterProvider: inlandWaterProvider,
-		LandcoverProvider:   landcoverProvider,
-		FeltMappingSchema:   mapping.Schema,
-		ClimateZone:         climateZoneForLat((opts.BBox.MinLat+opts.BBox.MaxLat)/2, opts.ClimateZone),
-		Orient:              orient,
-		ApproxTileMeters:    approximateTileMeters(opts.BBox, opts.GridSize),
-		CoastlineConfidence: "approximate",
-		CoastlineReason:     "DEM-only sampling cannot distinguish ocean 0.0m from low coastal land; provide landmask/bathymetry/coastline vector to upgrade this claim.",
-		StandingLadder:      []string{"from_data", "inferred", "default"},
-		TerrainCounts:       map[int]int{},
-		SpeciesResolutions:  mapping.SpeciesResolutions,
-		FloraDensity:        normalizeDensity(opts.FloraDensity),
-		LandFaunaDensity:    normalizeDensity(opts.LandFaunaDensity),
-		FishDensity:         normalizeDensity(opts.FishDensity),
-		ShoreFishDensity:    normalizeDensity(firstPositive(opts.ShoreFishDensity, opts.FishDensity)),
-		OceanFishDensity:    normalizeDensity(firstPositive(opts.OceanFishDensity, opts.FishDensity)),
-		ShoreBandWidth:      normalizeShoreBandWidth(opts.ShoreBandWidth),
-		WaterBandWidth:      normalizeWaterBandWidth(opts.WaterBandWidth),
+		Experimental:          true,
+		CoastRefinement:       coastRefinement,
+		Seed:                  opts.Seed,
+		BBox:                  opts.BBox,
+		OverlayBBox:           overlayBBox,
+		GridSize:              opts.GridSize,
+		Provider:              provider,
+		LandmaskProvider:      landmaskProvider,
+		InlandWaterProvider:   inlandWaterProvider,
+		LandcoverProvider:     landcoverProvider,
+		FeltMappingSchema:     mapping.Schema,
+		EcologyProfile:        profile,
+		USGSWoodyProvider:     usgsWoodyProvider,
+		USGSWoodyPointCount:   usgsSummary.PointCount,
+		USGSWoodySpeciesCount: usgsSummary.SpeciesCount,
+		USGSWoodySHA256:       usgsSummary.SHA256,
+		DatPath:               opts.DatPath,
+		ClimateZone:           climateZoneForLat((opts.BBox.MinLat+opts.BBox.MaxLat)/2, opts.ClimateZone),
+		Orient:                orient,
+		ApproxTileMeters:      approximateTileMeters(opts.BBox, opts.GridSize),
+		CoastlineConfidence:   "approximate",
+		CoastlineReason:       "DEM-only sampling cannot distinguish ocean 0.0m from low coastal land; provide landmask/bathymetry/coastline vector to upgrade this claim.",
+		StandingLadder:        []string{"from_data", "inferred", "default"},
+		TerrainCounts:         map[int]int{},
+		SpeciesResolutions:    mapping.SpeciesResolutions,
+		FloraDensity:          normalizeDensity(opts.FloraDensity),
+		LandFaunaDensity:      normalizeDensity(opts.LandFaunaDensity),
+		FishDensity:           normalizeDensity(opts.FishDensity),
+		ShoreFishDensity:      normalizeDensity(firstPositive(opts.ShoreFishDensity, opts.FishDensity)),
+		OceanFishDensity:      normalizeDensity(firstPositive(opts.OceanFishDensity, opts.FishDensity)),
+		ShoreBandWidth:        normalizeShoreBandWidth(opts.ShoreBandWidth),
+		WaterBandWidth:        normalizeWaterBandWidth(opts.WaterBandWidth),
+		ProjectionAspect:      normalizeProjectionAspect(opts.ProjectionAspect),
+		ProjectionNorthScale:  normalizeProjectionNorthScale(opts.ProjectionNorthScale),
+	}
+	if profile.EnableUnvalidatedUrban {
+		report.Warnings = append(report.Warnings, "Urban buildings and accents explicitly enabled: engine behavior is unvalidated")
+	}
+	if landcoverProvider == "worldcover" {
+		report.Attribution = map[string]SourceAttribution{"landcover": worldCoverAttribution(overlayBBox)}
+	}
+	if usgsWoody != nil {
+		report.USGSWoodyMaxDistanceKM = usgsWoodyMaxDistanceKM
 	}
 	if orient == "iso-ccw-screen" {
-		proj := newGeoProjection(opts.BBox, orient)
 		report.ViewportTileWHRatio = viewportTileWHRatio(proj)
-		report.ViewportScreenWHRatio = 1.0
+		report.ViewportScreenWHRatio = report.ViewportTileWHRatio * screenRhombusWidthToHeight
 		report.ProjectionSelfCheck = projectionSelfCheck(proj)
-		report.PeninsulaAxisAngleDeg = peninsulaAxisAngleDeg(proj)
+		measureCalibrationAxes(&report)
 	}
 	if landcover != nil {
 		report.LandcoverCounts = map[string]int{}
 		report.LandcoverGLCCounts = map[string]int{}
+		for _, sample := range landcover {
+			if sample.MissingTile != "" {
+				if report.LandcoverMissingTiles == nil {
+					report.LandcoverMissingTiles = map[string]int{}
+				}
+				report.LandcoverMissingTiles[sample.MissingTile]++
+			}
+		}
+		if len(report.LandcoverMissingTiles) > 0 {
+			report.Warnings = append(report.Warnings, "WorldCover 404 coverage gaps retain the source landmask; absence is not independent water evidence")
+		}
 	}
 	if report.ApproxTileMeters > 1000 {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("coarse trace: each AoE2 tile is about %.0fm; features smaller than 1-2 tiles will blur", report.ApproxTileMeters))
@@ -333,6 +452,9 @@ func TraceDEM(opts Options) (Report, error) {
 	if landmask != nil {
 		report.CoastlineConfidence = "from_data"
 		report.CoastlineReason = "land/water classification came from an explicit landmask provider, not DEM thresholding"
+		if coastRefinement.Enabled {
+			report.CoastlineReason = "source landmask refined by resolution-qualified WorldCover classes; see coast_refinement for policy and directional counts"
+		}
 		if opts.TargetWaterFraction > 0 && opts.TargetWaterFraction < 1 {
 			adjusted, applied := emphasizeLandmask(landmask, opts.GridSize, opts.TargetWaterFraction, opts.SeamWaterColumns, orient)
 			landmask = adjusted
@@ -354,6 +476,9 @@ func TraceDEM(opts Options) (Report, error) {
 		}
 		climateZone := climateZoneForLat(point.Lat, opts.ClimateZone)
 		inWater := inlandWater != nil && inlandWater[i]
+		if i < len(originalLandmask) && i < len(landcover) && worldCoverInlandWater(originalLandmask[i], landcover[i]) {
+			inWater = true
+		}
 		waterName := ""
 		if inWater && i < len(inlandWaterNames) {
 			waterName = inlandWaterNames[i]
@@ -363,6 +488,9 @@ func TraceDEM(opts Options) (Report, error) {
 			lc = &landcover[i]
 		}
 		cell := classifyCell(point, elev, land, shoreDistance[i], climateZone, mapping, inWater, waterName, lc)
+		if usgsWoody != nil {
+			cell.USGSWoodySpecies = usgsWoody.nearestSpecies(point.Lat, point.Lon)
+		}
 		report.Cells = append(report.Cells, cell)
 		report.TerrainCounts[cell.TerrainID]++
 		if cell.Land != nil && *cell.Land {
@@ -387,6 +515,7 @@ func TraceDEM(opts Options) (Report, error) {
 		}
 		sum += elev
 	}
+	normalizeDockableShore(&report)
 	report.UnbuildableTerrainIDs = unbuildableTerrainIDsForGaiaPlacement()
 	report.PlacementGuard = buildPlacementGuard(report)
 	if report.PlacementGuard != nil {
@@ -411,8 +540,19 @@ func TraceDEM(opts Options) (Report, error) {
 		report.RoadVertexCountRaw = roadStats.VertexCountRaw
 		report.RoadVertexCount = roadStats.VertexCount
 		report.RoadSimplifyTiles = roadStats.SimplifyTiles
+		report.RoadWidthTiles = roadStats.WidthTiles
 		report.RoadCells = roadStats.CellCount
 		report.RoadRefs = roadStats.Refs
+		if report.SourceCoverage == nil {
+			report.SourceCoverage = map[string]SourceCoverage{}
+		}
+		report.SourceCoverage["roads"] = roadStats.Coverage
+		if a, ok := osmRoadAttribution(opts, roadStats.Coverage); ok {
+			if report.Attribution == nil {
+				report.Attribution = map[string]SourceAttribution{}
+			}
+			report.Attribution["roads"] = a
+		}
 	}
 	if opts.AdminBorders {
 		overlayOpts := opts
@@ -424,14 +564,56 @@ func TraceDEM(opts Options) (Report, error) {
 		report.BorderWayCount = borderWayCount
 	}
 	applyDerivedFeatureMasks(&report)
+	markPopulationCenters(&report)
 	markShoreCrossfadeCells(&report)
-	measureOverlayNorthOf31(&report)
+	classifyShelteredWater(&report)
+	measureProfileRegions(&report)
 	measureLandExtents(&report)
+	constraints, err := loadDockConstraints(opts.DatPath, profile)
+	if err != nil {
+		return Report{}, err
+	}
+	report.Diagnostics = measureMapDiagnostics(report, constraints)
+	measureSourceCoverage(&report)
 	if landmask != nil {
-		recipe := BuildRecipe(report)
+		recipe := buildRecipe(report, &report.EcologyLayers)
 		report.Recipe = &recipe
+		if err := applyPlayerStarts(&report); err != nil {
+			return Report{}, err
+		}
+		if err := applyNeutralResources(&report); err != nil {
+			return Report{}, err
+		}
 	}
 	return report, nil
+}
+
+// normalizeDockableShore makes the shoreline contract explicit. Terrain 1 is
+// the shallow-water terrain used by dock placement; only a real landmask can
+// justify applying this override, so DEM-only traces remain approximate.
+func normalizeDockableShore(report *Report) {
+	if report == nil || report.LandmaskProvider == "" {
+		return
+	}
+	width := normalizeShoreBandWidth(report.ShoreBandWidth)
+	report.DockableShoreCells = 0
+	report.TerrainCounts = map[int]int{}
+	for i := range report.Cells {
+		cell := &report.Cells[i]
+		if cell.Land != nil && *cell.Land {
+			report.TerrainCounts[cell.TerrainID]++
+			continue
+		}
+		if cell.InlandWater || cell.DistanceToShoreTiles > width {
+			report.TerrainCounts[cell.TerrainID]++
+			continue
+		}
+		cell.TerrainID = 1
+		cell.TerrainConfidence = "inferred"
+		cell.Reason = "landmask coastal water; shallow-water candidate for dock placement, engine confirmation pending"
+		report.DockableShoreCells++
+		report.TerrainCounts[cell.TerrainID]++
+	}
 }
 
 func measureLandExtents(report *Report) {
@@ -625,9 +807,9 @@ func normalizeOrient(raw string) (string, error) {
 	}
 }
 
-func gridPoints(b BBox, n int, orient string) []Cell {
+func gridPoints(proj geoProjection, n int) []Cell {
+	b, orient := proj.b, proj.orient
 	out := make([]Cell, 0, n*n)
-	proj := newGeoProjection(b, orient)
 	for y := 0; y < n; y++ {
 		for x := 0; x < n; x++ {
 			if orient == "diamond" {
@@ -817,45 +999,36 @@ func buildPlacementGuard(report Report) *PlacementGuard {
 	}
 }
 
-func measureOverlayNorthOf31(report *Report) {
-	if report == nil {
-		return
-	}
-	report.RoadCellsNorthOf31 = 0
-	report.BorderCellsNorthOf31 = 0
-	for _, cell := range report.Cells {
-		if cell.Lat <= 31 {
-			continue
-		}
-		if cell.Road {
-			report.RoadCellsNorthOf31++
-		}
-		if cell.Border {
-			report.BorderCellsNorthOf31++
-		}
-	}
-}
-
 type geoProjection struct {
-	b           BBox
-	orient      string
-	midLat      float64
-	midLon      float64
-	kmPerLat    float64
-	kmPerLon    float64
-	rotHalfKm   float64
-	northScale  float64
-	tileScaleU  float64
-	matrixScale float64
-	halfEastKm  float64
-	halfNorthKm float64
+	b            BBox
+	orient       string
+	midLat       float64
+	midLon       float64
+	kmPerLat     float64
+	kmPerLon     float64
+	rotHalfKm    float64
+	northScale   float64
+	tileScaleU   float64
+	matrixScale  float64
+	halfEastKm   float64
+	halfNorthKm  float64
+	screenAspect float64
 }
 
 const (
 	screenRhombusWidthToHeight = 2.0
 )
 
-func newGeoProjection(b BBox, orient string) geoProjection {
+type ProjectionOptions struct {
+	Aspect     float64 `json:"aspect,omitempty"`
+	NorthScale float64 `json:"north_scale,omitempty"`
+}
+
+func (r Report) projection() geoProjection {
+	return newGeoProjection(r.BBox, r.Orient, ProjectionOptions{Aspect: r.ProjectionAspect, NorthScale: r.ProjectionNorthScale})
+}
+
+func newGeoProjection(b BBox, orient string, options ProjectionOptions) geoProjection {
 	midLat := (b.MinLat + b.MaxLat) / 2
 	kmPerLat := 111.320
 	kmPerLon := 111.320 * math.Cos(midLat*math.Pi/180)
@@ -864,7 +1037,8 @@ func newGeoProjection(b BBox, orient string) geoProjection {
 	}
 	halfEast := (b.MaxLon - b.MinLon) * kmPerLon / 2
 	halfNorth := (b.MaxLat - b.MinLat) * kmPerLat / 2
-	northScale := 1.0
+	aspect := normalizeProjectionAspect(options.Aspect)
+	northScale := normalizeProjectionNorthScale(options.NorthScale)
 	tileScaleU := 1.0
 	scaledHalfNorth := halfNorth * northScale
 	rotHalf := (halfEast + scaledHalfNorth) / math.Sqrt2
@@ -873,26 +1047,53 @@ func newGeoProjection(b BBox, orient string) geoProjection {
 	}
 	matrixScale := 0.0
 	if orient == "iso-ccw-screen" {
-		denom := halfNorth + 0.5*halfEast
+		denom := scaledHalfNorth + (1/aspect)*halfEast
 		if denom <= 0 {
 			denom = 1
 		}
 		matrixScale = 0.5 / denom
 	}
 	return geoProjection{
-		b:           b,
-		orient:      orient,
-		midLat:      midLat,
-		midLon:      (b.MinLon + b.MaxLon) / 2,
-		kmPerLat:    kmPerLat,
-		kmPerLon:    kmPerLon,
-		rotHalfKm:   rotHalf,
-		northScale:  northScale,
-		tileScaleU:  tileScaleU,
-		matrixScale: matrixScale,
-		halfEastKm:  halfEast,
-		halfNorthKm: halfNorth,
+		b:            b,
+		orient:       orient,
+		midLat:       midLat,
+		midLon:       (b.MinLon + b.MaxLon) / 2,
+		kmPerLat:     kmPerLat,
+		kmPerLon:     kmPerLon,
+		rotHalfKm:    rotHalf,
+		northScale:   northScale,
+		tileScaleU:   tileScaleU,
+		matrixScale:  matrixScale,
+		halfEastKm:   halfEast,
+		halfNorthKm:  halfNorth,
+		screenAspect: aspect,
 	}
+}
+
+func normalizeProjectionAspect(value float64) float64 {
+	if value <= 0 {
+		return screenRhombusWidthToHeight
+	}
+	if value < 0.5 {
+		return 0.5
+	}
+	if value > 8 {
+		return 8
+	}
+	return value
+}
+
+func normalizeProjectionNorthScale(value float64) float64 {
+	if value <= 0 {
+		return 1
+	}
+	if value < 0.25 {
+		return 0.25
+	}
+	if value > 4 {
+		return 4
+	}
+	return value
 }
 
 func (p geoProjection) gridToLatLon(u, v float64) (lat, lon float64, outside bool) {
@@ -910,8 +1111,8 @@ func (p geoProjection) gridToLatLon(u, v float64) (lat, lon float64, outside boo
 		// emitted tile axes as sx=u+v, sy=(v-u)/2. This is the accepted
 		// proper rotation turned 180 degrees after in-engine readback showed
 		// correct chirality but upside-down orientation.
-		eastKm := (u + v) / scale
-		northKm := (u - v) / (2 * scale)
+		eastKm := (u + v) / (2 * (1 / p.screenAspect) * scale)
+		northKm := (u - v) / (2 * scale * p.northScale)
 		lon = p.midLon + eastKm/p.kmPerLon
 		lat = p.midLat + northKm/p.kmPerLat
 		outside = lat < p.b.MinLat || lat > p.b.MaxLat || lon < p.b.MinLon || lon > p.b.MaxLon
@@ -947,7 +1148,7 @@ func (p geoProjection) latLonToGridUnit(lat, lon float64) (u, v float64, ok bool
 		}
 		u = (lon - p.midLon) / (p.b.MaxLon - p.b.MinLon)
 		v = -(lat - p.midLat) / (p.b.MaxLat - p.b.MinLat)
-		return u, v, math.Abs(u) <= 0.5 && math.Abs(v) <= 0.5
+		return u, v, withinProjectionFrame(u, v)
 	}
 	eastKm := (lon - p.midLon) * p.kmPerLon
 	northKm := (lat - p.midLat) * p.kmPerLat
@@ -962,9 +1163,10 @@ func (p geoProjection) latLonToGridUnit(lat, lon float64) (u, v float64, ok bool
 		// Determinant-positive rotation of the raw shear-free axes, turned 180
 		// degrees from v11. The older v10 frame flipped only one axis, which
 		// preserved angle and size but mirrored the geography.
-		u = scale * (0.5*eastKm + northKm)
-		v = scale * (0.5*eastKm - northKm)
-		return u, v, math.Abs(u) <= 0.5 && math.Abs(v) <= 0.5
+		eastScale := 1 / p.screenAspect
+		u = scale * (eastScale*eastKm + northKm)
+		v = scale * (eastScale*eastKm - northKm)
+		return u, v, withinProjectionFrame(u, v)
 	}
 	var r1, r2 float64
 	switch p.orient {
@@ -980,7 +1182,12 @@ func (p geoProjection) latLonToGridUnit(lat, lon float64) (u, v float64, ok bool
 	if p.tileScaleU != 0 && p.tileScaleU != 1 {
 		u *= p.tileScaleU
 	}
-	return u, v, math.Abs(u) <= 0.5 && math.Abs(v) <= 0.5
+	return u, v, withinProjectionFrame(u, v)
+}
+
+func withinProjectionFrame(u, v float64) bool {
+	// Corner arithmetic can round a fitted half-tile bound a few ulps outward.
+	return math.Abs(u) <= 0.5+1e-12 && math.Abs(v) <= 0.5+1e-12
 }
 
 func screenPointForLatLon(p geoProjection, lat, lon float64) (sx, sy float64, ok bool) {
@@ -1034,8 +1241,8 @@ func viewportTileWHRatio(p geoProjection) float64 {
 func projectionSelfCheck(p geoProjection) *ProjectionSelfCheck {
 	lat := p.midLat
 	lon := p.midLon
-	eastKm := 100.0
-	northKm := 100.0
+	eastKm := math.Min(100, p.halfEastKm*0.5)
+	northKm := math.Min(100, p.halfNorthKm*0.5)
 	baseSX, baseSY, ok := screenPointForLatLon(p, lat, lon)
 	if !ok {
 		return nil
@@ -1051,22 +1258,6 @@ func projectionSelfCheck(p geoProjection) *ProjectionSelfCheck {
 		DueNorthScreenDX: northSX - baseSX,
 		DueNorthScreenDY: northSY - baseSY,
 	}
-}
-
-func peninsulaAxisAngleDeg(p geoProjection) float64 {
-	// Acceptance anchor: Jacksonville-ish north end to the Florida tip
-	// should lean about 12 degrees east of south.
-	jaxSX, jaxSY, ok0 := screenPointForLatLon(p, 30.3, -81.7)
-	tipSX, tipSY, ok1 := screenPointForLatLon(p, 25.4, -80.5)
-	if !ok0 || !ok1 {
-		return 0
-	}
-	dx := tipSX - jaxSX
-	dySouth := tipSY - jaxSY
-	if dySouth == 0 {
-		return 0
-	}
-	return math.Atan2(dx, dySouth) * 180 / math.Pi
 }
 
 func diagonalRange(n, sum int) (xMin, xMax, length int) {
@@ -1091,6 +1282,9 @@ func sampleElevations(provider string, client *http.Client, points []Cell) ([]fl
 }
 
 func sampleOpenTopoData(client *http.Client, points []Cell) ([]float64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	session := fetch.Session{Client: client}
 	if client == nil {
 		client = &http.Client{Timeout: 30 * time.Second}
 	}
@@ -1106,10 +1300,6 @@ func sampleOpenTopoData(client *http.Client, points []Cell) ([]float64, error) {
 			locations = append(locations, fmt.Sprintf("%.7f,%.7f", point.Lat, point.Lon))
 		}
 		u := "https://api.opentopodata.org/v1/srtm30m?locations=" + url.QueryEscape(strings.Join(locations, "|"))
-		resp, err := client.Get(u)
-		if err != nil {
-			return nil, err
-		}
 		var payload struct {
 			Status  string `json:"status"`
 			Results []struct {
@@ -1117,16 +1307,20 @@ func sampleOpenTopoData(client *http.Client, points []Cell) ([]float64, error) {
 			} `json:"results"`
 			Error string `json:"error"`
 		}
-		err = json.NewDecoder(resp.Body).Decode(&payload)
-		closeErr := resp.Body.Close()
+		_, err := session.Get(ctx, fetch.Part{Name: fmt.Sprintf("DEM part %d", start/batchSize+1), Endpoints: []string{u}, Validate: func(data []byte) error {
+			if err := json.Unmarshal(data, &payload); err != nil {
+				return err
+			}
+			if payload.Status != "OK" {
+				return fmt.Errorf("OpenTopoData status %s: %s", payload.Status, payload.Error)
+			}
+			if len(payload.Results) != end-start {
+				return fmt.Errorf("incomplete DEM results")
+			}
+			return nil
+		}})
 		if err != nil {
 			return nil, err
-		}
-		if closeErr != nil {
-			return nil, closeErr
-		}
-		if resp.StatusCode < 200 || resp.StatusCode >= 300 || payload.Status != "OK" {
-			return nil, fmt.Errorf("OpenTopoData status %d/%s: %s", resp.StatusCode, payload.Status, payload.Error)
 		}
 		if len(payload.Results) != end-start {
 			return nil, fmt.Errorf("OpenTopoData returned %d result(s), want %d", len(payload.Results), end-start)
@@ -1152,6 +1346,23 @@ func classifyCell(point Cell, elevation float64, land *bool, shoreDistance float
 	point.ElevationBand = elevationBand(elevation, land, shoreDistance)
 	point.Standing = "from_data"
 	if landcover != nil && landcover.Valid {
+		if landcover.CoastalLandFraction > 0 && !inlandWater {
+			point.CoastalLandFraction = landcover.CoastalLandFraction
+			point.SourceLandcoverClass = landcover.Class
+			copy := *landcover
+			copy.Histogram = nil
+			for _, stat := range landcover.Histogram {
+				if stat.Class == 80 || !knownWorldCoverClass(stat.Class) {
+					continue
+				}
+				stat.Weight /= landcover.CoastalLandFraction
+				copy.Histogram = append(copy.Histogram, stat)
+			}
+			if len(copy.Histogram) > 0 {
+				copy.Class, copy.Key, copy.Fraction = copy.Histogram[0].Class, copy.Histogram[0].Key, copy.Histogram[0].Weight
+				landcover = &copy
+			}
+		}
 		point.LandcoverClass = landcover.Class
 		point.LandcoverKey = landcover.Key
 		point.LandcoverClassGLC = landcover.GLCClass
@@ -1160,15 +1371,17 @@ func classifyCell(point Cell, elevation float64, land *bool, shoreDistance float
 		point.LandcoverHistogram = landcover.Histogram
 		point.SpeciesUnitConsts = mapping.speciesUnitConsts(landcover.GLCKey, climateZone)
 		if landcover.Class == 80 || landcover.Key == "80_permanent_water" {
-			point.InlandWater = true
-			point.ElevationBand = "inland_water"
+			// Permanent water includes the ocean. Only water on the source land
+			// mask (or an explicit inland polygon) supplies inland-water evidence.
+			point.InlandWater = inlandWater || (land != nil && *land)
+			point.ElevationBand = "water"
 			water := false
 			point.Land = &water
-		} else {
+		} else if !inlandWater && (land == nil || *land) {
 			point.ElevationBand = "landcover_" + landcover.Key
 		}
 		choice := mapping.landcoverChoice(landcover.Key)
-		if len(choice.Proportions) > 0 {
+		if len(choice.Proportions) > 0 && !point.InlandWater && (point.Land == nil || *point.Land) {
 			if landcover.Fraction < 0.65 && len(landcover.Histogram) > 1 {
 				if blend := mapping.blendedLandcoverChoice(landcover.Histogram[:minInt(2, len(landcover.Histogram))]); len(blend.Proportions) > 0 {
 					choice = blend
@@ -1182,7 +1395,9 @@ func classifyCell(point Cell, elevation float64, land *bool, shoreDistance float
 			return point
 		}
 	}
-	if inlandWater {
+	if point.InlandWater {
+		water := false
+		point.Land = &water
 		point.ElevationBand = "inland_water"
 		choice := mapping.landcoverChoice("80_permanent_water")
 		if len(choice.Proportions) == 0 {
@@ -1201,7 +1416,7 @@ func classifyCell(point Cell, elevation float64, land *bool, shoreDistance float
 		}
 		return point
 	}
-	if land != nil {
+	if point.Land != nil {
 		choice := mappingChoice(mapping, point.ElevationBand, climateZone, shoreDistance)
 		if len(choice.Proportions) > 0 {
 			point.TerrainID = chooseTerrain(point.X, point.Y, choice.Proportions)
@@ -1643,6 +1858,7 @@ func sampleLandmask(opts Options, points []Cell) ([]bool, string, error) {
 	if len(polygons) == 0 {
 		return nil, "", fmt.Errorf("landmask provider %q returned no polygons", provider)
 	}
+	polygons = polygonsForPoints(polygons, points)
 	return classifyPointsByPolygons(points, polygons), provider, nil
 }
 
@@ -1680,24 +1896,38 @@ func sampleInlandWater(opts Options, points []Cell) ([]bool, []string, string, e
 	if len(polygons) == 0 {
 		return nil, nil, "", fmt.Errorf("inland water provider %q returned no polygons", provider)
 	}
+	polygons = polygonsForPoints(polygons, points)
 	mask, names := classifyPointsByNamedPolygons(points, polygons)
 	return mask, names, provider, nil
 }
 
+func polygonsForPoints(polygons []polygon, points []Cell) []polygon {
+	if len(polygons) == 0 || len(points) == 0 {
+		return nil
+	}
+	minLon, minLat := math.MaxFloat64, math.MaxFloat64
+	maxLon, maxLat := -math.MaxFloat64, -math.MaxFloat64
+	for _, cell := range points {
+		minLon = math.Min(minLon, cell.Lon)
+		maxLon = math.Max(maxLon, cell.Lon)
+		minLat = math.Min(minLat, cell.Lat)
+		maxLat = math.Max(maxLat, cell.Lat)
+	}
+	filtered := make([]polygon, 0, len(polygons))
+	for _, poly := range polygons {
+		if poly.MaxLon < minLon || poly.MinLon > maxLon || poly.MaxLat < minLat || poly.MinLat > maxLat {
+			continue
+		}
+		filtered = append(filtered, poly)
+	}
+	return filtered
+}
+
 func fetchNaturalEarthLand(client *http.Client) ([]polygon, error) {
-	if client == nil {
-		client = &http.Client{Timeout: 60 * time.Second}
-	}
-	const naturalEarthLandURL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_land.geojson"
-	resp, err := client.Get(naturalEarthLandURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("Natural Earth landmask status %d", resp.StatusCode)
-	}
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 32<<20))
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	session := fetch.Session{Client: client}
+	data, err := session.Get(ctx, fetch.Part{Name: "Natural Earth Land", Endpoints: []string{"https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_land.geojson"}, MaxBytes: 32 << 20, Validate: func(data []byte) error { _, err := parseGeoJSONPolygons(data); return err }})
 	if err != nil {
 		return nil, err
 	}
@@ -1705,19 +1935,10 @@ func fetchNaturalEarthLand(client *http.Client) ([]polygon, error) {
 }
 
 func fetchNaturalEarthLakes(client *http.Client) ([]polygon, error) {
-	if client == nil {
-		client = &http.Client{Timeout: 60 * time.Second}
-	}
-	const naturalEarthLakesURL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_lakes.geojson"
-	resp, err := client.Get(naturalEarthLakesURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("Natural Earth lakes status %d", resp.StatusCode)
-	}
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 32<<20))
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	session := fetch.Session{Client: client}
+	data, err := session.Get(ctx, fetch.Part{Name: "Natural Earth Lakes", Endpoints: []string{"https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_lakes.geojson"}, MaxBytes: 32 << 20, Validate: func(data []byte) error { _, err := parseGeoJSONPolygons(data); return err }})
 	if err != nil {
 		return nil, err
 	}
@@ -1984,6 +2205,14 @@ func distanceToClass(land []bool, n int, target bool) []int {
 }
 
 func BuildRecipe(report Report) scenario.Recipe {
+	return buildRecipe(report, nil)
+}
+
+func buildRecipe(report Report, diagnostics *[]LayerDiagnostics) scenario.Recipe {
+	profile := report.EcologyProfile
+	if profile.Schema == "" {
+		profile = defaultEcologyProfile()
+	}
 	land := make([]scenario.MaskCellRecipe, 0, len(report.Cells))
 	water := make([]scenario.MaskCellRecipe, 0, len(report.Cells))
 	beach := make([]scenario.MaskCellRecipe, 0, len(report.Cells))
@@ -1992,13 +2221,14 @@ func BuildRecipe(report Report) scenario.Recipe {
 	highland := make([]scenario.MaskCellRecipe, 0, len(report.Cells))
 	terrainCells := map[int][]scenario.MaskCellRecipe{}
 	landcoverCells := map[string][]Cell{}
-	var roadCells []scenario.MaskCellRecipe
+	roadCellsByTerrain := map[int][]scenario.MaskCellRecipe{}
 	var roadsideCells []scenario.MaskCellRecipe
 	var borderCells []scenario.MaskCellRecipe
 	borderCellsByTerrain := map[int][]scenario.MaskCellRecipe{}
 	shoreBandCellsByTerrain := map[int][]scenario.MaskCellRecipe{}
 	var shoreMediumCells []scenario.MaskCellRecipe
 	var shoreDeepCells []scenario.MaskCellRecipe
+	var dockableShoreCells []scenario.MaskCellRecipe
 	shoreLayerCells := map[[2]int][]scenario.MaskCellRecipe{}
 	for _, cell := range report.Cells {
 		maskCell := scenario.MaskCellRecipe{X: cell.X, Y: cell.Y}
@@ -2008,7 +2238,11 @@ func BuildRecipe(report Report) scenario.Recipe {
 		}
 		terrainCells[cell.TerrainID] = append(terrainCells[cell.TerrainID], maskCell)
 		if cell.Road {
-			roadCells = append(roadCells, maskCell)
+			terrainID := cell.RoadTerrainID
+			if terrainID == 0 {
+				terrainID = roadTerrainID
+			}
+			roadCellsByTerrain[terrainID] = append(roadCellsByTerrain[terrainID], maskCell)
 		}
 		if cell.Roadside {
 			roadsideCells = append(roadsideCells, maskCell)
@@ -2016,6 +2250,11 @@ func BuildRecipe(report Report) scenario.Recipe {
 		if cell.Border {
 			borderCells = append(borderCells, maskCell)
 			borderCellsByTerrain[cell.TerrainID] = append(borderCellsByTerrain[cell.TerrainID], maskCell)
+		}
+		if cell.TerrainID == 1 && cell.Land != nil && !*cell.Land &&
+			!cell.InlandWater &&
+			cell.DistanceToShoreTiles <= normalizeShoreBandWidth(report.ShoreBandWidth) {
+			dockableShoreCells = append(dockableShoreCells, maskCell)
 		}
 		switch cell.ShoreCrossfadeBand {
 		case "A_over_B":
@@ -2039,7 +2278,7 @@ func BuildRecipe(report Report) scenario.Recipe {
 		case "C_over_B":
 			shoreLayerCells[[2]int{shoreTerrainID, cell.TerrainID}] = append(shoreLayerCells[[2]int{shoreTerrainID, cell.TerrainID}], maskCell)
 		}
-		if cell.LandcoverKey != "" {
+		if cell.LandcoverKey != "" && ((cell.Land != nil && *cell.Land) || (cell.InlandWater && cell.LandcoverKey == "80_permanent_water")) {
 			landcoverCells[cell.LandcoverKey] = append(landcoverCells[cell.LandcoverKey], cell)
 		}
 		if cell.Land != nil && *cell.Land {
@@ -2060,6 +2299,7 @@ func BuildRecipe(report Report) scenario.Recipe {
 	}
 	onePlayer := 1
 	recipe := scenario.Recipe{
+		DatPath:  report.DatPath,
 		Scenario: &scenario.ScenarioRecipe{PlayerCount: &onePlayer},
 	}
 	appendNonEmptyMask := func(name string, cells []scenario.MaskCellRecipe) {
@@ -2110,6 +2350,12 @@ func BuildRecipe(report Report) scenario.Recipe {
 	}
 	for _, key := range classKeys {
 		terrainIDs := terrainIDsForLandcoverKey(key)
+		if override := profile.TerrainByLandcover[key]; len(override) > 0 {
+			terrainIDs = override
+			if len(override) == 1 {
+				recipe.Map = append(recipe.Map, scenario.MapRecipe{Op: "set_terrain_mask", Mask: "landcover_" + key, TerrainID: intPtr(override[0])})
+			}
+		}
 		if len(terrainIDs) == 0 {
 			continue
 		}
@@ -2122,7 +2368,7 @@ func BuildRecipe(report Report) scenario.Recipe {
 		if len(terrainIDs) >= 2 {
 			scale := 9.0
 			threshold := 0.56
-			seed := 24000 + len(recipe.Map)*17
+			seed := report.Seed + 24000 + len(recipe.Map)*17
 			recipe.Map = append(recipe.Map, scenario.MapRecipe{
 				Op:         "noise_fill",
 				Mask:       "landcover_" + key,
@@ -2185,6 +2431,14 @@ func BuildRecipe(report Report) scenario.Recipe {
 			TerrainID2: intPtr(key[1]),
 		})
 	}
+	appendNonEmptyMask("dockable_shore", dockableShoreCells)
+	if len(dockableShoreCells) > 0 {
+		recipe.Map = append(recipe.Map, scenario.MapRecipe{
+			Op:        "set_terrain_mask",
+			Mask:      "dockable_shore",
+			TerrainID: intPtr(1),
+		})
+	}
 	appendNonEmptyMask("roadside", roadsideCells)
 	if len(roadsideCells) > 0 {
 		recipe.Map = append(recipe.Map, scenario.MapRecipe{
@@ -2193,12 +2447,18 @@ func BuildRecipe(report Report) scenario.Recipe {
 			TerrainID: intPtr(6),
 		})
 	}
-	appendNonEmptyMask("roads", roadCells)
-	if len(roadCells) > 0 {
+	roadTerrainIDs := make([]int, 0, len(roadCellsByTerrain))
+	for terrainID := range roadCellsByTerrain {
+		roadTerrainIDs = append(roadTerrainIDs, terrainID)
+	}
+	sort.Ints(roadTerrainIDs)
+	for _, terrainID := range roadTerrainIDs {
+		name := fmt.Sprintf("roads_%d", terrainID)
+		appendNonEmptyMask(name, roadCellsByTerrain[terrainID])
 		recipe.Map = append(recipe.Map, scenario.MapRecipe{
 			Op:        "set_terrain_mask",
-			Mask:      "roads",
-			TerrainID: intPtr(roadTerrainID),
+			Mask:      name,
+			TerrainID: intPtr(terrainID),
 		})
 	}
 	appendNonEmptyMask("state_borders", borderCells)
@@ -2219,12 +2479,15 @@ func BuildRecipe(report Report) scenario.Recipe {
 			})
 		}
 	}
-	if len(landcoverCells) > 0 {
-		recipe.Units = append(recipe.Units, landcoverVegetation(report, landcoverCells)...)
-	} else {
-		recipe.Units = append(recipe.Units, fallbackWorldVegetation(report)...)
+	units, layers := buildHabitatEcology(report, profile)
+	recipe.Units = append(recipe.Units, units...)
+	recipe.Units = append(recipe.Units, buildLandmarks(report, profile)...)
+	if diagnostics != nil {
+		*diagnostics = layers
 	}
-	recipe.Units = append(recipe.Units, projectionCalibrationMarkers(report)...)
+	if profile.PlayerStarts != nil && profile.PlayerStarts.Mode == "calibration" {
+		recipe.Units = append(recipe.Units, projectionCalibrationMarkers(report)...)
+	}
 	return recipe
 }
 
@@ -2232,7 +2495,7 @@ func projectionCalibrationMarkers(report Report) []scenario.UnitRecipe {
 	if report.GridSize <= 0 || report.Orient != "iso-ccw-screen" {
 		return nil
 	}
-	proj := newGeoProjection(report.BBox, report.Orient)
+	proj := report.projection()
 	offsetKm := 0.82 * math.Min(proj.halfEastKm, proj.halfNorthKm)
 	if offsetKm <= 0 {
 		return nil
@@ -2261,7 +2524,7 @@ func projectionCalibrationMarkers(report Report) []scenario.UnitRecipe {
 	z := 0.0
 	var out []scenario.UnitRecipe
 	for _, marker := range markers {
-		x, y, ok := gridCellForLatLon(report.BBox, report.GridSize, report.Orient, marker.lat, marker.lon)
+		x, y, ok := proj.gridCellForLatLon(report.GridSize, marker.lat, marker.lon)
 		if !ok {
 			continue
 		}
@@ -2510,296 +2773,6 @@ func BuildSailDemoUnits(gridSize int) []scenario.UnitRecipe {
 	}}
 }
 
-func filterInfrastructureFreeCells(cells []Cell, allowMangroveWaterBuffer bool) []Cell {
-	if len(cells) == 0 {
-		return nil
-	}
-	out := make([]Cell, 0, len(cells))
-	for _, cell := range cells {
-		if !cellBuildableForGaiaPlacement(cell) {
-			continue
-		}
-		if cell.Road || cell.Roadside || cell.Border || cell.KeyWestCauseway {
-			continue
-		}
-		if cell.WaterBuffer && !(allowMangroveWaterBuffer && cell.LandcoverKey == "95_mangrove") {
-			continue
-		}
-		out = append(out, cell)
-	}
-	return out
-}
-
-func roadsidePlantCells(report Report) []Cell {
-	out := make([]Cell, 0, report.RoadsideCells)
-	for _, cell := range report.Cells {
-		if cell.Roadside && cellBuildableForGaiaPlacement(cell) {
-			out = append(out, cell)
-		}
-	}
-	return out
-}
-
-func coastalPalmCells(report Report) []Cell {
-	out := make([]Cell, 0, report.WaterBufferCells)
-	for _, cell := range report.Cells {
-		if !cellBuildableForGaiaPlacement(cell) {
-			continue
-		}
-		if cell.Land == nil || !*cell.Land || cell.Road || cell.Roadside || cell.Border || cell.KeyWestCauseway {
-			continue
-		}
-		if !cell.WaterBuffer {
-			continue
-		}
-		if cell.ClimateZone != "tropical" && cell.ClimateZone != "subtropical" {
-			continue
-		}
-		if cell.LandcoverKey == "95_mangrove" || cell.LandcoverKey == "90_herbaceous_wetland" {
-			continue
-		}
-		out = append(out, cell)
-	}
-	return out
-}
-
-func alligatorAlleyCells(report Report) []Cell {
-	if !bboxContains(report.BBox, 26.15, -81.5) || !bboxContains(report.BBox, 26.05, -80.2) {
-		return nil
-	}
-	var out []Cell
-	for _, cell := range report.Cells {
-		if !cellBuildableForGaiaPlacement(cell) {
-			continue
-		}
-		if cell.Land == nil || !*cell.Land || cell.Road || cell.Roadside || cell.Border {
-			continue
-		}
-		if cell.Lat < 25.75 || cell.Lat > 26.45 || cell.Lon < -82.1 || cell.Lon > -80.05 {
-			continue
-		}
-		if cell.LandcoverKey == "90_herbaceous_wetland" || cell.LandcoverKey == "95_mangrove" || cell.TerrainID == 111 || cell.TerrainID == 55 || cell.TerrainID == 101 || cell.TerrainID == 95 {
-			out = append(out, cell)
-		}
-	}
-	return out
-}
-
-func directUnitsFromCells(cells []Cell, unitConsts []int, stride, maxCount, seed int) []scenario.UnitRecipe {
-	if len(cells) == 0 || len(unitConsts) == 0 {
-		return nil
-	}
-	if stride < 1 {
-		stride = 1
-	}
-	status := 2
-	z := 0.0
-	out := make([]scenario.UnitRecipe, 0, minInt(len(cells)/stride+1, maxCount))
-	offset := seed % stride
-	for i, cell := range cells {
-		if i%stride != offset {
-			continue
-		}
-		if maxCount > 0 && len(out) >= maxCount {
-			break
-		}
-		jitterX := (hashUnitFloat(cell.X, cell.Y, seed) - 0.5) * 0.22
-		jitterY := (hashUnitFloat(cell.X, cell.Y, seed+37) - 0.5) * 0.22
-		x := float64(cell.X) + 0.5 + jitterX
-		y := float64(cell.Y) + 0.5 + jitterY
-		rotation := math.Floor(hashUnitFloat(cell.X, cell.Y, seed+73) * 32)
-		out = append(out, scenario.UnitRecipe{
-			Op:        "add_unit",
-			Player:    0,
-			UnitConst: unitConsts[(len(out)+seed)%len(unitConsts)],
-			X:         &x,
-			Y:         &y,
-			Z:         &z,
-			Status:    &status,
-			Rotation:  &rotation,
-		})
-	}
-	return out
-}
-
-type waterUnitCandidate struct {
-	cell Cell
-	hash float64
-}
-
-func sampledUnitsFromCells(cells []Cell, unitConsts []int, desired, maxCount, seed int) []scenario.UnitRecipe {
-	if len(cells) == 0 || len(unitConsts) == 0 || desired <= 0 {
-		return nil
-	}
-	if maxCount > 0 && desired > maxCount {
-		desired = maxCount
-	}
-	if desired > len(cells) {
-		desired = len(cells)
-	}
-	candidates := make([]waterUnitCandidate, 0, len(cells))
-	for _, cell := range cells {
-		candidates = append(candidates, waterUnitCandidate{
-			cell: cell,
-			hash: hashUnitFloat(cell.X, cell.Y, seed),
-		})
-	}
-	sort.Slice(candidates, func(i, j int) bool {
-		if candidates[i].hash == candidates[j].hash {
-			if candidates[i].cell.Y == candidates[j].cell.Y {
-				return candidates[i].cell.X < candidates[j].cell.X
-			}
-			return candidates[i].cell.Y < candidates[j].cell.Y
-		}
-		return candidates[i].hash < candidates[j].hash
-	})
-	status := 2
-	z := 0.0
-	out := make([]scenario.UnitRecipe, 0, desired)
-	minDist2 := 25
-	for pass := 0; pass < 2 && len(out) < desired; pass++ {
-		for _, candidate := range candidates {
-			if len(out) >= desired {
-				break
-			}
-			if pass == 0 && tooCloseToPlaced(candidate.cell, out, minDist2) {
-				continue
-			}
-			cell := candidate.cell
-			jitterX := (hashUnitFloat(cell.X, cell.Y, seed+11) - 0.5) * 0.22
-			jitterY := (hashUnitFloat(cell.X, cell.Y, seed+47) - 0.5) * 0.22
-			x := float64(cell.X) + 0.5 + jitterX
-			y := float64(cell.Y) + 0.5 + jitterY
-			rotation := math.Floor(hashUnitFloat(cell.X, cell.Y, seed+83) * 32)
-			out = append(out, scenario.UnitRecipe{
-				Op:        "add_unit",
-				Player:    0,
-				UnitConst: unitConsts[(len(out)+seed)%len(unitConsts)],
-				X:         &x,
-				Y:         &y,
-				Z:         &z,
-				Status:    &status,
-				Rotation:  &rotation,
-			})
-		}
-		minDist2 = 9
-	}
-	return out
-}
-
-func tooCloseToPlaced(cell Cell, units []scenario.UnitRecipe, minDist2 int) bool {
-	for _, unit := range units {
-		if unit.X == nil || unit.Y == nil {
-			continue
-		}
-		dx := float64(cell.X) + 0.5 - *unit.X
-		dy := float64(cell.Y) + 0.5 - *unit.Y
-		if dx*dx+dy*dy < float64(minDist2) {
-			return true
-		}
-	}
-	return false
-}
-
-func waterFaunaUnits(shore, lake, medium, deep []Cell) []scenario.UnitRecipe {
-	var out []scenario.UnitRecipe
-	// Shore fish are intentionally near-continuous so coasts read as harvestable.
-	out = append(out, directUnitsFromCells(shore, []int{455, 458, 2170, 455, 458}, 5, 520, 71001)...)
-	// Inland water uses a different species band than open ocean.
-	out = append(out, sampledUnitsFromCells(lake, []int{53, 53, 53, 456}, maxInt(24, len(lake)/4), 720, 71002)...)
-	// Open ocean is deliberately reduced to roughly a third of the old density.
-	out = append(out, sampledUnitsFromCells(medium, []int{456}, maxInt(40, len(medium)/80), 180, 71003)...)
-	out = append(out, sampledUnitsFromCells(deep, []int{457, 457, 450, 450, 2625}, maxInt(32, len(deep)/140), 130, 71004)...)
-	return out
-}
-
-func fallbackWorldVegetation(report Report) []scenario.UnitRecipe {
-	type scatterPlan struct {
-		name            string
-		cells           []Cell
-		unitConst       int
-		count           int
-		density         float64
-		centerLimit     int
-		spread          float64
-		minDist         float64
-		clusterShape    string
-		terrains        []int
-		rotationChoices []float64
-	}
-	var tropicalLand, temperateLand, borealLand, polarLand, allPlayableLand []Cell
-	for _, cell := range report.Cells {
-		if cell.Land == nil || !*cell.Land {
-			continue
-		}
-		if !cellBuildableForGaiaPlacement(cell) {
-			continue
-		}
-		if cell.Road || cell.Roadside || cell.Border || cell.WaterBuffer || cell.KeyWestCauseway {
-			continue
-		}
-		if math.Abs(cell.Lat) >= 66 {
-			polarLand = append(polarLand, cell)
-			continue
-		}
-		allPlayableLand = append(allPlayableLand, cell)
-		switch cell.ClimateZone {
-		case "tropical", "subtropical":
-			tropicalLand = append(tropicalLand, cell)
-		case "boreal":
-			borealLand = append(borealLand, cell)
-		default:
-			temperateLand = append(temperateLand, cell)
-		}
-	}
-	roadsidePlants := roadsidePlantCells(report)
-	coastalPalms := coastalPalmCells(report)
-	shoreWater, lakeWater, mediumWater, deepWater := waterResourceCells(report)
-	plans := []scatterPlan{
-		{name: "tropical_resource_groves", cells: tropicalLand, unitConst: 2567, count: minInt(5200, len(tropicalLand)/2), density: report.FloraDensity, centerLimit: 56, spread: 5.5, minDist: 0.45, clusterShape: "packed", terrains: []int{0, 10, 12, 55, 95, 100}, rotationChoices: rangeFloatChoices(0, 26)},
-		{name: "temperate_resource_forest", cells: temperateLand, unitConst: 350, count: minInt(5200, len(temperateLand)/2), density: report.FloraDensity, centerLimit: 56, spread: 5.5, minDist: 0.45, clusterShape: "packed", terrains: []int{0, 10, 12, 100}, rotationChoices: floatChoices(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 21, 22, 23, 24, 25, 26)},
-		{name: "boreal_resource_forest", cells: borealLand, unitConst: 350, count: minInt(3800, len(borealLand)/2), density: report.FloraDensity, centerLimit: 44, spread: 5.2, minDist: 0.45, clusterShape: "packed", terrains: []int{0, 10, 32, 40, 100}, rotationChoices: floatChoices(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 21, 22, 23, 24, 25, 26)},
-		{name: "world_edge_trees", cells: allPlayableLand, unitConst: 2567, count: minInt(180, maxInt(1, len(allPlayableLand)/120)), density: math.Min(report.FloraDensity, 4), centerLimit: 60, spread: 2.0, minDist: 2.4, terrains: []int{0, 10, 12, 32, 40, 55, 95, 100, 111}, rotationChoices: rangeFloatChoices(0, 26)},
-		{name: "roadside_sparse_palmetto", cells: roadsidePlants, unitConst: 1054, count: minInt(160, maxInt(1, len(roadsidePlants)/16)), density: 3, centerLimit: 36, spread: 2.0, minDist: 1.4, terrains: []int{6}, rotationChoices: rangeFloatChoices(0, 14)},
-		{name: "coastal_palms", cells: coastalPalms, unitConst: 351, count: minInt(900, maxInt(1, len(coastalPalms)*4/5)), density: report.FloraDensity, centerLimit: 48, spread: 3.5, minDist: 0.55, clusterShape: "packed", terrains: []int{53}, rotationChoices: rangeFloatChoices(0, 38)},
-		{name: "polar_sparse_cover", cells: polarLand, unitConst: 350, count: minInt(320, len(polarLand)/18), density: report.FloraDensity, centerLimit: 20, spread: 5.0, minDist: 0.6, clusterShape: "packed", terrains: []int{32, 35, 40}},
-		{name: "deer_hunt_world", cells: allPlayableLand, unitConst: 65, count: minInt(520, maxInt(4, len(allPlayableLand)/70)), density: report.LandFaunaDensity, centerLimit: 120, spread: 7.0, minDist: 1.0, terrains: []int{0, 10, 12, 32, 40, 55, 95, 100, 111}},
-		{name: "boar_hunt_world", cells: allPlayableLand, unitConst: 48, count: minInt(180, maxInt(2, len(allPlayableLand)/220)), density: report.LandFaunaDensity, centerLimit: 80, spread: 7.5, minDist: 1.7, terrains: []int{0, 10, 12, 55, 95, 100, 111}},
-	}
-	var out []scenario.UnitRecipe
-	for i, plan := range plans {
-		plan.count = densityScaledCount(plan.count, plan.density)
-		if len(plan.cells) == 0 || plan.count <= 0 {
-			continue
-		}
-		centers := representativeCenters(plan.cells, minInt(plan.centerLimit, maxInt(4, plan.count/90)))
-		exact := false
-		seed := 43000 + i*1543
-		x1, y1 := 0.0, 0.0
-		x2, y2 := float64(report.GridSize), float64(report.GridSize)
-		out = append(out, scenario.UnitRecipe{
-			Op:                "cluster_scatter",
-			Player:            0,
-			UnitConst:         plan.unitConst,
-			Count:             intPtr(plan.count),
-			Centers:           centers,
-			ClusterShape:      plan.clusterShape,
-			Spread:            float64Ptr(plan.spread),
-			MinDistance:       float64Ptr(plan.minDist),
-			AllowedTerrainIDs: pruneUnbuildableTerrainIDs(plan.terrains),
-			Exact:             &exact,
-			Seed:              intPtr(seed),
-			RotationChoices:   plan.rotationChoices,
-			TargetAreaX1:      &x1,
-			TargetAreaY1:      &y1,
-			TargetAreaX2:      &x2,
-			TargetAreaY2:      &y2,
-		})
-	}
-	out = append(out, waterFaunaUnits(shoreWater, lakeWater, mediumWater, deepWater)...)
-	return out
-}
-
 func normalizeDensity(value float64) float64 {
 	if value <= 0 {
 		return 10
@@ -2904,247 +2877,10 @@ func pruneUnbuildableTerrainIDs(ids []int) []int {
 	return out
 }
 
-func landcoverVegetation(report Report, byClass map[string][]Cell) []scenario.UnitRecipe {
-	type scatterPlan struct {
-		name            string
-		cells           []Cell
-		unitConst       int
-		count           int
-		density         float64
-		centerLimit     int
-		spread          float64
-		minDist         float64
-		clusterShape    string
-		terrains        []int
-		rotationChoices []float64
-	}
-	treeCells := nonIsolatedLandCells(filterInfrastructureFreeCells(byClass["10_tree_cover"], false), report.GridSize, 2)
-	shoreWater, lakeWater, mediumWater, deepWater := waterResourceCells(report)
-	forestGrass := append([]Cell{}, treeCells...)
-	forestGrass = append(forestGrass, filterInfrastructureFreeCells(byClass["30_grassland"], false)...)
-	forestGrass = append(forestGrass, filterInfrastructureFreeCells(byClass["20_shrubland"], false)...)
-	wetlandCells := filterInfrastructureFreeCells(byClass["90_herbaceous_wetland"], false)
-	mangroveCells := filterInfrastructureFreeCells(byClass["95_mangrove"], true)
-	shrublandCells := filterInfrastructureFreeCells(byClass["20_shrubland"], false)
-	roadsidePlants := roadsidePlantCells(report)
-	coastalPalms := coastalPalmCells(report)
-	alligatorCells := alligatorAlleyCells(report)
-	dataDrivenSpecies := landcoverSpeciesVegetation(report)
-	useDataDrivenSpecies := len(dataDrivenSpecies) > 0
-	genericTreeCells := treeCells
-	genericWetlandCells := wetlandCells
-	genericMangroveCells := mangroveCells
-	genericShrublandCells := shrublandCells
-	if useDataDrivenSpecies {
-		genericTreeCells = nil
-		genericWetlandCells = nil
-		genericMangroveCells = nil
-		genericShrublandCells = nil
-	}
-	plans := []scatterPlan{
-		{name: "pine_flatwoods_resource_forest", cells: genericTreeCells, unitConst: 350, count: minInt(7000, len(genericTreeCells)*2/5), density: report.FloraDensity, centerLimit: 72, spread: 5.5, minDist: 0.45, clusterShape: "packed", terrains: []int{10, 0}, rotationChoices: floatChoices(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 21, 22, 23, 24, 25, 26)},
-		{name: "live_oak_resource_forest", cells: genericTreeCells, unitConst: 2567, count: minInt(6200, len(genericTreeCells)*3/5), density: report.FloraDensity, centerLimit: 64, spread: 5.3, minDist: 0.45, clusterShape: "packed", terrains: []int{10, 0}, rotationChoices: rangeFloatChoices(0, 26)},
-		{name: "forest_edge_trees", cells: genericTreeCells, unitConst: 2567, count: minInt(140, maxInt(1, len(genericTreeCells)/160)), density: math.Min(report.FloraDensity, 4), centerLimit: 48, spread: 2.0, minDist: 2.4, terrains: []int{10, 0}, rotationChoices: rangeFloatChoices(0, 26)},
-		{name: "sawgrass_reed_wetland_resource", cells: genericWetlandCells, unitConst: 1350, count: minInt(1600, maxInt(1, len(genericWetlandCells)*2)), density: report.FloraDensity, centerLimit: 28, spread: 4.2, minDist: 0.45, clusterShape: "packed", terrains: []int{111, 55, 101, 95}},
-		{name: "mangrove_coast_resource", cells: genericMangroveCells, unitConst: 1144, count: minInt(900, maxInt(1, len(genericMangroveCells)*3)), density: report.FloraDensity, centerLimit: 24, spread: 3.8, minDist: 0.45, clusterShape: "packed", terrains: []int{55, 95}},
-		{name: "wetland_lilies", cells: append(lakeWater, wetlandCells...), unitConst: 2536, count: minInt(360, maxInt(1, (len(lakeWater)+len(wetlandCells))/14)), density: report.FloraDensity, centerLimit: 24, spread: 3.2, minDist: 0.7, clusterShape: "packed", terrains: []int{1, 23, 22, 111, 95}},
-		{name: "shrubland_palmetto", cells: genericShrublandCells, unitConst: 1054, count: minInt(80, maxInt(1, len(genericShrublandCells)*2)), density: report.FloraDensity, centerLimit: 8, spread: 2.6, minDist: 0.55, clusterShape: "packed", terrains: []int{0, 100}},
-		{name: "roadside_sparse_palmetto", cells: roadsidePlants, unitConst: 1054, count: minInt(160, maxInt(1, len(roadsidePlants)/16)), density: 3, centerLimit: 36, spread: 2.0, minDist: 1.4, terrains: []int{6}, rotationChoices: rangeFloatChoices(0, 14)},
-		{name: "barrier_coast_palms", cells: coastalPalms, unitConst: 351, count: minInt(900, maxInt(1, len(coastalPalms)*4/5)), density: report.FloraDensity, centerLimit: 48, spread: 3.5, minDist: 0.55, clusterShape: "packed", terrains: []int{53}, rotationChoices: rangeFloatChoices(0, 38)},
-		{name: "deer_hunt_clusters", cells: forestGrass, unitConst: 65, count: minInt(260, maxInt(4, len(forestGrass)/70)), density: report.LandFaunaDensity, centerLimit: 64, spread: 6.5, minDist: 1.0, terrains: []int{0, 10, 12, 100}},
-		{name: "boar_hunt_clusters", cells: forestGrass, unitConst: 48, count: minInt(95, maxInt(2, len(forestGrass)/190)), density: report.LandFaunaDensity, centerLimit: 48, spread: 6.0, minDist: 1.5, terrains: []int{0, 10, 12, 100}},
-		{name: "crocodile_wetland_predators", cells: wetlandCells, unitConst: 1031, count: minInt(36, maxInt(1, len(wetlandCells)/90)), density: report.LandFaunaDensity, centerLimit: 24, spread: 7.0, minDist: 3.0, terrains: []int{111, 55, 101, 95}},
-		{name: "alligator_alley_meme_cluster", cells: alligatorCells, unitConst: 1031, count: minInt(80, maxInt(12, len(alligatorCells)/5)), density: 10, centerLimit: 12, spread: 4.0, minDist: 1.1, terrains: []int{0, 10, 55, 95, 100, 101, 111}},
-		{name: "black_bear_forest_predators", cells: treeCells, unitConst: 2089, count: minInt(28, maxInt(1, len(treeCells)/520)), density: report.LandFaunaDensity, centerLimit: 24, spread: 9.0, minDist: 4.0, terrains: []int{0, 10}},
-		{name: "jaguar_swamp_ambiance", cells: wetlandCells, unitConst: 812, count: minInt(20, maxInt(1, len(wetlandCells)/160)), density: report.LandFaunaDensity, centerLimit: 16, spread: 8.0, minDist: 4.0, terrains: []int{111, 55, 101}},
-	}
-	var out []scenario.UnitRecipe
-	out = append(out, dataDrivenSpecies...)
-	for i, plan := range plans {
-		plan.count = densityScaledCount(plan.count, plan.density)
-		if len(plan.cells) == 0 || plan.count <= 0 {
-			continue
-		}
-		centers := representativeCenters(plan.cells, minInt(plan.centerLimit, maxInt(4, plan.count/90)))
-		exact := false
-		seed := 31000 + i*997
-		x1, y1 := 0.0, 0.0
-		x2, y2 := float64(report.GridSize), float64(report.GridSize)
-		out = append(out, scenario.UnitRecipe{
-			Op:                "cluster_scatter",
-			Player:            0,
-			UnitConst:         plan.unitConst,
-			Count:             intPtr(plan.count),
-			Centers:           centers,
-			ClusterShape:      plan.clusterShape,
-			Spread:            float64Ptr(plan.spread),
-			MinDistance:       float64Ptr(plan.minDist),
-			AllowedTerrainIDs: pruneUnbuildableTerrainIDs(plan.terrains),
-			Exact:             &exact,
-			Seed:              intPtr(seed),
-			RotationChoices:   plan.rotationChoices,
-			TargetAreaX1:      &x1,
-			TargetAreaY1:      &y1,
-			TargetAreaX2:      &x2,
-			TargetAreaY2:      &y2,
-		})
-	}
-	out = append(out, waterFaunaUnits(shoreWater, lakeWater, mediumWater, deepWater)...)
-	return out
-}
-
-func landcoverSpeciesVegetation(report Report) []scenario.UnitRecipe {
-	type key struct {
-		glc       string
-		unitConst int
-	}
-	byKey := map[key][]Cell{}
-	for _, cell := range report.Cells {
-		if len(cell.SpeciesUnitConsts) == 0 || cell.LandcoverKeyGLC == "" {
-			continue
-		}
-		if cell.Land == nil || !*cell.Land {
-			continue
-		}
-		if !cellBuildableForGaiaPlacement(cell) {
-			continue
-		}
-		if cell.Road || cell.Roadside || cell.Border || cell.WaterBuffer || cell.KeyWestCauseway {
-			continue
-		}
-		for _, unitConst := range cell.SpeciesUnitConsts {
-			if unitConst == 0 {
-				continue
-			}
-			byKey[key{glc: cell.LandcoverKeyGLC, unitConst: unitConst}] = append(byKey[key{glc: cell.LandcoverKeyGLC, unitConst: unitConst}], cell)
-		}
-	}
-	keys := make([]key, 0, len(byKey))
-	for k := range byKey {
-		keys = append(keys, k)
-	}
-	sort.Slice(keys, func(i, j int) bool {
-		if keys[i].glc != keys[j].glc {
-			return keys[i].glc < keys[j].glc
-		}
-		return keys[i].unitConst < keys[j].unitConst
-	})
-	var out []scenario.UnitRecipe
-	for i, k := range keys {
-		cells := nonIsolatedLandCells(filterInfrastructureFreeCells(byKey[k], k.unitConst == 1144), report.GridSize, 1)
-		if len(cells) == 0 {
-			continue
-		}
-		count := densityScaledCount(minInt(2600, maxInt(1, len(cells)/maxInt(1, len(byKey[k][0].SpeciesUnitConsts)))), report.FloraDensity)
-		if count <= 0 {
-			continue
-		}
-		x1, y1 := 0.0, 0.0
-		x2, y2 := float64(report.GridSize), float64(report.GridSize)
-		exact := false
-		out = append(out, scenario.UnitRecipe{
-			Op:                "cluster_scatter",
-			Player:            0,
-			UnitConst:         k.unitConst,
-			Count:             intPtr(count),
-			Centers:           representativeCenters(cells, minInt(72, maxInt(4, count/90))),
-			ClusterShape:      "packed",
-			Spread:            float64Ptr(5.4),
-			MinDistance:       float64Ptr(0.45),
-			AllowedTerrainIDs: pruneUnbuildableTerrainIDs(terrainIDsForLandcoverKey(byKey[k][0].LandcoverKey)),
-			Exact:             &exact,
-			Seed:              intPtr(62000 + i*733),
-			RotationChoices:   rotationChoicesForSpecies(k.unitConst),
-			TargetAreaX1:      &x1,
-			TargetAreaY1:      &y1,
-			TargetAreaX2:      &x2,
-			TargetAreaY2:      &y2,
-		})
-	}
-	return out
-}
-
-func rotationChoicesForSpecies(unitConst int) []float64 {
-	switch unitConst {
-	case 349, 350, 351, 413, 1054, 1144, 1347, 1717, 1984, 2027, 2028, 2567, 2580:
-		return rangeFloatChoices(0, 26)
-	default:
-		return nil
-	}
-}
-
-func waterResourceCells(report Report) (shore []Cell, lake []Cell, medium []Cell, deep []Cell) {
-	for _, cell := range report.Cells {
-		if cell.Road || cell.Roadside || cell.Border || cell.KeyWestCauseway {
-			continue
-		}
-		if cell.Land != nil && *cell.Land {
-			continue
-		}
-		if cell.InlandWater || cell.LandcoverKey == "80_permanent_water" {
-			lake = append(lake, cell)
-			continue
-		}
-		if cell.DistanceToShoreTiles <= 8 {
-			shore = append(shore, cell)
-			continue
-		}
-		if cell.DistanceToShoreTiles < 20 {
-			medium = append(medium, cell)
-			continue
-		}
-		if cell.DistanceToShoreTiles >= 20 {
-			deep = append(deep, cell)
-		}
-	}
-	return shore, lake, medium, deep
-}
-
-func nonIsolatedLandCells(cells []Cell, n int, minNeighbors int) []Cell {
-	if len(cells) == 0 {
-		return nil
-	}
-	present := map[int]bool{}
-	for _, cell := range cells {
-		present[cell.Y*n+cell.X] = true
-	}
-	out := make([]Cell, 0, len(cells))
-	for _, cell := range cells {
-		neighbors := 0
-		for dy := -1; dy <= 1; dy++ {
-			for dx := -1; dx <= 1; dx++ {
-				if dx == 0 && dy == 0 {
-					continue
-				}
-				x := cell.X + dx
-				y := cell.Y + dy
-				if x < 0 || y < 0 || x >= n || y >= n {
-					continue
-				}
-				if present[y*n+x] {
-					neighbors++
-				}
-			}
-		}
-		if neighbors >= minNeighbors {
-			out = append(out, cell)
-		}
-	}
-	return out
-}
-
-func floatChoices(values ...int) []float64 {
-	out := make([]float64, 0, len(values))
-	for _, value := range values {
-		out = append(out, float64(value))
-	}
-	return out
-}
-
-func rangeFloatChoices(first, last int) []float64 {
-	out := make([]float64, 0, last-first+1)
-	for i := first; i <= last; i++ {
-		out = append(out, float64(i))
+func rotationAngles(count int) []float64 {
+	out := make([]float64, count)
+	for i := range out {
+		out[i] = float64(i) * 2 * math.Pi / float64(count)
 	}
 	return out
 }

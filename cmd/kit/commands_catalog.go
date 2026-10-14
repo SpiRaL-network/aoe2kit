@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 // Command traits, declared beside the dispatch they describe.
 //
 // Bootstrapped once by "apiref --emit-catalog"; maintained here by hand.
@@ -137,7 +139,7 @@ var commandCatalog = []CommandSpec{
 	{Name: "fx bind", Usage: "kit fx bind --atlas file.png|--dds file.dds --grid RxC|--frames N --frame-size WxH --into resources/_common --dat empires*.dat --unit N --slot flying|standing|attack|dying --from graphic_id --name fx_name [--dry-run]", Trait: TraitWrites, Input: "dat"},
 	{Name: "fx lint", Usage: "kit fx lint <mod-or-resources/_common> [--dat empires*.dat] [--text]", Trait: TraitReadOnly, Input: "dat"},
 	{Name: "fx new", Usage: "kit fx new <name> --preset trail|explosion|aura|projectile-fire [--grid RxC] [descriptor overrides]", Trait: TraitWrites, Input: "other"},
-	{Name: "geo trace-dem", Usage: "kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--provider opentopodata|flat] [--landmask naturalearth|geojson] [--landmask-file path] [--inland-water naturalearth|geojson] [--inland-water-file path] [--landcover worldcover|glc-fcs30d] [--landcover-cache dir] [--landcover-dir dir] [--landcover-file path] [--climate zone] [--felt-mapping path] [--orient iso|iso-cw|iso-ccw|iso-ccw-screen|grid|diamond] [--water-fraction 0..1] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--roads-file roads.json] [--admin-borders] [--omit-report-cells] [--omit-report-recipe] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]", Trait: TraitWrites, Input: "other"},
+	{Name: "geo trace-dem", Usage: strings.TrimPrefix(geoTraceUsage(), "usage: "), Trait: TraitWrites, Input: "other"},
 	{Name: "gfx export", Usage: "kit gfx export <file.sld> [--out dir] [--limit N] [--text]", Trait: TraitWrites, Input: "other"},
 	{Name: "gfx info", Usage: "kit gfx info <file.sld> [--text]", Trait: TraitReadOnly, Input: "other"},
 	{Name: "identify", Usage: "kit identify <file.aoe2scenario|file.aoe2record> [--registry known_scenarios.json] [--ai-registry known_ais.json] [--register NAME] [--family FAMILY] [--description TEXT]", Trait: TraitReadOnly, Input: "scenario"},

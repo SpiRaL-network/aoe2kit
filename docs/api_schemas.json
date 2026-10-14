@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 1004,
+  "type_count": 1038,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -17749,6 +17749,85 @@
         }
       ]
     },
+    "fetch.Part": {
+      "package": "fetch",
+      "name": "Part",
+      "fields": [
+        {
+          "name": "Name",
+          "go_type": "string"
+        },
+        {
+          "name": "Endpoints",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Method",
+          "go_type": "string"
+        },
+        {
+          "name": "Body",
+          "go_type": "[]byte"
+        },
+        {
+          "name": "Header",
+          "go_type": "http.Header"
+        },
+        {
+          "name": "MaxBytes",
+          "go_type": "int64"
+        },
+        {
+          "name": "CachePath",
+          "go_type": "string"
+        },
+        {
+          "name": "Validate",
+          "go_type": "func(...)"
+        },
+        {
+          "name": "ValidateResponse",
+          "go_type": "func(...)"
+        }
+      ]
+    },
+    "fetch.Session": {
+      "package": "fetch",
+      "name": "Session",
+      "doc": "Session is sequential: its disabled-mirror set lasts for the entire job.",
+      "fields": [
+        {
+          "name": "Client",
+          "go_type": "*http.Client"
+        },
+        {
+          "name": "Progress",
+          "go_type": "io.Writer"
+        },
+        {
+          "name": "Attempts",
+          "go_type": "int"
+        },
+        {
+          "name": "Backoff",
+          "go_type": "time.Duration"
+        }
+      ]
+    },
+    "fetch.StatusError": {
+      "package": "fetch",
+      "name": "StatusError",
+      "fields": [
+        {
+          "name": "Code",
+          "go_type": "int"
+        },
+        {
+          "name": "Detail",
+          "go_type": "string"
+        }
+      ]
+    },
     "fx.BindOptions": {
       "package": "fx",
       "name": "BindOptions",
@@ -18277,6 +18356,27 @@
         }
       ]
     },
+    "geotrace.AxisDiagnostics": {
+      "package": "geotrace",
+      "name": "AxisDiagnostics",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Visible",
+          "json": "visible",
+          "go_type": "bool"
+        },
+        {
+          "name": "AngleFromSouthDeg",
+          "json": "angle_from_south_deg",
+          "go_type": "float64"
+        }
+      ]
+    },
     "geotrace.BBox": {
       "package": "geotrace",
       "name": "BBox",
@@ -18303,10 +18403,45 @@
         }
       ]
     },
+    "geotrace.CalibrationAxis": {
+      "package": "geotrace",
+      "name": "CalibrationAxis",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "From",
+          "json": "from",
+          "go_type": "GeoPoint",
+          "ref": "geotrace.GeoPoint"
+        },
+        {
+          "name": "To",
+          "json": "to",
+          "go_type": "GeoPoint",
+          "ref": "geotrace.GeoPoint"
+        }
+      ]
+    },
     "geotrace.Cell": {
       "package": "geotrace",
       "name": "Cell",
       "fields": [
+        {
+          "name": "CoastalLandFraction",
+          "json": "coastal_land_fraction",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "SourceLandcoverClass",
+          "json": "source_landcover_class",
+          "go_type": "int",
+          "optional": true
+        },
         {
           "name": "X",
           "json": "x",
@@ -18347,6 +18482,12 @@
         {
           "name": "InlandWater",
           "json": "inland_water",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "ShelteredWater",
+          "json": "sheltered_water",
           "go_type": "bool",
           "optional": true
         },
@@ -18394,6 +18535,12 @@
           "optional": true
         },
         {
+          "name": "USGSWoodySpecies",
+          "json": "usgs_woody_species",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
           "name": "SpeciesUnitConsts",
           "json": "species_unit_consts",
           "go_type": "[]int",
@@ -18434,8 +18581,38 @@
           "optional": true
         },
         {
+          "name": "RoadTerrainID",
+          "json": "road_terrain_id",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "RoadWidth",
+          "json": "road_width_tiles",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
           "name": "Roadside",
           "json": "roadside",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenter",
+          "json": "population_center",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "BuiltUpCore",
+          "json": "built_up_core",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "RoadCorridor",
+          "json": "road_corridor",
           "go_type": "bool",
           "optional": true
         },
@@ -18446,8 +18623,8 @@
           "optional": true
         },
         {
-          "name": "KeyWestCauseway",
-          "json": "key_west_causeway",
+          "name": "Causeway",
+          "json": "causeway",
           "go_type": "bool",
           "optional": true
         },
@@ -18486,6 +18663,328 @@
           "name": "Reason",
           "json": "reason",
           "go_type": "string"
+        }
+      ]
+    },
+    "geotrace.CoastRefinement": {
+      "package": "geotrace",
+      "name": "CoastRefinement",
+      "fields": [
+        {
+          "name": "Policy",
+          "json": "policy",
+          "go_type": "string"
+        },
+        {
+          "name": "Enabled",
+          "json": "enabled",
+          "go_type": "bool"
+        },
+        {
+          "name": "MaxTileMeters",
+          "json": "max_tile_meters",
+          "go_type": "float64"
+        },
+        {
+          "name": "MaxPixelMeters",
+          "json": "max_pixel_meters",
+          "go_type": "float64"
+        },
+        {
+          "name": "Eligible",
+          "json": "eligible_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "Resolved",
+          "json": "resolved_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "Fallback",
+          "json": "fallback_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "WaterToLand",
+          "json": "water_to_land",
+          "go_type": "int"
+        },
+        {
+          "name": "LandToWater",
+          "json": "land_to_water",
+          "go_type": "int"
+        },
+        {
+          "name": "Mode",
+          "json": "mode",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "MinLandPixels",
+          "json": "min_land_pixels",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.DiagnosticRegion": {
+      "package": "geotrace",
+      "name": "DiagnosticRegion",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Bounds",
+          "json": "bounds",
+          "go_type": "BBox",
+          "ref": "geotrace.BBox"
+        }
+      ]
+    },
+    "geotrace.DockConstraints": {
+      "package": "geotrace",
+      "name": "DockConstraints",
+      "fields": [
+        {
+          "name": "State",
+          "json": "state",
+          "go_type": "string"
+        },
+        {
+          "name": "DATHash",
+          "json": "dat_sha256",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Unit",
+          "json": "unit",
+          "go_type": "int"
+        },
+        {
+          "name": "Civ",
+          "json": "civ",
+          "go_type": "int"
+        },
+        {
+          "name": "Table",
+          "json": "terrain_table",
+          "go_type": "int"
+        },
+        {
+          "name": "AllowedTerrains",
+          "json": "allowed_terrains",
+          "go_type": "[]int",
+          "optional": true
+        },
+        {
+          "name": "FootprintTiles",
+          "json": "footprint_tiles",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Note",
+          "json": "note",
+          "go_type": "string"
+        }
+      ]
+    },
+    "geotrace.EcologyFaunaProfile": {
+      "package": "geotrace",
+      "name": "EcologyFaunaProfile",
+      "fields": [
+        {
+          "name": "Deer",
+          "json": "deer",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Boar",
+          "json": "boar",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Wetland",
+          "json": "wetland",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Forest",
+          "json": "forest",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Swamp",
+          "json": "swamp",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.EcologyProfile": {
+      "package": "geotrace",
+      "name": "EcologyProfile",
+      "doc": "EcologyProfile contains game-facing choices, while geography providers supply the evidence that selects where those choices apply.",
+      "fields": [
+        {
+          "name": "EnableUnvalidatedUrban",
+          "json": "enable_unvalidated_urban",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "PlayerStarts",
+          "json": "player_starts",
+          "go_type": "*PlayerStartProfile",
+          "ref": "geotrace.PlayerStartProfile",
+          "optional": true
+        },
+        {
+          "name": "NeutralResources",
+          "json": "neutral_resources",
+          "go_type": "[]NeutralResourceProfile",
+          "ref": "geotrace.NeutralResourceProfile",
+          "optional": true
+        },
+        {
+          "name": "FloraWaterTerrains",
+          "json": "flora_water_terrains",
+          "go_type": "map[int][]int",
+          "optional": true,
+          "doc": "Explicit exceptions to the land-flora rule; DAT eligibility still applies."
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "map[string]json.RawMessage",
+          "optional": true,
+          "doc": "Notes preserve author intent and provenance; they never affect generation."
+        },
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "CompendiumSHA256",
+          "json": "compendium_sha256",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ResourceTreeUnits",
+          "json": "resource_tree_units",
+          "go_type": "[]int",
+          "optional": true
+        },
+        {
+          "name": "DecorativeFloraUnit",
+          "json": "decorative_flora_unit",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "WaterFloraUnit",
+          "json": "water_flora_unit",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Fauna",
+          "json": "fauna",
+          "go_type": "EcologyFaunaProfile",
+          "ref": "geotrace.EcologyFaunaProfile",
+          "optional": true
+        },
+        {
+          "name": "FishByBand",
+          "json": "fish_by_band",
+          "go_type": "map[string][]int",
+          "optional": true
+        },
+        {
+          "name": "Biome",
+          "json": "biome",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Palettes",
+          "json": "palettes",
+          "go_type": "map[string][]WeightedUnit",
+          "ref": "geotrace.WeightedUnit",
+          "optional": true
+        },
+        {
+          "name": "SpeciesUnits",
+          "json": "species_units",
+          "go_type": "map[string][]int",
+          "optional": true
+        },
+        {
+          "name": "Overlays",
+          "json": "overlays",
+          "go_type": "[]GeographicOverlay",
+          "ref": "geotrace.GeographicOverlay",
+          "optional": true
+        },
+        {
+          "name": "Landmarks",
+          "json": "landmarks",
+          "go_type": "[]LandmarkCluster",
+          "ref": "geotrace.LandmarkCluster",
+          "optional": true
+        },
+        {
+          "name": "CalibrationAxes",
+          "json": "calibration_axes",
+          "go_type": "[]CalibrationAxis",
+          "ref": "geotrace.CalibrationAxis",
+          "optional": true
+        },
+        {
+          "name": "DiagnosticRegions",
+          "json": "diagnostic_regions",
+          "go_type": "[]DiagnosticRegion",
+          "ref": "geotrace.DiagnosticRegion",
+          "optional": true
+        },
+        {
+          "name": "Layers",
+          "json": "layers",
+          "go_type": "[]HabitatLayer",
+          "ref": "geotrace.HabitatLayer"
+        },
+        {
+          "name": "DockUnit",
+          "json": "dock_unit",
+          "go_type": "int"
+        },
+        {
+          "name": "DockCiv",
+          "json": "dock_civ",
+          "go_type": "int"
+        },
+        {
+          "name": "TerrainByLandcover",
+          "json": "terrain_by_landcover",
+          "go_type": "map[string][]int",
+          "optional": true
         }
       ]
     },
@@ -18557,6 +19056,41 @@
         }
       ]
     },
+    "geotrace.FeltSelection": {
+      "package": "geotrace",
+      "name": "FeltSelection",
+      "doc": "Each selector has a total weight, divided between its matching artworks.",
+      "fields": [
+        {
+          "name": "Functions",
+          "json": "functions",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Tags",
+          "json": "tags",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Materials",
+          "json": "materials",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Units",
+          "json": "unit_consts",
+          "go_type": "[]int",
+          "optional": true
+        },
+        {
+          "name": "Weight",
+          "json": "weight",
+          "go_type": "float64"
+        }
+      ]
+    },
     "geotrace.FeltTerrainChoice": {
       "package": "geotrace",
       "name": "FeltTerrainChoice",
@@ -18599,6 +19133,218 @@
         }
       ]
     },
+    "geotrace.GeoPoint": {
+      "package": "geotrace",
+      "name": "GeoPoint",
+      "fields": [
+        {
+          "name": "Lat",
+          "json": "lat",
+          "go_type": "float64"
+        },
+        {
+          "name": "Lon",
+          "json": "lon",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "geotrace.GeographicOverlay": {
+      "package": "geotrace",
+      "name": "GeographicOverlay",
+      "doc": "Overlays are explicit design additions, not observations from landcover.",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Kind",
+          "json": "kind",
+          "go_type": "string"
+        },
+        {
+          "name": "Provenance",
+          "json": "provenance",
+          "go_type": "string"
+        },
+        {
+          "name": "Points",
+          "json": "points",
+          "go_type": "[]GeoPoint",
+          "ref": "geotrace.GeoPoint"
+        },
+        {
+          "name": "Radius",
+          "json": "radius",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "RequireBounds",
+          "json": "require_bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.HabitatLayer": {
+      "package": "geotrace",
+      "name": "HabitatLayer",
+      "doc": "Layers describe habitat and density independently of a particular region.",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Role",
+          "json": "role",
+          "go_type": "string"
+        },
+        {
+          "name": "EcologyRole",
+          "json": "ecology_role",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Bounds",
+          "json": "bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox",
+          "optional": true
+        },
+        {
+          "name": "MinShoreDistance",
+          "json": "min_shore_distance",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "MaxShoreDistance",
+          "json": "max_shore_distance",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "AllowWaterBuffer",
+          "json": "allow_water_buffer",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "LandcoverKeys",
+          "json": "landcover_keys",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Climates",
+          "json": "climates",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "WaterBand",
+          "json": "water_band",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "TerrainIDs",
+          "json": "terrain_ids",
+          "go_type": "[]int",
+          "optional": true
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "[]WeightedUnit",
+          "ref": "geotrace.WeightedUnit"
+        },
+        {
+          "name": "Felt",
+          "json": "felt",
+          "go_type": "[]FeltSelection",
+          "ref": "geotrace.FeltSelection",
+          "optional": true
+        },
+        {
+          "name": "FeltEntries",
+          "json": "felt_entries",
+          "go_type": "map[int]feltEntry",
+          "optional": true
+        },
+        {
+          "name": "Rate",
+          "json": "rate",
+          "go_type": "float64"
+        },
+        {
+          "name": "Limit",
+          "json": "limit",
+          "go_type": "int"
+        },
+        {
+          "name": "Spacing",
+          "json": "spacing",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "PatchScale",
+          "json": "patch_scale",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenterOnly",
+          "json": "population_center_only",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenterLayer",
+          "json": "population_center_layer",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ClusterCount",
+          "json": "cluster_count",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "ClusterSize",
+          "json": "cluster_size",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "ClusterRadius",
+          "json": "cluster_radius",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "ClusterSpacing",
+          "json": "cluster_spacing",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "FootprintRadius",
+          "json": "footprint_radius",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
     "geotrace.LandcoverClassMapping": {
       "package": "geotrace",
       "name": "LandcoverClassMapping",
@@ -18615,6 +19361,18 @@
       "package": "geotrace",
       "name": "LandcoverSample",
       "fields": [
+        {
+          "name": "MissingTile",
+          "go_type": "string"
+        },
+        {
+          "name": "CoastalLandFraction",
+          "go_type": "float64"
+        },
+        {
+          "name": "PixelMeters",
+          "go_type": "float64"
+        },
         {
           "name": "Valid",
           "go_type": "bool"
@@ -18667,10 +19425,333 @@
         }
       ]
     },
+    "geotrace.LandmarkCluster": {
+      "package": "geotrace",
+      "name": "LandmarkCluster",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Provenance",
+          "json": "provenance",
+          "go_type": "string"
+        },
+        {
+          "name": "Bounds",
+          "json": "bounds",
+          "go_type": "BBox",
+          "ref": "geotrace.BBox"
+        },
+        {
+          "name": "RequireBounds",
+          "json": "require_bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox",
+          "optional": true
+        },
+        {
+          "name": "UnitConst",
+          "json": "unit_const",
+          "go_type": "int"
+        },
+        {
+          "name": "LandcoverKeys",
+          "json": "landcover_keys",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "TerrainIDs",
+          "json": "terrain_ids",
+          "go_type": "[]int",
+          "optional": true
+        },
+        {
+          "name": "AllowedTerrainIDs",
+          "json": "allowed_terrain_ids",
+          "go_type": "[]int"
+        },
+        {
+          "name": "MinCount",
+          "json": "min_count",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "MaxCount",
+          "json": "max_count",
+          "go_type": "int"
+        },
+        {
+          "name": "CellsPerUnit",
+          "json": "cells_per_unit",
+          "go_type": "float64"
+        },
+        {
+          "name": "Density",
+          "json": "density",
+          "go_type": "float64"
+        },
+        {
+          "name": "CenterLimit",
+          "json": "center_limit",
+          "go_type": "int"
+        },
+        {
+          "name": "Spread",
+          "json": "spread",
+          "go_type": "float64"
+        },
+        {
+          "name": "MinDistance",
+          "json": "min_distance",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "geotrace.LayerDiagnostics": {
+      "package": "geotrace",
+      "name": "LayerDiagnostics",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Role",
+          "json": "role",
+          "go_type": "string"
+        },
+        {
+          "name": "EligibleCells",
+          "json": "eligible_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "Requested",
+          "json": "requested",
+          "go_type": "int"
+        },
+        {
+          "name": "Emitted",
+          "json": "emitted",
+          "go_type": "int"
+        },
+        {
+          "name": "TruncatedBySpacing",
+          "json": "truncated_by_spacing",
+          "go_type": "int"
+        },
+        {
+          "name": "UnitCounts",
+          "json": "unit_counts",
+          "go_type": "map[int]int"
+        },
+        {
+          "name": "FamilyCounts",
+          "json": "family_counts",
+          "go_type": "map[string]int",
+          "optional": true
+        },
+        {
+          "name": "AmphibiousEligibleCells",
+          "json": "amphibious_eligible_cells",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "AmphibiousEmitted",
+          "json": "amphibious_emitted",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "ClustersEmitted",
+          "json": "clusters_emitted",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "FootprintTiles",
+          "json": "footprint_tiles",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.MapDiagnostics": {
+      "package": "geotrace",
+      "name": "MapDiagnostics",
+      "fields": [
+        {
+          "name": "SourceLandComponents",
+          "json": "source_land_components",
+          "go_type": "int"
+        },
+        {
+          "name": "LargestLandComponent",
+          "json": "largest_land_component",
+          "go_type": "int"
+        },
+        {
+          "name": "EdgeConnectedLandCells",
+          "json": "edge_connected_land_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "SourceWaterComponents",
+          "json": "source_water_components",
+          "go_type": "int"
+        },
+        {
+          "name": "LandBoundsFill",
+          "json": "land_bounds_fill",
+          "go_type": "float64"
+        },
+        {
+          "name": "ShorePairs",
+          "json": "shore_pairs",
+          "go_type": "[]ShorePair",
+          "ref": "geotrace.ShorePair"
+        },
+        {
+          "name": "DATCandidateDockFootprints",
+          "json": "dat_candidate_dock_footprints",
+          "go_type": "int"
+        },
+        {
+          "name": "Dock",
+          "json": "dock",
+          "go_type": "DockConstraints",
+          "ref": "geotrace.DockConstraints"
+        }
+      ]
+    },
+    "geotrace.NeutralPile": {
+      "package": "geotrace",
+      "name": "NeutralPile",
+      "fields": [
+        {
+          "name": "Centre",
+          "json": "centre",
+          "go_type": "scenario.PointRecipe",
+          "ref": "scenario.PointRecipe"
+        },
+        {
+          "name": "Objects",
+          "json": "objects",
+          "go_type": "[]StartObject",
+          "ref": "geotrace.StartObject"
+        }
+      ]
+    },
+    "geotrace.NeutralResourceProfile": {
+      "package": "geotrace",
+      "name": "NeutralResourceProfile",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Unit",
+          "json": "unit",
+          "go_type": "int"
+        },
+        {
+          "name": "PileSize",
+          "json": "pile_size",
+          "go_type": "int"
+        },
+        {
+          "name": "GroupsPer10000",
+          "json": "groups_per_10000",
+          "go_type": "float64"
+        },
+        {
+          "name": "Spacing",
+          "json": "spacing",
+          "go_type": "float64"
+        },
+        {
+          "name": "StartDistance",
+          "json": "start_distance",
+          "go_type": "float64"
+        },
+        {
+          "name": "Provenance",
+          "json": "provenance",
+          "go_type": "string"
+        }
+      ]
+    },
+    "geotrace.NeutralResourceReport": {
+      "package": "geotrace",
+      "name": "NeutralResourceReport",
+      "fields": [
+        {
+          "name": "Config",
+          "json": "config",
+          "go_type": "NeutralResourceProfile",
+          "ref": "geotrace.NeutralResourceProfile"
+        },
+        {
+          "name": "AreaScale",
+          "json": "area_scale",
+          "go_type": "float64"
+        },
+        {
+          "name": "RequestedGroups",
+          "json": "requested_groups",
+          "go_type": "int"
+        },
+        {
+          "name": "EmittedGroups",
+          "json": "emitted_groups",
+          "go_type": "int"
+        },
+        {
+          "name": "CandidateGroups",
+          "json": "candidate_groups",
+          "go_type": "int"
+        },
+        {
+          "name": "RejectedGroups",
+          "json": "rejected_groups",
+          "go_type": "int"
+        },
+        {
+          "name": "Objects",
+          "json": "objects",
+          "go_type": "int"
+        },
+        {
+          "name": "Centres",
+          "json": "centres",
+          "go_type": "[]scenario.PointRecipe",
+          "ref": "scenario.PointRecipe"
+        },
+        {
+          "name": "Piles",
+          "json": "piles",
+          "go_type": "[]NeutralPile",
+          "ref": "geotrace.NeutralPile"
+        }
+      ]
+    },
     "geotrace.Options": {
       "package": "geotrace",
       "name": "Options",
       "fields": [
+        {
+          "name": "Seed",
+          "go_type": "int"
+        },
         {
           "name": "BBox",
           "go_type": "BBox",
@@ -18725,6 +19806,30 @@
           "go_type": "string"
         },
         {
+          "name": "ProfilePath",
+          "go_type": "string"
+        },
+        {
+          "name": "CompendiumPath",
+          "go_type": "string"
+        },
+        {
+          "name": "USGSWoodyPath",
+          "go_type": "string"
+        },
+        {
+          "name": "DatPath",
+          "go_type": "string"
+        },
+        {
+          "name": "ProjectionAspect",
+          "go_type": "float64"
+        },
+        {
+          "name": "ProjectionNorthScale",
+          "go_type": "float64"
+        },
+        {
           "name": "Orient",
           "go_type": "string"
         },
@@ -18777,7 +19882,19 @@
           "go_type": "string"
         },
         {
+          "name": "RoadsTimeout",
+          "go_type": "time.Duration"
+        },
+        {
+          "name": "Progress",
+          "go_type": "io.Writer"
+        },
+        {
           "name": "RoadSimplifyTiles",
+          "go_type": "float64"
+        },
+        {
+          "name": "RoadWidthTiles",
           "go_type": "float64"
         },
         {
@@ -18787,6 +19904,122 @@
         {
           "name": "Client",
           "go_type": "*http.Client"
+        }
+      ]
+    },
+    "geotrace.PlacementAudit": {
+      "package": "geotrace",
+      "name": "PlacementAudit",
+      "doc": "PlacementAudit describes a static DAT/terrain check, not an engine pathing test.",
+      "fields": [
+        {
+          "name": "State",
+          "json": "state",
+          "go_type": "string"
+        },
+        {
+          "name": "DATHash",
+          "json": "dat_sha256",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Checked",
+          "json": "checked_objects",
+          "go_type": "int"
+        },
+        {
+          "name": "FloraTerrain",
+          "json": "flora_invalid_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "FaunaTerrain",
+          "json": "fauna_invalid_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "FaunaBlockers",
+          "json": "fauna_overlapping_blockers",
+          "go_type": "int"
+        },
+        {
+          "name": "Removed",
+          "json": "sweep_removed_objects",
+          "go_type": "int"
+        },
+        {
+          "name": "Rejected",
+          "json": "rejected_candidates",
+          "go_type": "int"
+        },
+        {
+          "name": "UnitCounts",
+          "json": "unit_counts",
+          "go_type": "map[int]int",
+          "optional": true
+        },
+        {
+          "name": "InvalidByUnit",
+          "json": "invalid_by_unit",
+          "go_type": "map[int]int",
+          "optional": true
+        },
+        {
+          "name": "Deferred",
+          "json": "deferred_operations",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "ResourceTerrain",
+          "json": "resource_invalid_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "ResourceBlockers",
+          "json": "resource_overlapping_blockers",
+          "go_type": "int"
+        },
+        {
+          "name": "BuildingTerrain",
+          "json": "building_invalid_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "BuildingBlockers",
+          "json": "building_overlapping_blockers",
+          "go_type": "int"
+        },
+        {
+          "name": "BuildingConnectivity",
+          "json": "building_static_connectivity",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "LandComponentsBefore",
+          "json": "land_components_before_buildings",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "LandComponentsAfter",
+          "json": "land_components_after_buildings",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "BuildingsRejectedForConnectivity",
+          "json": "buildings_rejected_for_connectivity",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "FloraAmphibiousObjects",
+          "json": "flora_amphibious_objects",
+          "go_type": "int",
+          "optional": true
         }
       ]
     },
@@ -18829,6 +20062,155 @@
         }
       ]
     },
+    "geotrace.PlayerStartProfile": {
+      "package": "geotrace",
+      "name": "PlayerStartProfile",
+      "fields": [
+        {
+          "name": "Mode",
+          "json": "mode",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "TownCenter",
+          "json": "town_center",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Villager",
+          "json": "villager",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Scout",
+          "json": "scout",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Civ",
+          "json": "civ",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "MinSeparation",
+          "json": "min_separation",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "ClearRadius",
+          "json": "clear_radius",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "FloraClearance",
+          "json": "flora_clearance",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "TownCenterFootprint",
+          "json": "town_center_footprint",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Inventory",
+          "json": "inventory",
+          "go_type": "[]StartResource",
+          "ref": "geotrace.StartResource",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.PlayerStartReport": {
+      "package": "geotrace",
+      "name": "PlayerStartReport",
+      "fields": [
+        {
+          "name": "Mode",
+          "json": "mode",
+          "go_type": "string"
+        },
+        {
+          "name": "Config",
+          "json": "config",
+          "go_type": "PlayerStartProfile",
+          "ref": "geotrace.PlayerStartProfile"
+        },
+        {
+          "name": "Evidence",
+          "json": "evidence",
+          "go_type": "string"
+        },
+        {
+          "name": "Provenance",
+          "json": "provenance",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Positions",
+          "json": "positions",
+          "go_type": "[]StartPosition",
+          "ref": "geotrace.StartPosition"
+        },
+        {
+          "name": "RemovedAmbient",
+          "json": "removed_ambient_objects",
+          "go_type": "int"
+        },
+        {
+          "name": "AmbientBefore",
+          "json": "ambient_before",
+          "go_type": "map[string]int"
+        },
+        {
+          "name": "AmbientAfter",
+          "json": "ambient_after",
+          "go_type": "map[string]int"
+        },
+        {
+          "name": "Budget",
+          "json": "budget_comparison",
+          "go_type": "map[string]float64"
+        },
+        {
+          "name": "BudgetNote",
+          "json": "budget_note",
+          "go_type": "string"
+        }
+      ]
+    },
+    "geotrace.ProjectionOptions": {
+      "package": "geotrace",
+      "name": "ProjectionOptions",
+      "fields": [
+        {
+          "name": "Aspect",
+          "json": "aspect",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "NorthScale",
+          "json": "north_scale",
+          "go_type": "float64",
+          "optional": true
+        }
+      ]
+    },
     "geotrace.ProjectionSelfCheck": {
       "package": "geotrace",
       "name": "ProjectionSelfCheck",
@@ -18855,10 +20237,116 @@
         }
       ]
     },
+    "geotrace.RegionDiagnostics": {
+      "package": "geotrace",
+      "name": "RegionDiagnostics",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "RoadCells",
+          "json": "road_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "BorderCells",
+          "json": "border_cells",
+          "go_type": "int"
+        }
+      ]
+    },
     "geotrace.Report": {
       "package": "geotrace",
       "name": "Report",
       "fields": [
+        {
+          "name": "Experimental",
+          "json": "experimental",
+          "go_type": "bool"
+        },
+        {
+          "name": "Attribution",
+          "json": "attribution",
+          "go_type": "map[string]SourceAttribution",
+          "ref": "geotrace.SourceAttribution",
+          "optional": true
+        },
+        {
+          "name": "PlayerStarts",
+          "json": "player_starts",
+          "go_type": "*PlayerStartReport",
+          "ref": "geotrace.PlayerStartReport",
+          "optional": true
+        },
+        {
+          "name": "PlacementSweep",
+          "json": "placement_sweep",
+          "go_type": "*PlacementAudit",
+          "ref": "geotrace.PlacementAudit",
+          "optional": true
+        },
+        {
+          "name": "PlacementGate",
+          "json": "placement_gate",
+          "go_type": "*PlacementAudit",
+          "ref": "geotrace.PlacementAudit",
+          "optional": true
+        },
+        {
+          "name": "NeutralResources",
+          "json": "neutral_resources",
+          "go_type": "[]NeutralResourceReport",
+          "ref": "geotrace.NeutralResourceReport",
+          "optional": true
+        },
+        {
+          "name": "WrittenPlacementAudit",
+          "json": "written_placement_audit",
+          "go_type": "*PlacementAudit",
+          "ref": "geotrace.PlacementAudit",
+          "optional": true
+        },
+        {
+          "name": "PlacementSweepRecipe",
+          "json": "placement_sweep_recipe",
+          "go_type": "*scenario.Recipe",
+          "ref": "scenario.Recipe",
+          "optional": true
+        },
+        {
+          "name": "CoastRefinement",
+          "json": "coast_refinement",
+          "go_type": "CoastRefinement",
+          "ref": "geotrace.CoastRefinement"
+        },
+        {
+          "name": "Seed",
+          "json": "seed",
+          "go_type": "int"
+        },
+        {
+          "name": "EcologyLayers",
+          "json": "ecology_layers",
+          "go_type": "[]LayerDiagnostics",
+          "ref": "geotrace.LayerDiagnostics",
+          "optional": true
+        },
+        {
+          "name": "Diagnostics",
+          "json": "diagnostics",
+          "go_type": "*MapDiagnostics",
+          "ref": "geotrace.MapDiagnostics",
+          "optional": true
+        },
+        {
+          "name": "SourceCoverage",
+          "json": "source_coverage",
+          "go_type": "map[string]SourceCoverage",
+          "ref": "geotrace.SourceCoverage"
+        },
         {
           "name": "BBox",
           "json": "bbox",
@@ -18903,6 +20391,49 @@
         {
           "name": "FeltMappingSchema",
           "json": "felt_mapping_schema",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "EcologyProfile",
+          "json": "ecology_profile",
+          "go_type": "EcologyProfile",
+          "ref": "geotrace.EcologyProfile",
+          "optional": true
+        },
+        {
+          "name": "USGSWoodyProvider",
+          "json": "usgs_woody_provider",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "USGSWoodyPointCount",
+          "json": "usgs_woody_point_count",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "USGSWoodySpeciesCount",
+          "json": "usgs_woody_species_count",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "USGSWoodySHA256",
+          "json": "usgs_woody_sha256",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "USGSWoodyMaxDistanceKM",
+          "json": "usgs_woody_max_distance_km",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "DatPath",
+          "json": "dat_path",
           "go_type": "string",
           "optional": true
         },
@@ -18957,6 +20488,12 @@
         {
           "name": "LandcoverCounts",
           "json": "landcover_counts",
+          "go_type": "map[string]int",
+          "optional": true
+        },
+        {
+          "name": "LandcoverMissingTiles",
+          "json": "landcover_missing_tiles",
           "go_type": "map[string]int",
           "optional": true
         },
@@ -19066,6 +20603,12 @@
           "optional": true
         },
         {
+          "name": "DockableShoreCells",
+          "json": "dockable_shore_cells",
+          "go_type": "int",
+          "optional": true
+        },
+        {
           "name": "UnbuildableTerrainIDs",
           "json": "unbuildable_terrain_ids",
           "go_type": "[]int",
@@ -19115,8 +20658,32 @@
           "optional": true
         },
         {
+          "name": "RoadWidthTiles",
+          "json": "road_width_tiles",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
           "name": "RoadCells",
           "json": "road_cells",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenterCells",
+          "json": "population_center_cells",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenterBuiltUpCells",
+          "json": "population_center_built_up_cells",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "PopulationCenterRoadDensityCells",
+          "json": "population_center_road_density_cells",
           "go_type": "int",
           "optional": true
         },
@@ -19133,8 +20700,8 @@
           "optional": true
         },
         {
-          "name": "KeyWestCausewayCells",
-          "json": "key_west_causeway_cells",
+          "name": "CausewayCells",
+          "json": "causeway_cells",
           "go_type": "int",
           "optional": true
         },
@@ -19151,15 +20718,10 @@
           "optional": true
         },
         {
-          "name": "RoadCellsNorthOf31",
-          "json": "road_cells_north_of_31",
-          "go_type": "int",
-          "optional": true
-        },
-        {
-          "name": "BorderCellsNorthOf31",
-          "json": "border_cells_north_of_31",
-          "go_type": "int",
+          "name": "RegionDiagnostics",
+          "json": "region_diagnostics",
+          "go_type": "[]RegionDiagnostics",
+          "ref": "geotrace.RegionDiagnostics",
           "optional": true
         },
         {
@@ -19211,9 +20773,10 @@
           "optional": true
         },
         {
-          "name": "PeninsulaAxisAngleDeg",
-          "json": "peninsula_axis_angle_deg",
-          "go_type": "float64",
+          "name": "CalibrationAxes",
+          "json": "calibration_axes",
+          "go_type": "[]AxisDiagnostics",
+          "ref": "geotrace.AxisDiagnostics",
           "optional": true
         },
         {
@@ -19221,6 +20784,18 @@
           "json": "projection_self_check",
           "go_type": "*ProjectionSelfCheck",
           "ref": "geotrace.ProjectionSelfCheck",
+          "optional": true
+        },
+        {
+          "name": "ProjectionAspect",
+          "json": "projection_aspect",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "ProjectionNorthScale",
+          "json": "projection_north_scale",
+          "go_type": "float64",
           "optional": true
         },
         {
@@ -19243,6 +20818,133 @@
           "json": "recipe",
           "go_type": "*scenario.Recipe",
           "ref": "scenario.Recipe",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.ShorePair": {
+      "package": "geotrace",
+      "name": "ShorePair",
+      "fields": [
+        {
+          "name": "LandTerrain",
+          "json": "land_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "WaterTerrain",
+          "json": "water_terrain",
+          "go_type": "int"
+        },
+        {
+          "name": "Edges",
+          "json": "edges",
+          "go_type": "int"
+        },
+        {
+          "name": "AllowedByDAT",
+          "json": "allowed_by_dat",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "geotrace.SourceAttribution": {
+      "package": "geotrace",
+      "name": "SourceAttribution",
+      "doc": "SourceAttribution travels with reports, including unknown local query extents.",
+      "fields": [
+        {
+          "name": "Source",
+          "json": "source",
+          "go_type": "string"
+        },
+        {
+          "name": "Text",
+          "json": "attribution",
+          "go_type": "string"
+        },
+        {
+          "name": "License",
+          "json": "license",
+          "go_type": "string"
+        },
+        {
+          "name": "URL",
+          "json": "url",
+          "go_type": "string"
+        },
+        {
+          "name": "Dataset",
+          "json": "dataset",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "QueryBounds",
+          "json": "query_bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox"
+        },
+        {
+          "name": "ExtentState",
+          "json": "query_extent_state",
+          "go_type": "string"
+        }
+      ]
+    },
+    "geotrace.SourceCoverage": {
+      "package": "geotrace",
+      "name": "SourceCoverage",
+      "doc": "Observed coverage is not a claim that a source contains every real feature.",
+      "fields": [
+        {
+          "name": "State",
+          "json": "state",
+          "go_type": "string"
+        },
+        {
+          "name": "EligibleCells",
+          "json": "eligible_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "CoveredCells",
+          "json": "covered_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "MissingCells",
+          "json": "missing_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "OutsideNominalCells",
+          "json": "outside_nominal_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "OutsideNominalCovered",
+          "json": "outside_nominal_covered",
+          "go_type": "int"
+        },
+        {
+          "name": "QueryBounds",
+          "json": "query_bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox",
+          "optional": true
+        },
+        {
+          "name": "GeometryBounds",
+          "json": "geometry_bounds",
+          "go_type": "*BBox",
+          "ref": "geotrace.BBox",
+          "optional": true
+        },
+        {
+          "name": "Note",
+          "json": "note",
+          "go_type": "string",
           "optional": true
         }
       ]
@@ -19291,6 +20993,161 @@
         }
       ]
     },
+    "geotrace.StartObject": {
+      "package": "geotrace",
+      "name": "StartObject",
+      "fields": [
+        {
+          "name": "Player",
+          "json": "player",
+          "go_type": "int"
+        },
+        {
+          "name": "Unit",
+          "json": "unit",
+          "go_type": "int"
+        },
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "geotrace.StartPlacement": {
+      "package": "geotrace",
+      "name": "StartPlacement",
+      "fields": [
+        {
+          "name": "Role",
+          "json": "role",
+          "go_type": "string"
+        },
+        {
+          "name": "Unit",
+          "json": "unit",
+          "go_type": "int"
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        },
+        {
+          "name": "Distance",
+          "json": "distance",
+          "go_type": "float64"
+        },
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        },
+        {
+          "name": "SpeciesUnits",
+          "json": "species_units",
+          "go_type": "[]int",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.StartPosition": {
+      "package": "geotrace",
+      "name": "StartPosition",
+      "fields": [
+        {
+          "name": "Player",
+          "json": "player",
+          "go_type": "int"
+        },
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        },
+        {
+          "name": "Lat",
+          "json": "lat",
+          "go_type": "float64"
+        },
+        {
+          "name": "Lon",
+          "json": "lon",
+          "go_type": "float64"
+        },
+        {
+          "name": "Reason",
+          "json": "reason",
+          "go_type": "string"
+        },
+        {
+          "name": "Inventory",
+          "json": "inventory",
+          "go_type": "map[int]int"
+        },
+        {
+          "name": "Resources",
+          "json": "resources",
+          "go_type": "[]StartPlacement",
+          "ref": "geotrace.StartPlacement"
+        },
+        {
+          "name": "Objects",
+          "json": "objects",
+          "go_type": "[]StartObject",
+          "ref": "geotrace.StartObject",
+          "optional": true
+        },
+        {
+          "name": "NaturalWoodlineTrees",
+          "json": "natural_woodline_trees",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
+    "geotrace.StartResource": {
+      "package": "geotrace",
+      "name": "StartResource",
+      "fields": [
+        {
+          "name": "Role",
+          "json": "role",
+          "go_type": "string"
+        },
+        {
+          "name": "Unit",
+          "json": "unit",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        },
+        {
+          "name": "Distance",
+          "json": "distance",
+          "go_type": "int"
+        }
+      ]
+    },
     "geotrace.TerrainWeight": {
       "package": "geotrace",
       "name": "TerrainWeight",
@@ -19304,6 +21161,25 @@
           "name": "Weight",
           "json": "w",
           "go_type": "float64"
+        }
+      ]
+    },
+    "geotrace.USGSWoodyPoint": {
+      "package": "geotrace",
+      "name": "USGSWoodyPoint",
+      "doc": "USGSWoodyPoint is one approximately 25 km atlas grid point.",
+      "fields": [
+        {
+          "name": "Lat",
+          "go_type": "float64"
+        },
+        {
+          "name": "Lon",
+          "go_type": "float64"
+        },
+        {
+          "name": "Species",
+          "go_type": "[]string"
         }
       ]
     },
@@ -19344,6 +21220,22 @@
           "json": "buckets",
           "go_type": "[]WaterDistanceBucket",
           "ref": "geotrace.WaterDistanceBucket"
+        }
+      ]
+    },
+    "geotrace.WeightedUnit": {
+      "package": "geotrace",
+      "name": "WeightedUnit",
+      "fields": [
+        {
+          "name": "UnitConst",
+          "json": "unit_const",
+          "go_type": "int"
+        },
+        {
+          "name": "Weight",
+          "json": "weight",
+          "go_type": "float64"
         }
       ]
     },
