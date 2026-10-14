@@ -357,6 +357,7 @@
     "pkg/scenario/disconnect.go",
     "pkg/scenario/editor_coverage.go",
     "pkg/scenario/editor_coverage_test.go",
+    "pkg/scenario/editor_parity_write_test.go",
     "pkg/scenario/effect_editor_fields.go",
     "pkg/scenario/effect_editor_fields_test.go",
     "pkg/scenario/effects.go",

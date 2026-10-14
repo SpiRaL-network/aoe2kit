@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 1042,
+  "type_count": 1044,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -42673,6 +42673,12 @@
           "go_type": "int"
         },
         {
+          "name": "FirstDivergenceSection",
+          "json": "first_divergence_section",
+          "go_type": "string",
+          "optional": true
+        },
+        {
           "name": "Warning",
           "json": "warning",
           "go_type": "string",
@@ -42734,6 +42740,12 @@
           "name": "Length",
           "json": "length",
           "go_type": "int"
+        },
+        {
+          "name": "Section",
+          "json": "section",
+          "go_type": "string",
+          "optional": true
         },
         {
           "name": "BeforeHex",
@@ -46110,6 +46122,42 @@
           "go_type": "string"
         },
         {
+          "name": "Preset",
+          "json": "preset",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Anchor",
+          "json": "anchor",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "OffsetX",
+          "json": "offset_x",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "OffsetY",
+          "json": "offset_y",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "FillTerrain",
+          "json": "fill_terrain",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "MapColorMood",
+          "json": "map_color_mood",
+          "go_type": "*string",
+          "optional": true
+        },
+        {
           "name": "Mask",
           "json": "mask",
           "go_type": "string",
@@ -46255,6 +46303,11 @@
         {
           "name": "WaterDefinition",
           "json": "water_definition",
+          "go_type": "string"
+        },
+        {
+          "name": "ColorMood",
+          "json": "color_mood",
           "go_type": "string"
         }
       ]
@@ -46552,6 +46605,24 @@
         }
       ]
     },
+    "scenario.MessageSlotRecipe": {
+      "package": "scenario",
+      "name": "MessageSlotRecipe",
+      "fields": [
+        {
+          "name": "StringTableID",
+          "json": "string_table_id",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "Literal",
+          "json": "literal",
+          "go_type": "*string",
+          "optional": true
+        }
+      ]
+    },
     "scenario.MessageSlotSettings": {
       "package": "scenario",
       "name": "MessageSlotSettings",
@@ -46576,6 +46647,54 @@
           "name": "EffectiveSource",
           "json": "effective_source",
           "go_type": "string"
+        }
+      ]
+    },
+    "scenario.MessagesRecipe": {
+      "package": "scenario",
+      "name": "MessagesRecipe",
+      "fields": [
+        {
+          "name": "Instructions",
+          "json": "instructions",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
+        },
+        {
+          "name": "Hints",
+          "json": "hints",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
+        },
+        {
+          "name": "Victory",
+          "json": "victory",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
+        },
+        {
+          "name": "Loss",
+          "json": "loss",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
+        },
+        {
+          "name": "History",
+          "json": "history",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
+        },
+        {
+          "name": "Scouts",
+          "json": "scouts",
+          "go_type": "*MessageSlotRecipe",
+          "ref": "scenario.MessageSlotRecipe",
+          "optional": true
         }
       ]
     },
@@ -47098,6 +47217,12 @@
           "go_type": "bool"
         },
         {
+          "name": "Warnings",
+          "json": "warnings",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
           "name": "Verification",
           "json": "verification",
           "go_type": "aoe2.VerificationClaim",
@@ -47512,6 +47637,30 @@
           "optional": true
         },
         {
+          "name": "Architecture",
+          "json": "architecture",
+          "go_type": "*string",
+          "optional": true
+        },
+        {
+          "name": "StartingAge",
+          "json": "starting_age",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "PopulationLimit",
+          "json": "population_limit",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "Color",
+          "json": "color",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
           "name": "LockCivilization",
           "json": "lock_civilization",
           "go_type": "*bool",
@@ -47908,6 +48057,19 @@
           "json": "victory",
           "go_type": "*VictoryRecipe",
           "ref": "scenario.VictoryRecipe",
+          "optional": true
+        },
+        {
+          "name": "Messages",
+          "json": "messages",
+          "go_type": "*MessagesRecipe",
+          "ref": "scenario.MessagesRecipe",
+          "optional": true
+        },
+        {
+          "name": "GameDir",
+          "json": "game_dir",
+          "go_type": "string",
           "optional": true
         },
         {
@@ -50695,6 +50857,13 @@
           "name": "ConditionName",
           "json": "condition_name",
           "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ConditionData",
+          "json": "condition_data",
+          "go_type": "[]ConditionSummary",
+          "ref": "scenario.ConditionSummary",
           "optional": true
         },
         {

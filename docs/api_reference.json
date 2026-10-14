@@ -6260,12 +6260,16 @@
       ],
       "name": "scen patch",
       "group": "scen",
-      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--text|--json]",
+      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--game-dir D] [--text|--json]",
       "flags": [
         {
           "name": "--recipe",
           "value_hint": "recipe.json",
           "required": true
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "D"
         }
       ],
       "positional": [
@@ -6286,12 +6290,16 @@
       ],
       "name": "scen plan",
       "group": "scen",
-      "usage": "kit scen plan \u003cin.aoe2scenario\u003e --recipe recipe.json",
+      "usage": "kit scen plan \u003cin.aoe2scenario\u003e --recipe recipe.json [--game-dir D]",
       "flags": [
         {
           "name": "--recipe",
           "value_hint": "recipe.json",
           "required": true
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "D"
         }
       ],
       "positional": [
@@ -6475,8 +6483,7 @@
         "map",
         "triggers",
         "units"
-      ],
-      "response_type": "scenario.Recipe"
+      ]
     },
     {
       "path": [
@@ -6649,14 +6656,15 @@
       ],
       "name": "scen units",
       "group": "scen",
-      "usage": "kit scen units \u003cfile.aoe2scenario\u003e [--named]",
+      "usage": "kit scen units \u003cfile.aoe2scenario\u003e [--named] [--text|--json]",
       "flags": [
         {
           "name": "--named"
         }
       ],
       "positional": [
-        "\u003cfile.aoe2scenario\u003e"
+        "\u003cfile.aoe2scenario\u003e",
+        "--text|--json"
       ],
       "mutates": false,
       "network": false,

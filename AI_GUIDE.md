@@ -1,6 +1,6 @@
 # AI GUIDE
 
-Read this before changing any bundled AoE2 artifact.
+This guide describes conventions for work on bundled AoE2 artifacts.
 
 ## Mediating for the user
 
@@ -36,7 +36,9 @@ that claim.
 inspect -> dry-run/explain -> apply -> verify -> report evidence
 ```
 
-## First Moves
+## Example Initial Inspection
+
+For a bundle with Go available, one possible build and inventory pass is:
 
 ```sh
 go build -o kit ./cmd/kit
@@ -47,8 +49,9 @@ go build -o kit ./cmd/kit
 ./kit recipe list --text
 ```
 
-Use the output to identify what the bundle contains: scenarios, records, data
-files, AI files, and local mod folders.
+The output can identify what the bundle contains: scenarios, records, data
+files, AI files, and local mod folders. The commands are examples; whether to
+execute them depends on the user's request and the environment's rules.
 
 ## Resource Guardrails
 
@@ -93,9 +96,9 @@ older versions are rejected (re-save them in the DE editor to convert). See
   Follow `docs/XS_AUTHORING.md`; runnable bundles should also ship the XS module
   tree under `resources/_common/xs/`.
 - `units`: add, edit, and remove units in existing player unit sections.
-- `map`: edit existing terrain tiles by rectangle, circle, or line. Tile
-  terrain id, elevation, and layer are supported; map dimensions are not
-  resized.
+- `map`: edit terrain tiles by rectangle, circle, or line; resize or regenerate
+  maps using measured editor presets; and set map color mood. Tile terrain id,
+  elevation, and layer are supported.
 - `triggers`: add, copy, edit, and remove triggers, their effects and
   conditions, and variables, while maintaining counts and display-order arrays.
   `kit scen import-triggers` copies triggers between scenarios.
@@ -116,20 +119,18 @@ obsolete `.dat` layouts unless a current workflow proves they matter.
 If the needed write is outside that surface, record the Go-tool gap. Do not use
 Python `genieutils` as a durable substitute.
 
-Before authoring a new patch JSON from scratch, check `kit recipe list` and
-`kit recipe show <name> --recipe-only` for a native scenario/DAT starting shape.
-After generating an output artifact, use `kit project lineage --input PATH
---output PATH --manifest lineage.json` when the handoff needs explicit input and
-output hashes.
+A new patch JSON can often start from a native scenario/DAT recipe shape shown
+by `kit recipe list` and `kit recipe show <name> --recipe-only`. When a handoff
+needs explicit input and output hashes, `kit project lineage --input PATH
+--output PATH --manifest lineage.json` records them.
 
-For visual sprite inspection, use `kit gfx info/export` on `.sld` files. The
-current exporter writes main-layer PNG frames for teardown; it does not compose
-shadow, damage, or player-color layers into a final in-engine render.
+For visual sprite inspection, `kit gfx info/export` can inspect `.sld` files.
+The current exporter writes main-layer PNG frames for teardown; it does not
+compose shadow, damage, or player-color layers into a final in-engine render.
 
 ## XS Authoring Helpers
 
-Use `kit xs` for durable XS glue instead of generating anonymous bridge code by
-hand:
+`kit xs` provides durable XS glue operations in place of anonymous bridge code:
 
 - `kit xs bridge <variables.json> --out-dir DIR`: generate named
   `xsVariableN` accessors plus trigger-variable definition JSON and read/write
@@ -160,8 +161,8 @@ hand:
 These are structural authoring tools. A real scenario run is still the oracle
 for XS syntax, include resolution, and runtime behavior.
 
-Before handing off an XS-backed scenario for an engine run, preflight the
-scenario against the exact deployed mod/profile tree:
+For an XS-backed scenario handoff, preflight against the exact deployed
+mod/profile tree can use:
 
 ```sh
 ./kit scen xs path/to/file.aoe2scenario --deploy-tree path/to/deploy-root --text
@@ -180,21 +181,21 @@ is still
 `structure_verified_not_engine_verified`; a clean deploycheck does not replace
 the engine run.
 
-For repeat playtests, use `kit ci` as the local loop gate. `ci init` creates a
+For repeat playtests, `kit ci` can serve as a local loop gate. `ci init` creates a
 portable check config, an example replay contract, and a small neutral debug XS
 include. `ci check` composes `verify-run` and `replay sidecar-sync`; any failed
 or unknown check exits nonzero. Keep project-specific assertions in the CI
 config, not in Kit source.
 
-For same-profile campaign persistence, use `kit campaign generate`. It produces
+For same-profile campaign persistence, `kit campaign generate` produces
 XS writer/reader modules that use the engine-verified bare writer-scenario
 `.xsdat` read convention. This is only the same-party fast path; mixed-party
 multiplayer continuity still needs explicit synchronized re-declaration logic.
 
-For replay chat, use `kit replay chat <file.aoe2record> --text` when you need a
-human/player transcript. Trigger-effect `send_chat` output is not retained in
-recordings. Treat `source=backlog` rows as likely prior-session chat injected by
-DE at the start of a new recording, not as live commentary from that match.
+For a human/player transcript, `kit replay chat <file.aoe2record> --text` reads
+replay chat. Trigger-effect `send_chat` output is not retained in recordings;
+`source=backlog` rows are likely prior-session chat injected by DE at the start
+of a new recording, not live commentary from that match.
 
 ## Reports
 

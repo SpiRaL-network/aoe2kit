@@ -1,6 +1,7 @@
 package scenario
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"unicode"
@@ -11,19 +12,20 @@ type ByteDiffOptions struct {
 }
 
 type ByteDiffReport struct {
-	BeforePath       string           `json:"before_path,omitempty"`
-	AfterPath        string           `json:"after_path,omitempty"`
-	BeforeBytes      int              `json:"before_inflated_bytes"`
-	AfterBytes       int              `json:"after_inflated_bytes"`
-	Mode             string           `json:"mode"`
-	LengthDelta      int              `json:"length_delta"`
-	FirstDivergence  int              `json:"first_divergence"`
-	Warning          string           `json:"warning,omitempty"`
-	NoiseSuppressed  []SuppressedRun  `json:"noise_suppressed,omitempty"`
-	Changes          []ByteDiffRun    `json:"changes,omitempty"`
-	Verification     string           `json:"verification"`
-	Notes            []string         `json:"notes,omitempty"`
-	ComparedByteSpan ComparedByteSpan `json:"compared_byte_span"`
+	BeforePath             string           `json:"before_path,omitempty"`
+	AfterPath              string           `json:"after_path,omitempty"`
+	BeforeBytes            int              `json:"before_inflated_bytes"`
+	AfterBytes             int              `json:"after_inflated_bytes"`
+	Mode                   string           `json:"mode"`
+	LengthDelta            int              `json:"length_delta"`
+	FirstDivergence        int              `json:"first_divergence"`
+	FirstDivergenceSection string           `json:"first_divergence_section,omitempty"`
+	Warning                string           `json:"warning,omitempty"`
+	NoiseSuppressed        []SuppressedRun  `json:"noise_suppressed,omitempty"`
+	Changes                []ByteDiffRun    `json:"changes,omitempty"`
+	Verification           string           `json:"verification"`
+	Notes                  []string         `json:"notes,omitempty"`
+	ComparedByteSpan       ComparedByteSpan `json:"compared_byte_span"`
 }
 
 type ComparedByteSpan struct {
@@ -43,6 +45,7 @@ type ByteDiffRun struct {
 	StartHex    string           `json:"start_hex"`
 	End         int              `json:"end"`
 	Length      int              `json:"length"`
+	Section     string           `json:"section,omitempty"`
 	BeforeHex   string           `json:"before_hex,omitempty"`
 	AfterHex    string           `json:"after_hex,omitempty"`
 	BeforeText  string           `json:"before_ascii,omitempty"`
@@ -73,46 +76,62 @@ type byteSpan struct {
 	end   int
 }
 
+type knownNoiseField struct {
+	span byteSpan
+	raw  []byte
+}
+
 type BeforeAfter[T any] struct {
 	Before T `json:"before"`
 	After  T `json:"after"`
 }
 
 func ByteDiffFiles(beforePath, afterPath string, opts ByteDiffOptions) (ByteDiffReport, error) {
-	before, beforeProtected, err := inflatedBodyAndProtectedSpans(beforePath)
+	before, beforeProtected, beforeNoise, beforeSections, err := inflatedBodyAndSpans(beforePath)
 	if err != nil {
 		return ByteDiffReport{}, err
 	}
-	after, afterProtected, err := inflatedBodyAndProtectedSpans(afterPath)
+	after, afterProtected, afterNoise, afterSections, err := inflatedBodyAndSpans(afterPath)
 	if err != nil {
 		return ByteDiffReport{}, err
 	}
-	report := byteDiffBodies(before, after, opts, append(beforeProtected, afterProtected...))
+	report := byteDiffBodies(before, after, opts, append(beforeProtected, afterProtected...), beforeNoise, afterNoise, beforeSections, afterSections)
 	report.BeforePath = beforePath
 	report.AfterPath = afterPath
 	return report, nil
 }
 
 func ByteDiffBodies(before, after []byte, opts ByteDiffOptions) ByteDiffReport {
-	return byteDiffBodies(before, after, opts, nil)
+	return byteDiffBodies(before, after, opts, nil, nil, nil, nil, nil)
 }
 
-func byteDiffBodies(before, after []byte, opts ByteDiffOptions, protectedSpans []byteSpan) ByteDiffReport {
+func byteDiffBodies(before, after []byte, opts ByteDiffOptions, protectedSpans []byteSpan, beforeNoise, afterNoise map[string]knownNoiseField, beforeSections, afterSections []SectionInfo) ByteDiffReport {
 	report := ByteDiffReport{
 		BeforeBytes:  len(before),
 		AfterBytes:   len(after),
 		LengthDelta:  len(after) - len(before),
 		Verification: "structure_verified_not_engine_verified",
+		Notes:        []string{"comparison covers inflated scenario body; file-header fields such as timestamp_of_last_save are outside this byte span"},
 	}
 	limit := len(before)
 	if len(after) < limit {
 		limit = len(after)
 	}
-	// Body offset zero is a real DataHeader field
-	// (next_unit_id_to_place), not save timestamp noise. Keep the original
-	// coordinates so calibration diffs can identify that field correctly.
-	report.FirstDivergence = firstDivergence(before, after)
+	comparedBefore := append([]byte(nil), before...)
+	comparedAfter := append([]byte(nil), after...)
+	if !opts.IncludeNoise {
+		maskKnownNoiseFields(comparedBefore, beforeNoise)
+		maskKnownNoiseFields(comparedAfter, afterNoise)
+		report.NoiseSuppressed = changedKnownNoiseFields(beforeNoise, afterNoise)
+	}
+	report.FirstDivergence = firstDivergence(comparedBefore, comparedAfter)
 	report.ComparedByteSpan = ComparedByteSpan{Start: 0, End: limit}
+	if report.FirstDivergence >= 0 {
+		report.FirstDivergenceSection = sectionAt(report.FirstDivergence, beforeSections)
+		if report.FirstDivergenceSection == "" {
+			report.FirstDivergenceSection = sectionAt(report.FirstDivergence, afterSections)
+		}
+	}
 	if len(before) == len(after) {
 		report.Mode = "in-place"
 	} else {
@@ -122,7 +141,7 @@ func byteDiffBodies(before, after []byte, opts ByteDiffOptions, protectedSpans [
 		report.ComparedByteSpan.End = limit
 	}
 
-	runs := changedRuns(before, after, limit)
+	runs := changedRuns(comparedBefore, comparedAfter, limit)
 	if !opts.IncludeNoise {
 		var kept []byteRun
 		for _, run := range runs {
@@ -141,21 +160,85 @@ func byteDiffBodies(before, after []byte, opts ByteDiffOptions, protectedSpans [
 		report.Notes = append(report.Notes, "suppressed likely per-player derived nonce runs")
 	}
 	for _, run := range runs {
-		report.Changes = append(report.Changes, decodeByteRun(before, after, run))
+		change := decodeByteRun(before, after, run)
+		change.Section = sectionAt(run.start, beforeSections)
+		if change.Section == "" {
+			change.Section = sectionAt(run.start, afterSections)
+		}
+		report.Changes = append(report.Changes, change)
 	}
 	return report
 }
 
-func inflatedBodyAndProtectedSpans(path string) ([]byte, []byteSpan, error) {
+func inflatedBodyAndSpans(path string) ([]byte, []byteSpan, map[string]knownNoiseField, []SectionInfo, error) {
 	file, err := Open(path)
 	if err == nil {
-		return file.body, protectedByteSpans(file), nil
+		return file.body, protectedByteSpans(file), knownSaveNoiseFields(file), file.Sections, nil
 	}
 	body, bodyErr := InflatedBodyFile(path)
 	if bodyErr != nil {
-		return nil, nil, bodyErr
+		return nil, nil, nil, nil, bodyErr
 	}
-	return body, nil, nil
+	return body, nil, nil, nil, nil
+}
+
+func knownSaveNoiseFields(file *File) map[string]knownNoiseField {
+	if file == nil || file.root == nil {
+		return nil
+	}
+	fields := collectFileFields(file)
+	wanted := []string{"DataHeader.next_unit_id_to_place"}
+	for i := 0; i < 16; i++ {
+		for _, axis := range []string{"x", "y"} {
+			wanted = append(wanted, fmt.Sprintf("Units.player_data_3[%d].editor_camera_%s", i, axis))
+		}
+	}
+	noise := make(map[string]knownNoiseField)
+	for _, path := range wanted {
+		field, ok := fields[path]
+		if !ok || len(field.Raw) == 0 {
+			continue
+		}
+		noise[path] = knownNoiseField{span: byteSpan{start: field.Start, end: field.Start + len(field.Raw)}, raw: append([]byte(nil), field.Raw...)}
+	}
+	return noise
+}
+
+func maskKnownNoiseFields(data []byte, fields map[string]knownNoiseField) {
+	for _, field := range fields {
+		span := field.span
+		start, end := maxInt(0, span.start), minInt(len(data), span.end)
+		for i := start; i < end; i++ {
+			data[i] = 0
+		}
+	}
+}
+
+func changedKnownNoiseFields(before, after map[string]knownNoiseField) []SuppressedRun {
+	var out []SuppressedRun
+	for path, old := range before {
+		current, ok := after[path]
+		if ok && bytes.Equal(old.raw, current.raw) {
+			continue
+		}
+		out = append(out, SuppressedRun{Kind: "known_save_field", Start: old.span.start, End: old.span.end, Detail: path})
+	}
+	for path, current := range after {
+		if _, ok := before[path]; ok {
+			continue
+		}
+		out = append(out, SuppressedRun{Kind: "known_save_field", Start: current.span.start, End: current.span.end, Detail: path})
+	}
+	return out
+}
+
+func sectionAt(offset int, sections []SectionInfo) string {
+	for _, section := range sections {
+		if offset >= section.Start && offset < section.End {
+			return section.Name
+		}
+	}
+	return ""
 }
 
 func protectedByteSpans(file *File) []byteSpan {

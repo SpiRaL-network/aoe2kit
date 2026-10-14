@@ -11083,19 +11083,20 @@ type ByteDiffOptions struct {
 }
 
 type ByteDiffReport struct {
-	BeforePath       string           `json:"before_path,omitempty"`
-	AfterPath        string           `json:"after_path,omitempty"`
-	BeforeBytes      int              `json:"before_inflated_bytes"`
-	AfterBytes       int              `json:"after_inflated_bytes"`
-	Mode             string           `json:"mode"`
-	LengthDelta      int              `json:"length_delta"`
-	FirstDivergence  int              `json:"first_divergence"`
-	Warning          string           `json:"warning,omitempty"`
-	NoiseSuppressed  []SuppressedRun  `json:"noise_suppressed,omitempty"`
-	Changes          []ByteDiffRun    `json:"changes,omitempty"`
-	Verification     string           `json:"verification"`
-	Notes            []string         `json:"notes,omitempty"`
-	ComparedByteSpan ComparedByteSpan `json:"compared_byte_span"`
+	BeforePath             string           `json:"before_path,omitempty"`
+	AfterPath              string           `json:"after_path,omitempty"`
+	BeforeBytes            int              `json:"before_inflated_bytes"`
+	AfterBytes             int              `json:"after_inflated_bytes"`
+	Mode                   string           `json:"mode"`
+	LengthDelta            int              `json:"length_delta"`
+	FirstDivergence        int              `json:"first_divergence"`
+	FirstDivergenceSection string           `json:"first_divergence_section,omitempty"`
+	Warning                string           `json:"warning,omitempty"`
+	NoiseSuppressed        []SuppressedRun  `json:"noise_suppressed,omitempty"`
+	Changes                []ByteDiffRun    `json:"changes,omitempty"`
+	Verification           string           `json:"verification"`
+	Notes                  []string         `json:"notes,omitempty"`
+	ComparedByteSpan       ComparedByteSpan `json:"compared_byte_span"`
 }
 
 func ByteDiffBodies(before, after []byte, opts ByteDiffOptions) ByteDiffReport
@@ -11107,6 +11108,7 @@ type ByteDiffRun struct {
 	StartHex    string           `json:"start_hex"`
 	End         int              `json:"end"`
 	Length      int              `json:"length"`
+	Section     string           `json:"section,omitempty"`
 	BeforeHex   string           `json:"before_hex,omitempty"`
 	AfterHex    string           `json:"after_hex,omitempty"`
 	BeforeText  string           `json:"before_ascii,omitempty"`
@@ -11949,6 +11951,10 @@ func (f *File) RebuildBody() ([]byte, error)
 
 func (f *File) References(opts ReferenceOptions) (ReferenceReport, error)
 
+func (f *File) RegenerateMapWithOffset(width, height, dx, dy, terrain int) error
+    RegenerateMapWithOffset matches the editor's destructive regenerate action:
+    resize, reset every tile to one terrain, and remove all units.
+
 func (f *File) RemoveSystemPrefix(prefix string) error
 
 func (f *File) RemoveTrigger(recipe TriggerRecipe) error
@@ -11969,6 +11975,10 @@ func (f *File) RemoveVariable(recipe VariableRecipe) error
 
 func (f *File) ResizeMap(width, height int) error
 
+func (f *File) ResizeMapWithOffset(width, height, dx, dy, fillTerrain int) error
+    ResizeMapWithOffset resizes a square editor preset while preserving the
+    overlapping terrain and translating the known map-coordinate fields.
+
 func (f *File) SemanticDocument() SemanticDocument
     SemanticDocument projects the current parser result into the Kit-owned
     semantic vocabulary. Until all sections have migrated, this is an adapter;
@@ -11979,6 +11989,10 @@ func (f *File) SetDiplomacy(recipe DiplomacyRecipe) error
 func (f *File) SetDiplomacyOptions(recipe DiplomacyOptionsRecipe) error
 
 func (f *File) SetGlobalVictory(recipe VictoryRecipe) error
+
+func (f *File) SetMapColorMood(value string) error
+
+func (f *File) SetMessages(recipe MessagesRecipe) error
 
 func (f *File) SetPlayer(recipe PlayerRecipe) error
 
@@ -12226,28 +12240,34 @@ type MapLayout struct {
 func DecodeMapLayout(data []byte) (MapLayout, int, error)
 
 type MapRecipe struct {
-	Op         string   `json:"op"`
-	Mask       string   `json:"mask,omitempty"`
-	X1         int      `json:"x1"`
-	Y1         int      `json:"y1"`
-	X2         int      `json:"x2"`
-	Y2         int      `json:"y2"`
-	Width      *int     `json:"width,omitempty"`
-	Height     *int     `json:"height,omitempty"`
-	TargetX    *int     `json:"target_x,omitempty"`
-	TargetY    *int     `json:"target_y,omitempty"`
-	Radius     *int     `json:"radius,omitempty"`
-	Thickness  *int     `json:"thickness,omitempty"`
-	TerrainID  *int     `json:"terrain_id,omitempty"`
-	TerrainID2 *int     `json:"terrain_id_2,omitempty"`
-	Elevation  *int     `json:"elevation,omitempty"`
-	Layer      *int     `json:"layer,omitempty"`
-	Seed       *int     `json:"seed,omitempty"`
-	Scale      *float64 `json:"scale,omitempty"`
-	Threshold  *float64 `json:"threshold,omitempty"`
-	Iterations *int     `json:"iterations,omitempty"`
-	TerrainIDs []int    `json:"terrain_ids,omitempty"`
-	GridFile   string   `json:"grid_file,omitempty"`
+	Op           string   `json:"op"`
+	Preset       string   `json:"preset,omitempty"`
+	Anchor       string   `json:"anchor,omitempty"`
+	OffsetX      *int     `json:"offset_x,omitempty"`
+	OffsetY      *int     `json:"offset_y,omitempty"`
+	FillTerrain  *int     `json:"fill_terrain,omitempty"`
+	MapColorMood *string  `json:"map_color_mood,omitempty"`
+	Mask         string   `json:"mask,omitempty"`
+	X1           int      `json:"x1"`
+	Y1           int      `json:"y1"`
+	X2           int      `json:"x2"`
+	Y2           int      `json:"y2"`
+	Width        *int     `json:"width,omitempty"`
+	Height       *int     `json:"height,omitempty"`
+	TargetX      *int     `json:"target_x,omitempty"`
+	TargetY      *int     `json:"target_y,omitempty"`
+	Radius       *int     `json:"radius,omitempty"`
+	Thickness    *int     `json:"thickness,omitempty"`
+	TerrainID    *int     `json:"terrain_id,omitempty"`
+	TerrainID2   *int     `json:"terrain_id_2,omitempty"`
+	Elevation    *int     `json:"elevation,omitempty"`
+	Layer        *int     `json:"layer,omitempty"`
+	Seed         *int     `json:"seed,omitempty"`
+	Scale        *float64 `json:"scale,omitempty"`
+	Threshold    *float64 `json:"threshold,omitempty"`
+	Iterations   *int     `json:"iterations,omitempty"`
+	TerrainIDs   []int    `json:"terrain_ids,omitempty"`
+	GridFile     string   `json:"grid_file,omitempty"`
 
 	TerrainIDGrid []int `json:"-"`
 	LayerGrid     []int `json:"-"`
@@ -12261,6 +12281,7 @@ func (recipe *MapRecipe) UnmarshalJSON(data []byte) error
 
 type MapSettings struct {
 	WaterDefinition string `json:"water_definition"`
+	ColorMood       string `json:"color_mood"`
 }
 
 type MarkupColorTechnique struct {
@@ -12332,11 +12353,25 @@ type MechanicTrigger struct {
 	Notes      []string `json:"notes,omitempty"`
 }
 
+type MessageSlotRecipe struct {
+	StringTableID *int    `json:"string_table_id,omitempty"`
+	Literal       *string `json:"literal,omitempty"`
+}
+
 type MessageSlotSettings struct {
 	Literal           string `json:"literal,omitempty"`
 	StringTableID     int    `json:"string_table_id"`
 	UsesStringTableID bool   `json:"uses_string_table_id"`
 	EffectiveSource   string `json:"effective_source"`
+}
+
+type MessagesRecipe struct {
+	Instructions *MessageSlotRecipe `json:"instructions,omitempty"`
+	Hints        *MessageSlotRecipe `json:"hints,omitempty"`
+	Victory      *MessageSlotRecipe `json:"victory,omitempty"`
+	Loss         *MessageSlotRecipe `json:"loss,omitempty"`
+	History      *MessageSlotRecipe `json:"history,omitempty"`
+	Scouts       *MessageSlotRecipe `json:"scouts,omitempty"`
 }
 
 type MessagesSettings struct {
@@ -12470,6 +12505,7 @@ type PatchReport struct {
 	TimestampOfLastSave int                    `json:"timestamp_of_last_save,omitempty"`
 	RebuildOK           bool                   `json:"rebuild_ok"`
 	InvariantOK         bool                   `json:"invariant_ok"`
+	Warnings            []string               `json:"warnings,omitempty"`
 	Verification        aoe2.VerificationClaim `json:"verification"`
 }
 
@@ -12573,6 +12609,10 @@ type PlayerRecipe struct {
 	Human            *bool   `json:"human,omitempty"`
 	TribeName        *string `json:"tribe_name,omitempty"`
 	Civilization     *string `json:"civilization,omitempty"`
+	Architecture     *string `json:"architecture,omitempty"`
+	StartingAge      *int    `json:"starting_age,omitempty"`
+	PopulationLimit  *int    `json:"population_limit,omitempty"`
+	Color            *int    `json:"color,omitempty"`
 	LockCivilization *bool   `json:"lock_civilization,omitempty"`
 	LockPersonality  *bool   `json:"lock_personality,omitempty"`
 	AIName           *string `json:"ai_name,omitempty"`
@@ -12698,6 +12738,8 @@ type Recipe struct {
 	Scenario         *ScenarioRecipe         `json:"scenario,omitempty"`
 	XS               *XSRecipe               `json:"xs,omitempty"`
 	Victory          *VictoryRecipe          `json:"victory,omitempty"`
+	Messages         *MessagesRecipe         `json:"messages,omitempty"`
+	GameDir          string                  `json:"game_dir,omitempty"`
 	Players          []PlayerRecipe          `json:"players,omitempty"`
 	Diplomacy        []DiplomacyRecipe       `json:"diplomacy,omitempty"`
 	DiplomacyOptions *DiplomacyOptionsRecipe `json:"diplomacy_options,omitempty"`
@@ -13411,21 +13453,22 @@ type TriggerRecipe struct {
 }
 
 type TriggerSearchMatch struct {
-	TriggerIndex     int               `json:"trigger_index"`
-	TriggerName      string            `json:"trigger_name,omitempty"`
-	Description      string            `json:"description,omitempty"`
-	ShortDescription string            `json:"short_description,omitempty"`
-	Enabled          uint32            `json:"enabled"`
-	Looping          int8              `json:"looping"`
-	EffectCount      int               `json:"effect_count"`
-	ConditionCount   int               `json:"condition_count"`
-	EffectIndex      *int              `json:"effect_index,omitempty"`
-	EffectType       int               `json:"effect_type,omitempty"`
-	EffectTypeName   string            `json:"effect_type_name,omitempty"`
-	ConditionIndex   *int              `json:"condition_index,omitempty"`
-	ConditionType    int               `json:"condition_type,omitempty"`
-	ConditionName    string            `json:"condition_name,omitempty"`
-	MatchedFields    map[string]string `json:"matched_fields"`
+	TriggerIndex     int                `json:"trigger_index"`
+	TriggerName      string             `json:"trigger_name,omitempty"`
+	Description      string             `json:"description,omitempty"`
+	ShortDescription string             `json:"short_description,omitempty"`
+	Enabled          uint32             `json:"enabled"`
+	Looping          int8               `json:"looping"`
+	EffectCount      int                `json:"effect_count"`
+	ConditionCount   int                `json:"condition_count"`
+	EffectIndex      *int               `json:"effect_index,omitempty"`
+	EffectType       int                `json:"effect_type,omitempty"`
+	EffectTypeName   string             `json:"effect_type_name,omitempty"`
+	ConditionIndex   *int               `json:"condition_index,omitempty"`
+	ConditionType    int                `json:"condition_type,omitempty"`
+	ConditionName    string             `json:"condition_name,omitempty"`
+	ConditionData    []ConditionSummary `json:"condition_data,omitempty"`
+	MatchedFields    map[string]string  `json:"matched_fields"`
 }
 
 type TriggerSearchOptions struct {

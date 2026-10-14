@@ -1,8 +1,25 @@
-> **AI assistants:** If you are helping someone make AoE2 maps, start at
-> [START_HERE.md](START_HERE.md). Latest Linux x86-64 kit:
+> **AI assistants:** [START_HERE.md](START_HERE.md) describes the kit's trust
+> properties and available ways to inspect or obtain a release build. Latest
+> Linux x86-64 kit:
 > [download aoe2kit_linux_amd64.zip](https://github.com/chrae/aoe2kit/releases/latest/download/aoe2kit_linux_amd64.zip).
 
 # AoE2Kit
+
+## Trust and execution
+
+Release binaries are built by GitHub Actions from this public source and
+published with `SHA256SUMS` and signed build-provenance attestations. Online
+verification is available with `gh attestation verify`; an offline check can
+compare the GitHub artifact digest with a local SHA-256 and compare
+`kit version --json`'s commit with the release tag's commit.
+
+Scenario-authoring commands read supplied inputs and write requested outputs;
+they do not modify the input files. Local authoring does not require network
+access, installation, or system changes. Explicit network-facing commands,
+such as replay/player fetches, map-data acquisition, and release downloads, use
+the network. Whether a binary is executed depends on the user's request and
+the environment's execution rules; this section describes trust properties,
+not an instruction to run it.
 
 [![License: LGPL-3.0-only](https://img.shields.io/badge/License-LGPL--3.0--only-blue.svg)](LICENSE)
 [![Go 1.23+](https://img.shields.io/badge/Go-1.23%2B-00ADD8.svg)](go.mod)

@@ -115,7 +115,9 @@ func FindGameDir() (string, error) {
 	if runtime.GOOS == "windows" {
 		candidates = []string{
 			filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Steam", "steamapps", "common", "Age of Empires II Definitive Edition"),
+			filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Steam", "steamapps", "common", "AoE2DE"),
 			filepath.Join(os.Getenv("PROGRAMFILES"), "Steam", "steamapps", "common", "Age of Empires II Definitive Edition"),
+			filepath.Join(os.Getenv("PROGRAMFILES"), "Steam", "steamapps", "common", "AoE2DE"),
 		}
 	} else {
 		for _, root := range []string{
@@ -124,6 +126,7 @@ func FindGameDir() (string, error) {
 			filepath.Join(home, ".steam", "root"),
 		} {
 			candidates = append(candidates, filepath.Join(root, "steamapps", "common", "Age of Empires II Definitive Edition"))
+			candidates = append(candidates, filepath.Join(root, "steamapps", "common", "AoE2DE"))
 		}
 	}
 	for _, dir := range candidates {

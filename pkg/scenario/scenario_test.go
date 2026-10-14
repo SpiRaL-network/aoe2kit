@@ -3094,7 +3094,7 @@ func TestLintActiveComputerWithoutAuthoredUnits(t *testing.T) {
 	}
 }
 
-func TestLintLoadSafetyPlayerCountAndLockedCiv(t *testing.T) {
+func TestPlayerCountWriteSynchronizesActiveSlots(t *testing.T) {
 	dir := t.TempDir()
 	input := filepath.Join(dir, "base.aoe2scenario")
 	if _, err := WriteBlankScenarioFile(input, BlankOptions{PlayerCount: 4, HumanSlots: 4, Timestamp: 1800000000}); err != nil {
@@ -3102,25 +3102,48 @@ func TestLintLoadSafetyPlayerCountAndLockedCiv(t *testing.T) {
 	}
 	output := filepath.Join(dir, "bad_players.aoe2scenario")
 	playerCount := 3
-	locked := true
 	if _, err := PatchRecipeFile(input, output, Recipe{
 		Scenario: &ScenarioRecipe{PlayerCount: &playerCount},
-		Players:  []PlayerRecipe{{Player: 2, LockCivilization: &locked}},
 	}); err != nil {
+		t.Fatalf("PatchRecipeFile: %v", err)
+	}
+	patched, err := Open(output)
+	if err != nil {
+		t.Fatalf("Open patched scenario: %v", err)
+	}
+	if patched.PlayerCount != 3 {
+		t.Fatalf("header player_count=%d, want 3", patched.PlayerCount)
+	}
+	for i, player := range patched.Players {
+		if i < 4 && player.Active != (i < 3) {
+			t.Fatalf("player %d active=%t, want %t", i+1, player.Active, i < 3)
+		}
+	}
+	report, err := LintFileWithOptions(output, LintOptions{LoadSafety: true})
+	if err != nil {
+		t.Fatalf("LintFileWithOptions: %v", err)
+	}
+	if hasIssueCode(report.Issues, "load_safety_player_count_mismatch") {
+		t.Fatalf("player count write left active-slot mismatch: %+v", report.Issues)
+	}
+}
+
+func TestLintLoadSafetyLockedCivWarningRemains(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "locked-civ.aoe2scenario")
+	if _, err := WriteBlankScenarioFile(path, BlankOptions{PlayerCount: 4, HumanSlots: 4, Timestamp: 1800000000}); err != nil {
+		t.Fatalf("WriteBlankScenarioFile: %v", err)
+	}
+	locked := true
+	output := filepath.Join(t.TempDir(), "locked-civ-out.aoe2scenario")
+	if _, err := PatchRecipeFile(path, output, Recipe{Players: []PlayerRecipe{{Player: 2, LockCivilization: &locked}}}); err != nil {
 		t.Fatalf("PatchRecipeFile: %v", err)
 	}
 	report, err := LintFileWithOptions(output, LintOptions{LoadSafety: true})
 	if err != nil {
 		t.Fatalf("LintFileWithOptions: %v", err)
 	}
-	if !hasIssueCode(report.Issues, "load_safety_player_count_mismatch") {
-		t.Fatalf("missing player-count mismatch issue: %+v", report.Issues)
-	}
 	if !hasIssueCode(report.Issues, "load_safety_locked_civ_launch_risk") {
 		t.Fatalf("missing locked-civ launch warning: %+v", report.Issues)
-	}
-	if report.OK {
-		t.Fatalf("load-safety error should make lint fail: %+v", report.Issues)
 	}
 }
 
@@ -7492,15 +7515,15 @@ func TestScenarioByteDiffCalibrationFixtures(t *testing.T) {
 	if report.Mode != "in-place" {
 		t.Fatalf("mode=%q, want in-place", report.Mode)
 	}
-	if len(report.Changes) != 2 {
-		t.Fatalf("changes=%+v, want the cursor and authored changes; suppressed=%+v", report.Changes, report.NoiseSuppressed)
+	if len(report.Changes) != 1 {
+		t.Fatalf("changes=%+v, want only the authored change; suppressed=%+v", report.Changes, report.NoiseSuppressed)
 	}
-	if report.Changes[0].Start != 0 || report.Changes[0].Length != 1 || report.Changes[0].Decodes.Uint8 == nil || report.Changes[0].Decodes.Uint8.Before != 172 || report.Changes[0].Decodes.Uint8.After != 174 {
-		t.Fatalf("cursor change=%+v, want body offset 0 172->174", report.Changes[0])
-	}
-	change := report.Changes[1]
+	change := report.Changes[0]
 	if change.Start != 0x5046 || change.Length != 1 {
 		t.Fatalf("change=%+v, want one byte at 0x5046", change)
+	}
+	if report.FirstDivergence != 0x5046 || report.FirstDivergenceSection != "Options" || change.Section != "Options" {
+		t.Fatalf("section context divergence=%d/%q change=%q", report.FirstDivergence, report.FirstDivergenceSection, change.Section)
 	}
 	if change.Decodes.Uint8 == nil || change.Decodes.Uint8.Before != 6 || change.Decodes.Uint8.After != 4 {
 		t.Fatalf("uint8 decode=%+v, want 6->4", change.Decodes.Uint8)
@@ -7508,8 +7531,8 @@ func TestScenarioByteDiffCalibrationFixtures(t *testing.T) {
 	if change.Decodes.FieldLE == nil || change.Decodes.FieldLE.Before != 6 || change.Decodes.FieldLE.After != 4 {
 		t.Fatalf("field int32 decode=%+v, want 6->4", change.Decodes.FieldLE)
 	}
-	if !suppressedKind(report.NoiseSuppressed, "likely_per_player_nonce") {
-		t.Fatalf("missing nonce suppression: %+v", report.NoiseSuppressed)
+	if !suppressedKind(report.NoiseSuppressed, "known_save_field") {
+		t.Fatalf("missing known save-field suppression: %+v", report.NoiseSuppressed)
 	}
 }
 
@@ -7635,7 +7658,7 @@ func TestDiffSurfacesPlayerSettingsFields(t *testing.T) {
 	}
 }
 
-func TestDiffLabelsOneEditorPlayerAcrossSectionBases(t *testing.T) {
+func TestDiffLabelsAINamesByPlayerSlot(t *testing.T) {
 	dir := scenarioAoe2DEPath("runs", "cal159", "round2")
 	beforePath := filepath.Join(dir, "Clean v159.4.aoe2scenario")
 	afterPath := filepath.Join(dir, "Clean v159.5.aoe2scenario")
@@ -7659,12 +7682,13 @@ func TestDiffLabelsOneEditorPlayerAcrossSectionBases(t *testing.T) {
 		if change.Kind != "players" {
 			continue
 		}
-		if change.Player != "P1" {
-			t.Fatalf("player change mislabeled as %q: %+v", change.Player, change)
-		}
 		if strings.HasSuffix(change.Field, ".ai_name") {
 			if change.SectionIndex == nil {
 				t.Fatalf("AI-name change missing section index: %+v", change)
+			}
+			wantPlayer := fmt.Sprintf("P%d", *change.SectionIndex+1)
+			if change.Player != wantPlayer || change.IndexBase != "players_from_1" {
+				t.Fatalf("AI-name row mislabeled: got player=%s index=%d base=%s, want %s/players_from_1", change.Player, *change.SectionIndex, change.IndexBase, wantPlayer)
 			}
 			aiNameRefs = append(aiNameRefs, PlayerReference{
 				Player:       change.Player,
@@ -7674,13 +7698,10 @@ func TestDiffLabelsOneEditorPlayerAcrossSectionBases(t *testing.T) {
 		}
 	}
 	if len(aiNameRefs) != 2 {
-		t.Fatalf("got %d P1 AI-name changes, want two raw observations: %+v", len(aiNameRefs), aiNameRefs)
+		t.Fatalf("got %d AI-name changes, want P1 and P2: %+v", len(aiNameRefs), aiNameRefs)
 	}
 	if aiNameRefs[0].SectionIndex != 0 || aiNameRefs[1].SectionIndex != 1 {
-		t.Fatalf("P1 AI-name raw indexes = %+v, want 0 and 1", aiNameRefs)
-	}
-	if aiNameRefs[0].IndexBase == aiNameRefs[1].IndexBase {
-		t.Fatalf("P1 AI-name references lost index-base distinction: %+v", aiNameRefs)
+		t.Fatalf("AI-name raw indexes = %+v, want P1 index 0 and P2 index 1", aiNameRefs)
 	}
 }
 

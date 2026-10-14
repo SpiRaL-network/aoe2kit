@@ -16,6 +16,7 @@ import (
 
 	"aoe2kit/pkg/aoe2"
 	"aoe2kit/pkg/datcache"
+	"aoe2kit/pkg/gamestrings"
 )
 
 type Recipe struct {
@@ -23,6 +24,8 @@ type Recipe struct {
 	Scenario         *ScenarioRecipe         `json:"scenario,omitempty"`
 	XS               *XSRecipe               `json:"xs,omitempty"`
 	Victory          *VictoryRecipe          `json:"victory,omitempty"`
+	Messages         *MessagesRecipe         `json:"messages,omitempty"`
+	GameDir          string                  `json:"game_dir,omitempty"`
 	Players          []PlayerRecipe          `json:"players,omitempty"`
 	Diplomacy        []DiplomacyRecipe       `json:"diplomacy,omitempty"`
 	DiplomacyOptions *DiplomacyOptionsRecipe `json:"diplomacy_options,omitempty"`
@@ -75,6 +78,11 @@ var scenarioMapPresets = []ScenarioMapPreset{
 	{Name: "Ludicrous", Size: 480, StringID: 25480, StringKey: "MAPSIZE_LUDICROUS"},
 }
 
+var editorResizePresets = map[string]int{
+	"tiny": 120, "small": 144, "medium": 168, "normal": 200,
+	"large": 220, "huge": 240, "ludicrous": 480,
+}
+
 type XSRecipe struct {
 	Name                string `json:"name,omitempty"`
 	Content             string `json:"content,omitempty"`
@@ -100,12 +108,98 @@ type VictoryRecipe struct {
 	TimeForTimedGameIn10thsOfAYear *int `json:"time_for_timed_game_in_10ths_of_a_year,omitempty"`
 }
 
+type MessagesRecipe struct {
+	Instructions *MessageSlotRecipe `json:"instructions,omitempty"`
+	Hints        *MessageSlotRecipe `json:"hints,omitempty"`
+	Victory      *MessageSlotRecipe `json:"victory,omitempty"`
+	Loss         *MessageSlotRecipe `json:"loss,omitempty"`
+	History      *MessageSlotRecipe `json:"history,omitempty"`
+	Scouts       *MessageSlotRecipe `json:"scouts,omitempty"`
+}
+
+type MessageSlotRecipe struct {
+	StringTableID *int    `json:"string_table_id,omitempty"`
+	Literal       *string `json:"literal,omitempty"`
+}
+
+func resolveMessageRecipe(recipe MessagesRecipe, gameDir string) (MessagesRecipe, []string, error) {
+	slots := []*MessageSlotRecipe{recipe.Instructions, recipe.Hints, recipe.Victory, recipe.Loss, recipe.History, recipe.Scouts}
+	names := []string{"instructions", "hints", "victory", "loss", "history", "scouts"}
+	needsTable := false
+	set := false
+	for i, slot := range slots {
+		if slot == nil {
+			continue
+		}
+		set = true
+		if slot.StringTableID == nil && slot.Literal == nil {
+			return MessagesRecipe{}, nil, fmt.Errorf("message %s requires string_table_id or literal", names[i])
+		}
+		if slot.StringTableID != nil {
+			if *slot.StringTableID < -2 {
+				return MessagesRecipe{}, nil, fmt.Errorf("message %s string_table_id %d invalid; use -2 or a non-negative id", names[i], *slot.StringTableID)
+			}
+			needsTable = needsTable || *slot.StringTableID >= 0
+		}
+	}
+	if !set {
+		return MessagesRecipe{}, nil, fmt.Errorf("messages recipe has no slots")
+	}
+	var table gamestrings.Table
+	var warnings []string
+	tableAvailable := false
+	if needsTable {
+		loaded, err := gamestrings.LoadAuto(gameDir)
+		if err != nil {
+			warnings = append(warnings, "game string table unavailable; message string-table ids are preserved and unresolved literals are empty")
+		} else {
+			table = loaded
+			tableAvailable = true
+		}
+	}
+	resolved := make([]*MessageSlotRecipe, len(slots))
+	for i, slot := range slots {
+		if slot == nil {
+			continue
+		}
+		copySlot := *slot
+		if copySlot.StringTableID != nil {
+			id := *copySlot.StringTableID
+			if id >= 0 {
+				if text, ok := table.Values[id]; ok {
+					copySlot.Literal = &text
+				} else if tableAvailable {
+					return MessagesRecipe{}, nil, fmt.Errorf("message %s string-table id %d is absent", names[i], id)
+				} else if copySlot.Literal == nil {
+					empty := ""
+					copySlot.Literal = &empty
+				}
+			} else if copySlot.Literal == nil {
+				empty := ""
+				copySlot.Literal = &empty
+			}
+		} else {
+			unset := -2
+			copySlot.StringTableID = &unset
+		}
+		resolved[i] = &copySlot
+	}
+	return MessagesRecipe{
+		Instructions: resolved[0], Hints: resolved[1], Victory: resolved[2],
+		Loss: resolved[3], History: resolved[4], Scouts: resolved[5],
+	}, warnings, nil
+}
+
 type PlayerRecipe struct {
 	Player           int     `json:"player"`
 	Active           *bool   `json:"active,omitempty"`
 	Human            *bool   `json:"human,omitempty"`
 	TribeName        *string `json:"tribe_name,omitempty"`
 	Civilization     *string `json:"civilization,omitempty"`
+	Architecture     *string `json:"architecture,omitempty"`
+	StartingAge      *int    `json:"starting_age,omitempty"`
+	PopulationLimit  *int    `json:"population_limit,omitempty"`
+	Color            *int    `json:"color,omitempty"`
 	LockCivilization *bool   `json:"lock_civilization,omitempty"`
 	LockPersonality  *bool   `json:"lock_personality,omitempty"`
 	AIName           *string `json:"ai_name,omitempty"`
@@ -182,28 +276,34 @@ type MaskCellRecipe struct {
 }
 
 type MapRecipe struct {
-	Op         string   `json:"op"`
-	Mask       string   `json:"mask,omitempty"`
-	X1         int      `json:"x1"`
-	Y1         int      `json:"y1"`
-	X2         int      `json:"x2"`
-	Y2         int      `json:"y2"`
-	Width      *int     `json:"width,omitempty"`
-	Height     *int     `json:"height,omitempty"`
-	TargetX    *int     `json:"target_x,omitempty"`
-	TargetY    *int     `json:"target_y,omitempty"`
-	Radius     *int     `json:"radius,omitempty"`
-	Thickness  *int     `json:"thickness,omitempty"`
-	TerrainID  *int     `json:"terrain_id,omitempty"`
-	TerrainID2 *int     `json:"terrain_id_2,omitempty"`
-	Elevation  *int     `json:"elevation,omitempty"`
-	Layer      *int     `json:"layer,omitempty"`
-	Seed       *int     `json:"seed,omitempty"`
-	Scale      *float64 `json:"scale,omitempty"`
-	Threshold  *float64 `json:"threshold,omitempty"`
-	Iterations *int     `json:"iterations,omitempty"`
-	TerrainIDs []int    `json:"terrain_ids,omitempty"`
-	GridFile   string   `json:"grid_file,omitempty"`
+	Op           string   `json:"op"`
+	Preset       string   `json:"preset,omitempty"`
+	Anchor       string   `json:"anchor,omitempty"`
+	OffsetX      *int     `json:"offset_x,omitempty"`
+	OffsetY      *int     `json:"offset_y,omitempty"`
+	FillTerrain  *int     `json:"fill_terrain,omitempty"`
+	MapColorMood *string  `json:"map_color_mood,omitempty"`
+	Mask         string   `json:"mask,omitempty"`
+	X1           int      `json:"x1"`
+	Y1           int      `json:"y1"`
+	X2           int      `json:"x2"`
+	Y2           int      `json:"y2"`
+	Width        *int     `json:"width,omitempty"`
+	Height       *int     `json:"height,omitempty"`
+	TargetX      *int     `json:"target_x,omitempty"`
+	TargetY      *int     `json:"target_y,omitempty"`
+	Radius       *int     `json:"radius,omitempty"`
+	Thickness    *int     `json:"thickness,omitempty"`
+	TerrainID    *int     `json:"terrain_id,omitempty"`
+	TerrainID2   *int     `json:"terrain_id_2,omitempty"`
+	Elevation    *int     `json:"elevation,omitempty"`
+	Layer        *int     `json:"layer,omitempty"`
+	Seed         *int     `json:"seed,omitempty"`
+	Scale        *float64 `json:"scale,omitempty"`
+	Threshold    *float64 `json:"threshold,omitempty"`
+	Iterations   *int     `json:"iterations,omitempty"`
+	TerrainIDs   []int    `json:"terrain_ids,omitempty"`
+	GridFile     string   `json:"grid_file,omitempty"`
 
 	TerrainIDGrid []int `json:"-"`
 	LayerGrid     []int `json:"-"`
@@ -213,28 +313,34 @@ type MapRecipe struct {
 
 func (recipe *MapRecipe) UnmarshalJSON(data []byte) error {
 	type wire struct {
-		Op         string          `json:"op"`
-		Mask       string          `json:"mask,omitempty"`
-		X1         int             `json:"x1"`
-		Y1         int             `json:"y1"`
-		X2         int             `json:"x2"`
-		Y2         int             `json:"y2"`
-		Width      *int            `json:"width,omitempty"`
-		Height     *int            `json:"height,omitempty"`
-		TargetX    *int            `json:"target_x,omitempty"`
-		TargetY    *int            `json:"target_y,omitempty"`
-		Radius     *int            `json:"radius,omitempty"`
-		Thickness  *int            `json:"thickness,omitempty"`
-		TerrainID  json.RawMessage `json:"terrain_id,omitempty"`
-		TerrainID2 *int            `json:"terrain_id_2,omitempty"`
-		Elevation  json.RawMessage `json:"elevation,omitempty"`
-		Layer      json.RawMessage `json:"layer,omitempty"`
-		Seed       *int            `json:"seed,omitempty"`
-		Scale      *float64        `json:"scale,omitempty"`
-		Threshold  *float64        `json:"threshold,omitempty"`
-		Iterations *int            `json:"iterations,omitempty"`
-		TerrainIDs []int           `json:"terrain_ids,omitempty"`
-		GridFile   string          `json:"grid_file,omitempty"`
+		Op           string          `json:"op"`
+		Preset       string          `json:"preset,omitempty"`
+		Anchor       string          `json:"anchor,omitempty"`
+		OffsetX      *int            `json:"offset_x,omitempty"`
+		OffsetY      *int            `json:"offset_y,omitempty"`
+		FillTerrain  *int            `json:"fill_terrain,omitempty"`
+		MapColorMood *string         `json:"map_color_mood,omitempty"`
+		Mask         string          `json:"mask,omitempty"`
+		X1           int             `json:"x1"`
+		Y1           int             `json:"y1"`
+		X2           int             `json:"x2"`
+		Y2           int             `json:"y2"`
+		Width        *int            `json:"width,omitempty"`
+		Height       *int            `json:"height,omitempty"`
+		TargetX      *int            `json:"target_x,omitempty"`
+		TargetY      *int            `json:"target_y,omitempty"`
+		Radius       *int            `json:"radius,omitempty"`
+		Thickness    *int            `json:"thickness,omitempty"`
+		TerrainID    json.RawMessage `json:"terrain_id,omitempty"`
+		TerrainID2   *int            `json:"terrain_id_2,omitempty"`
+		Elevation    json.RawMessage `json:"elevation,omitempty"`
+		Layer        json.RawMessage `json:"layer,omitempty"`
+		Seed         *int            `json:"seed,omitempty"`
+		Scale        *float64        `json:"scale,omitempty"`
+		Threshold    *float64        `json:"threshold,omitempty"`
+		Iterations   *int            `json:"iterations,omitempty"`
+		TerrainIDs   []int           `json:"terrain_ids,omitempty"`
+		GridFile     string          `json:"grid_file,omitempty"`
 	}
 	var raw wire
 	if err := json.Unmarshal(data, &raw); err != nil {
@@ -254,6 +360,12 @@ func (recipe *MapRecipe) UnmarshalJSON(data []byte) error {
 	}
 	*recipe = MapRecipe{
 		Op:            raw.Op,
+		Preset:        raw.Preset,
+		Anchor:        raw.Anchor,
+		OffsetX:       raw.OffsetX,
+		OffsetY:       raw.OffsetY,
+		FillTerrain:   raw.FillTerrain,
+		MapColorMood:  raw.MapColorMood,
 		Mask:          raw.Mask,
 		X1:            raw.X1,
 		Y1:            raw.Y1,
@@ -284,28 +396,34 @@ func (recipe *MapRecipe) UnmarshalJSON(data []byte) error {
 
 func (recipe MapRecipe) MarshalJSON() ([]byte, error) {
 	type wire struct {
-		Op         string   `json:"op"`
-		Mask       string   `json:"mask,omitempty"`
-		X1         int      `json:"x1"`
-		Y1         int      `json:"y1"`
-		X2         int      `json:"x2"`
-		Y2         int      `json:"y2"`
-		Width      *int     `json:"width,omitempty"`
-		Height     *int     `json:"height,omitempty"`
-		TargetX    *int     `json:"target_x,omitempty"`
-		TargetY    *int     `json:"target_y,omitempty"`
-		Radius     *int     `json:"radius,omitempty"`
-		Thickness  *int     `json:"thickness,omitempty"`
-		TerrainID  any      `json:"terrain_id,omitempty"`
-		TerrainID2 *int     `json:"terrain_id_2,omitempty"`
-		Elevation  any      `json:"elevation,omitempty"`
-		Layer      any      `json:"layer,omitempty"`
-		Seed       *int     `json:"seed,omitempty"`
-		Scale      *float64 `json:"scale,omitempty"`
-		Threshold  *float64 `json:"threshold,omitempty"`
-		Iterations *int     `json:"iterations,omitempty"`
-		TerrainIDs []int    `json:"terrain_ids,omitempty"`
-		GridFile   string   `json:"grid_file,omitempty"`
+		Op           string   `json:"op"`
+		Preset       string   `json:"preset,omitempty"`
+		Anchor       string   `json:"anchor,omitempty"`
+		OffsetX      *int     `json:"offset_x,omitempty"`
+		OffsetY      *int     `json:"offset_y,omitempty"`
+		FillTerrain  *int     `json:"fill_terrain,omitempty"`
+		MapColorMood *string  `json:"map_color_mood,omitempty"`
+		Mask         string   `json:"mask,omitempty"`
+		X1           int      `json:"x1"`
+		Y1           int      `json:"y1"`
+		X2           int      `json:"x2"`
+		Y2           int      `json:"y2"`
+		Width        *int     `json:"width,omitempty"`
+		Height       *int     `json:"height,omitempty"`
+		TargetX      *int     `json:"target_x,omitempty"`
+		TargetY      *int     `json:"target_y,omitempty"`
+		Radius       *int     `json:"radius,omitempty"`
+		Thickness    *int     `json:"thickness,omitempty"`
+		TerrainID    any      `json:"terrain_id,omitempty"`
+		TerrainID2   *int     `json:"terrain_id_2,omitempty"`
+		Elevation    any      `json:"elevation,omitempty"`
+		Layer        any      `json:"layer,omitempty"`
+		Seed         *int     `json:"seed,omitempty"`
+		Scale        *float64 `json:"scale,omitempty"`
+		Threshold    *float64 `json:"threshold,omitempty"`
+		Iterations   *int     `json:"iterations,omitempty"`
+		TerrainIDs   []int    `json:"terrain_ids,omitempty"`
+		GridFile     string   `json:"grid_file,omitempty"`
 	}
 	var terrainID any
 	if recipe.TerrainID != nil {
@@ -329,28 +447,34 @@ func (recipe MapRecipe) MarshalJSON() ([]byte, error) {
 		layer = recipe.LayerGrid
 	}
 	return json.Marshal(wire{
-		Op:         recipe.Op,
-		Mask:       recipe.Mask,
-		X1:         recipe.X1,
-		Y1:         recipe.Y1,
-		X2:         recipe.X2,
-		Y2:         recipe.Y2,
-		Width:      recipe.Width,
-		Height:     recipe.Height,
-		TargetX:    recipe.TargetX,
-		TargetY:    recipe.TargetY,
-		Radius:     recipe.Radius,
-		Thickness:  recipe.Thickness,
-		TerrainID:  terrainID,
-		TerrainID2: recipe.TerrainID2,
-		Elevation:  elevation,
-		Layer:      layer,
-		Seed:       recipe.Seed,
-		Scale:      recipe.Scale,
-		Threshold:  recipe.Threshold,
-		Iterations: recipe.Iterations,
-		TerrainIDs: recipe.TerrainIDs,
-		GridFile:   recipe.GridFile,
+		Op:           recipe.Op,
+		Preset:       recipe.Preset,
+		Anchor:       recipe.Anchor,
+		OffsetX:      recipe.OffsetX,
+		OffsetY:      recipe.OffsetY,
+		FillTerrain:  recipe.FillTerrain,
+		MapColorMood: recipe.MapColorMood,
+		Mask:         recipe.Mask,
+		X1:           recipe.X1,
+		Y1:           recipe.Y1,
+		X2:           recipe.X2,
+		Y2:           recipe.Y2,
+		Width:        recipe.Width,
+		Height:       recipe.Height,
+		TargetX:      recipe.TargetX,
+		TargetY:      recipe.TargetY,
+		Radius:       recipe.Radius,
+		Thickness:    recipe.Thickness,
+		TerrainID:    terrainID,
+		TerrainID2:   recipe.TerrainID2,
+		Elevation:    elevation,
+		Layer:        layer,
+		Seed:         recipe.Seed,
+		Scale:        recipe.Scale,
+		Threshold:    recipe.Threshold,
+		Iterations:   recipe.Iterations,
+		TerrainIDs:   recipe.TerrainIDs,
+		GridFile:     recipe.GridFile,
 	})
 }
 
@@ -587,6 +711,7 @@ type PatchReport struct {
 	TimestampOfLastSave int                    `json:"timestamp_of_last_save,omitempty"`
 	RebuildOK           bool                   `json:"rebuild_ok"`
 	InvariantOK         bool                   `json:"invariant_ok"`
+	Warnings            []string               `json:"warnings,omitempty"`
 	Verification        aoe2.VerificationClaim `json:"verification"`
 }
 
@@ -617,6 +742,9 @@ func LoadRecipe(path string) (Recipe, error) {
 		return Recipe{}, err
 	}
 	baseDir := filepath.Dir(path)
+	if recipe.GameDir != "" && !filepath.IsAbs(recipe.GameDir) {
+		recipe.GameDir = filepath.Join(baseDir, recipe.GameDir)
+	}
 	if recipe.DatPath != "" && !filepath.IsAbs(recipe.DatPath) {
 		recipe.DatPath = filepath.Join(baseDir, recipe.DatPath)
 	}
@@ -695,6 +823,7 @@ func PatchRecipeFile(input, output string, recipe Recipe) (PatchReport, error) {
 		TimestampOfLastSave: timestamp,
 		RebuildOK:           true,
 		InvariantOK:         invariantOK,
+		Warnings:            plan.Warnings,
 		Verification:        scenarioWriteVerification(),
 	}, nil
 }
@@ -911,10 +1040,21 @@ func (f *File) Plan(recipe Recipe) (Plan, error) {
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_xs", Name: recipe.XS.Name})
 	}
 	if recipe.Scenario != nil && recipe.Scenario.PlayerCount != nil {
+		if *recipe.Scenario.PlayerCount < 1 || *recipe.Scenario.PlayerCount > 8 {
+			return Plan{}, fmt.Errorf("scenario player_count %d out of range 1..8", *recipe.Scenario.PlayerCount)
+		}
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_scenario_player_count", Name: fmt.Sprintf("%d", *recipe.Scenario.PlayerCount)})
 	}
 	if recipe.Victory != nil {
 		plan.Operations = append(plan.Operations, PlanOp{Op: "set_global_victory", Name: recipe.Victory.summary()})
+	}
+	if recipe.Messages != nil {
+		_, warnings, err := resolveMessageRecipe(*recipe.Messages, recipe.GameDir)
+		if err != nil {
+			return Plan{}, err
+		}
+		plan.Warnings = append(plan.Warnings, warnings...)
+		plan.Operations = append(plan.Operations, PlanOp{Op: "set_messages"})
 	}
 	for _, player := range recipe.Players {
 		if _, err := normalizePlayerRecipe(player); err != nil {
@@ -1119,6 +1259,49 @@ func (f *File) Plan(recipe Recipe) (Plan, error) {
 	}
 	for _, mapPatch := range recipe.Map {
 		switch mapPatch.Op {
+		case "resize_map":
+			width, err := resizePresetSize(mapPatch.Preset)
+			if err != nil {
+				return Plan{}, err
+			}
+			dx, dy, err := resizeOffset(mapPatch, f.Map.Width, f.Map.Height, width, width)
+			if err != nil {
+				return Plan{}, err
+			}
+			if mapPatch.FillTerrain != nil && (*mapPatch.FillTerrain < 0 || *mapPatch.FillTerrain > 255) {
+				return Plan{}, fmt.Errorf("resize_map fill_terrain %d outside u8 range", *mapPatch.FillTerrain)
+			}
+			outOfBounds := f.outOfBoundsUnitReferences(width, width, dx, dy)
+			if err := f.ensureUnitsNotReferenced(intSet(outOfBounds)); err != nil {
+				return Plan{}, err
+			}
+			plan.UnitCountAfter -= len(outOfBounds)
+			plan.Operations = append(plan.Operations, PlanOp{Op: "resize_map", Name: fmt.Sprintf("%dx%d offset=(%d,%d)", width, width, dx, dy)})
+			plan.MapTilesChanged += width * width
+		case "regenerate_map":
+			width, err := resizePresetSize(mapPatch.Preset)
+			if err != nil {
+				return Plan{}, err
+			}
+			dx, dy, err := resizeOffset(mapPatch, f.Map.Width, f.Map.Height, width, width)
+			if err != nil {
+				return Plan{}, err
+			}
+			if mapPatch.FillTerrain != nil && (*mapPatch.FillTerrain < 0 || *mapPatch.FillTerrain > 255) {
+				return Plan{}, fmt.Errorf("regenerate_map fill_terrain %d outside u8 range", *mapPatch.FillTerrain)
+			}
+			refs := allUnitReferenceIDs(f)
+			if err := f.ensureUnitsNotReferenced(intSet(refs)); err != nil {
+				return Plan{}, err
+			}
+			plan.UnitCountAfter = 0
+			plan.Operations = append(plan.Operations, PlanOp{Op: "regenerate_map", Name: fmt.Sprintf("%dx%d offset=(%d,%d) terrain=%d remove_units=%d", width, width, dx, dy, intValue(mapPatch.FillTerrain, 0), len(refs))})
+			plan.MapTilesChanged += width * width
+		case "set_map_color_mood":
+			if mapPatch.MapColorMood == nil {
+				return Plan{}, fmt.Errorf("set_map_color_mood requires map_color_mood")
+			}
+			plan.Operations = append(plan.Operations, PlanOp{Op: "set_map_color_mood", Name: *mapPatch.MapColorMood})
 		case "set_terrain_rect", "set_terrain_circle", "set_terrain_line", "set_terrain_border", "copy_terrain_area", "noise_fill", "erode", "semantic_erode", "set_terrain_mask", "layered_crossfade", "terrain_grid":
 			changed, err := f.countMapTiles(mapPatch, masks)
 			if err != nil {
@@ -1141,6 +1324,15 @@ func (f *File) ApplyRecipe(recipe Recipe) error {
 	}
 	if recipe.Victory != nil {
 		if err := f.SetGlobalVictory(*recipe.Victory); err != nil {
+			return err
+		}
+	}
+	if recipe.Messages != nil {
+		resolved, _, err := resolveMessageRecipe(*recipe.Messages, recipe.GameDir)
+		if err != nil {
+			return err
+		}
+		if err := f.SetMessages(resolved); err != nil {
 			return err
 		}
 	}
@@ -1376,6 +1568,37 @@ func (f *File) ApplyRecipe(recipe Recipe) error {
 	}
 	for _, mapPatch := range recipe.Map {
 		switch mapPatch.Op {
+		case "resize_map":
+			width, err := resizePresetSize(mapPatch.Preset)
+			if err != nil {
+				return err
+			}
+			dx, dy, err := resizeOffset(mapPatch, f.Map.Width, f.Map.Height, width, width)
+			if err != nil {
+				return err
+			}
+			if err := f.ResizeMapWithOffset(width, width, dx, dy, intValue(mapPatch.FillTerrain, 0)); err != nil {
+				return err
+			}
+		case "regenerate_map":
+			width, err := resizePresetSize(mapPatch.Preset)
+			if err != nil {
+				return err
+			}
+			dx, dy, err := resizeOffset(mapPatch, f.Map.Width, f.Map.Height, width, width)
+			if err != nil {
+				return err
+			}
+			if err := f.RegenerateMapWithOffset(width, width, dx, dy, intValue(mapPatch.FillTerrain, 0)); err != nil {
+				return err
+			}
+		case "set_map_color_mood":
+			if mapPatch.MapColorMood == nil {
+				return fmt.Errorf("set_map_color_mood requires map_color_mood")
+			}
+			if err := f.SetMapColorMood(*mapPatch.MapColorMood); err != nil {
+				return err
+			}
 		case "set_terrain_rect", "set_terrain_circle", "set_terrain_line", "set_terrain_border":
 			if err := f.SetTerrainWithMasks(mapPatch, masks); err != nil {
 				return err
@@ -1462,6 +1685,19 @@ func (f *File) SetScenario(recipe ScenarioRecipe) error {
 		if playerCount < 1 || playerCount > 8 {
 			return fmt.Errorf("scenario player_count %d out of range 1..8", playerCount)
 		}
+		dataHeader := f.root.section("DataHeader")
+		if dataHeader == nil {
+			return fmt.Errorf("missing DataHeader section")
+		}
+		players := dataHeader.list("player_data_1")
+		if len(players) < playerCount || len(players) < 8 {
+			return fmt.Errorf("player data has %d slots, cannot set player_count %d", len(players), playerCount)
+		}
+		for i := 0; i < 8; i++ {
+			if err := setIntField(players[i], "active", "u32", boolInt(i < playerCount)); err != nil {
+				return fmt.Errorf("set player %d active: %w", i+1, err)
+			}
+		}
 		if err := setIntField(f.headerRoot, "player_count", "u32", playerCount); err != nil {
 			return err
 		}
@@ -1473,6 +1709,7 @@ func (f *File) SetScenario(recipe ScenarioRecipe) error {
 		f.header = f.headerRoot.raw()
 		f.HeaderBytes = len(f.header)
 		f.PlayerCount = playerCount
+		f.Players = f.root.playerInfo()
 		changed = true
 	}
 	if !changed {
@@ -1852,6 +2089,71 @@ func (f *File) SetPlayer(recipe PlayerRecipe) error {
 	}
 	if recipe.Civilization != nil {
 		if err := setStringField(node, "civilization", "str16", *recipe.Civilization); err != nil {
+			return err
+		}
+	}
+	if recipe.Architecture != nil {
+		if err := setStringField(node, "architecture_set", "str16", *recipe.Architecture); err != nil {
+			return err
+		}
+	}
+	if recipe.StartingAge != nil {
+		if *recipe.StartingAge < 2 || *recipe.StartingAge > 6 {
+			return fmt.Errorf("player %d starting_age %d outside supported editor range 2..6", recipe.Player+1, *recipe.StartingAge)
+		}
+		options := f.root.section("Options")
+		if options == nil {
+			return fmt.Errorf("missing Options section")
+		}
+		ages := options.intList("per_player_starting_age")
+		if recipe.Player >= len(ages) {
+			return fmt.Errorf("starting age player %d out of range 0..%d", recipe.Player, len(ages)-1)
+		}
+		ages[recipe.Player] = *recipe.StartingAge
+		if err := setIntListField(options, "per_player_starting_age", "u32", ages); err != nil {
+			return err
+		}
+	}
+	if recipe.PopulationLimit != nil {
+		if *recipe.PopulationLimit < 0 || *recipe.PopulationLimit > math.MaxUint32 {
+			return fmt.Errorf("player %d population_limit %d outside u32 range", recipe.Player+1, *recipe.PopulationLimit)
+		}
+		mapSection := f.root.section("Map")
+		if mapSection == nil {
+			return fmt.Errorf("missing Map section")
+		}
+		limits := mapSection.intList("per_player_population_cap")
+		if recipe.Player >= len(limits) {
+			return fmt.Errorf("population cap player %d out of range 0..%d", recipe.Player, len(limits)-1)
+		}
+		limits[recipe.Player] = *recipe.PopulationLimit
+		if err := setIntListField(mapSection, "per_player_population_cap", "u32", limits); err != nil {
+			return err
+		}
+		units := f.root.section("Units")
+		if units == nil || recipe.Player >= len(units.list("player_data_4")) {
+			return fmt.Errorf("missing player_data_4 population mirror for player %d", recipe.Player+1)
+		}
+		if err := setFloatField(units.list("player_data_4")[recipe.Player], "population_limit", "f32", float64(*recipe.PopulationLimit)); err != nil {
+			return err
+		}
+	}
+	if recipe.Color != nil {
+		if *recipe.Color < 0 || *recipe.Color > 7 {
+			return fmt.Errorf("player %d color %d outside editor palette 0..7", recipe.Player+1, *recipe.Color)
+		}
+		playerDataTwo := f.root.section("PlayerDataTwo")
+		if playerDataTwo == nil || recipe.Player >= len(playerDataTwo.list("resources")) {
+			return fmt.Errorf("missing player color data for player %d", recipe.Player+1)
+		}
+		if err := setIntField(playerDataTwo.list("resources")[recipe.Player], "player_color", "s32", *recipe.Color); err != nil {
+			return err
+		}
+		units := f.root.section("Units")
+		if units == nil || recipe.Player >= len(units.list("player_data_3")) {
+			return fmt.Errorf("missing player_data_3 color mirror for player %d", recipe.Player+1)
+		}
+		if err := setIntField(units.list("player_data_3")[recipe.Player], "color", "u32", *recipe.Color); err != nil {
 			return err
 		}
 	}
@@ -3412,6 +3714,365 @@ func ScenarioMapPresetSizesString() string {
 		parts = append(parts, fmt.Sprintf("%d=%s", preset.Size, preset.Name))
 	}
 	return strings.Join(parts, ", ")
+}
+
+func resizePresetSize(name string) (int, error) {
+	size, ok := editorResizePresets[strings.ToLower(strings.TrimSpace(name))]
+	if !ok {
+		return 0, fmt.Errorf("resize_map preset %q unsupported; use Tiny, Small, Medium, Normal, Large, Huge, or Ludicrous", name)
+	}
+	return size, nil
+}
+
+func resizeOffset(recipe MapRecipe, oldWidth, oldHeight, newWidth, newHeight int) (int, int, error) {
+	anchor := strings.ToLower(strings.TrimSpace(recipe.Anchor))
+	hasOffset := recipe.OffsetX != nil || recipe.OffsetY != nil
+	if anchor == "" {
+		if hasOffset {
+			anchor = "offset"
+		} else {
+			anchor = "center"
+		}
+	}
+	switch anchor {
+	case "center":
+		if hasOffset {
+			return 0, 0, fmt.Errorf("resize_map anchor=center cannot be combined with offset_x/offset_y")
+		}
+		return (newWidth - oldWidth) / 2, (newHeight - oldHeight) / 2, nil
+	case "offset":
+		if recipe.OffsetX == nil || recipe.OffsetY == nil {
+			return 0, 0, fmt.Errorf("resize_map anchor=offset requires offset_x and offset_y")
+		}
+		return *recipe.OffsetX, *recipe.OffsetY, nil
+	default:
+		return 0, 0, fmt.Errorf("resize_map anchor %q unsupported; use center or offset", recipe.Anchor)
+	}
+}
+
+func (f *File) outOfBoundsUnitReferences(width, height, dx, dy int) []int {
+	units := f.root.section("Units")
+	if units == nil {
+		return nil
+	}
+	var refs []int
+	for _, player := range units.list("players_units") {
+		for _, unit := range player.list("units") {
+			x, xok := unit.floatValue("x")
+			y, yok := unit.floatValue("y")
+			if !xok || !yok {
+				continue
+			}
+			x += float64(dx)
+			y += float64(dy)
+			if x < 0 || y < 0 || x >= float64(width) || y >= float64(height) {
+				if id, ok := unit.intValue("reference_id"); ok && id >= 0 {
+					refs = append(refs, id)
+				}
+			}
+		}
+	}
+	return refs
+}
+
+func (f *File) validateResizeUnits(width, height, dx, dy int) error {
+	refs := f.outOfBoundsUnitReferences(width, height, dx, dy)
+	if len(refs) == 0 {
+		return nil
+	}
+	return f.ensureUnitsNotReferenced(intSet(refs))
+}
+
+// ResizeMapWithOffset resizes a square editor preset while preserving the
+// overlapping terrain and translating the known map-coordinate fields.
+func (f *File) ResizeMapWithOffset(width, height, dx, dy, fillTerrain int) error {
+	if width != height {
+		return fmt.Errorf("resize_map requires a square preset, got %dx%d", width, height)
+	}
+	if _, ok := editorResizePresetsBySize(width); !ok {
+		return fmt.Errorf("resize_map size %d is not one of the measured editor presets", width)
+	}
+	if fillTerrain < 0 || fillTerrain > 255 {
+		return fmt.Errorf("resize_map fill terrain %d outside u8 range", fillTerrain)
+	}
+	oldTiles, oldWidth, oldHeight, err := f.mapTiles()
+	if err != nil {
+		return err
+	}
+	if len(oldTiles) == 0 {
+		return fmt.Errorf("cannot resize map with no terrain tile template")
+	}
+	if err := f.validateResizeUnits(width, height, dx, dy); err != nil {
+		return err
+	}
+	mapSection := f.root.section("Map")
+	if mapSection == nil {
+		return fmt.Errorf("missing Map section")
+	}
+	terrainField := mapSection.field("terrain_data")
+	if terrainField == nil {
+		return fmt.Errorf("missing terrain_data")
+	}
+	baseTile := cloneParsedNode(oldTiles[0])
+	if err := setIntField(baseTile, "terrain_id", "u8", fillTerrain); err != nil {
+		return err
+	}
+	newTiles := make([]*parsedNode, width*height)
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			oldX, oldY := x-dx, y-dy
+			destination := y*width + x
+			if oldX >= 0 && oldY >= 0 && oldX < oldWidth && oldY < oldHeight {
+				newTiles[destination] = cloneParsedNode(oldTiles[oldY*oldWidth+oldX])
+			} else {
+				newTiles[destination] = cloneParsedNode(baseTile)
+			}
+		}
+	}
+	refs := f.outOfBoundsUnitReferences(width, height, dx, dy)
+	if len(refs) != 0 {
+		if err := f.removeUnitsByReferenceIDs(refs); err != nil {
+			return err
+		}
+	}
+	if err := shiftMapCoordinates(f.root, dx, dy); err != nil {
+		return err
+	}
+	if err := setIntField(mapSection, "map_width", "s32", width); err != nil {
+		return err
+	}
+	if err := setIntField(mapSection, "map_height", "s32", height); err != nil {
+		return err
+	}
+	terrainField.Raw = nil
+	terrainField.Elements = newTiles
+	terrainField.Value = terrainField.Elements
+	f.body = f.root.raw()
+	f.InflatedBytes = len(f.body)
+	mapInfo, err := f.root.mapInfo()
+	if err != nil {
+		return err
+	}
+	f.Map = mapInfo
+	return f.refreshUnits()
+}
+
+func allUnitReferenceIDs(f *File) []int {
+	if f == nil || f.root == nil {
+		return nil
+	}
+	units := f.root.section("Units")
+	if units == nil {
+		return nil
+	}
+	var refs []int
+	for _, player := range units.list("players_units") {
+		for _, unit := range player.list("units") {
+			if id, ok := unit.intValue("reference_id"); ok {
+				refs = append(refs, id)
+			}
+		}
+	}
+	return refs
+}
+
+// RegenerateMapWithOffset matches the editor's destructive regenerate action:
+// resize, reset every tile to one terrain, and remove all units.
+func (f *File) RegenerateMapWithOffset(width, height, dx, dy, terrain int) error {
+	if width != height {
+		return fmt.Errorf("regenerate_map requires a square preset, got %dx%d", width, height)
+	}
+	if _, ok := editorResizePresetsBySize(width); !ok {
+		return fmt.Errorf("regenerate_map size %d is not one of the measured editor presets", width)
+	}
+	if terrain < 0 || terrain > 255 {
+		return fmt.Errorf("regenerate_map terrain %d outside u8 range", terrain)
+	}
+	refs := allUnitReferenceIDs(f)
+	if err := f.ensureUnitsNotReferenced(intSet(refs)); err != nil {
+		return err
+	}
+	if len(refs) > 0 {
+		if err := f.removeUnitsByReferenceIDs(refs); err != nil {
+			return err
+		}
+	}
+	if err := f.ResizeMapWithOffset(width, height, dx, dy, terrain); err != nil {
+		return err
+	}
+	mapSection := f.root.section("Map")
+	for _, tile := range mapSection.list("terrain_data") {
+		if err := setIntField(tile, "terrain_id", "u8", terrain); err != nil {
+			return err
+		}
+	}
+	f.body = f.root.raw()
+	f.InflatedBytes = len(f.body)
+	mapInfo, err := f.root.mapInfo()
+	if err != nil {
+		return err
+	}
+	f.Map = mapInfo
+	return f.refreshUnits()
+}
+
+func editorResizePresetsBySize(size int) (string, bool) {
+	for name, candidate := range editorResizePresets {
+		if candidate == size {
+			return name, true
+		}
+	}
+	return "", false
+}
+
+func shiftMapCoordinates(root *parsedRoot, dx, dy int) error {
+	mapSection := root.section("Map")
+	if mapSection != nil {
+		for _, view := range mapSection.list("initial_player_views") {
+			if err := shiftIntCoordinatePair(view, "location_x", "location_y", dx, dy); err != nil {
+				return err
+			}
+		}
+	}
+	units := root.section("Units")
+	if units != nil {
+		for _, player := range units.list("player_data_3") {
+			for _, axis := range []struct {
+				field string
+				delta int
+				kind  string
+			}{{"editor_camera_x", dx, "f32"}, {"editor_camera_y", dy, "f32"}, {"initial_camera_x", dx, "s16"}, {"initial_camera_y", dy, "s16"}} {
+				value, ok := player.field(axis.field).Value.(float32)
+				if axis.kind == "s16" {
+					v, found := player.intValue(axis.field)
+					if !found || v < 0 {
+						continue
+					}
+					if err := setIntField(player, axis.field, axis.kind, v+axis.delta); err != nil {
+						return err
+					}
+					continue
+				}
+				if !ok || float64(value) < 0 {
+					continue
+				}
+				if err := setFloatField(player, axis.field, axis.kind, float64(value)+float64(axis.delta)); err != nil {
+					return err
+				}
+			}
+		}
+		for _, player := range units.list("players_units") {
+			for _, unit := range player.list("units") {
+				x, xok := unit.floatValue("x")
+				y, yok := unit.floatValue("y")
+				if !xok || !yok {
+					continue
+				}
+				if err := setFloatField(unit, "x", "f32", x+float64(dx)); err != nil {
+					return err
+				}
+				if err := setFloatField(unit, "y", "f32", y+float64(dy)); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	triggers := root.section("Triggers")
+	if triggers != nil {
+		for _, trigger := range triggers.list("trigger_data") {
+			for _, condition := range trigger.list("condition_data") {
+				if err := shiftTriggerCoordinateFields(condition, dx, dy); err != nil {
+					return err
+				}
+			}
+			for _, effect := range trigger.list("effect_data") {
+				if err := shiftTriggerCoordinateFields(effect, dx, dy); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func shiftIntCoordinatePair(node *parsedNode, xField, yField string, dx, dy int) error {
+	for _, axis := range []struct {
+		name  string
+		delta int
+	}{{xField, dx}, {yField, dy}} {
+		value, ok := node.intValue(axis.name)
+		if !ok || value < 0 {
+			continue
+		}
+		if err := setIntField(node, axis.name, "s32", value+axis.delta); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func shiftTriggerCoordinateFields(node *parsedNode, dx, dy int) error {
+	for _, pair := range [][2]string{{"location_x", "location_y"}, {"area_x1", "area_y1"}, {"area_x2", "area_y2"}, {"wall_x1", "wall_y1"}, {"wall_x2", "wall_y2"}} {
+		if err := shiftIntCoordinatePair(node, pair[0], pair[1], dx, dy); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (f *File) SetMapColorMood(value string) error {
+	mapSection := f.root.section("Map")
+	if mapSection == nil {
+		return fmt.Errorf("missing Map section")
+	}
+	if err := setStringField(mapSection, "map_color_mood", "str16", value); err != nil {
+		return err
+	}
+	f.body = f.root.raw()
+	f.InflatedBytes = len(f.body)
+	if info, err := f.root.mapInfo(); err == nil {
+		f.Map = info
+	} else {
+		return err
+	}
+	return nil
+}
+
+func (f *File) SetMessages(recipe MessagesRecipe) error {
+	messages := f.root.section("Messages")
+	if messages == nil {
+		return fmt.Errorf("missing Messages section")
+	}
+	slots := []struct {
+		name  string
+		value *MessageSlotRecipe
+	}{{"instructions", recipe.Instructions}, {"hints", recipe.Hints}, {"victory", recipe.Victory}, {"loss", recipe.Loss}, {"history", recipe.History}, {"scouts", recipe.Scouts}}
+	changed := false
+	for _, slot := range slots {
+		if slot.value == nil {
+			continue
+		}
+		if slot.value.StringTableID == nil || slot.value.Literal == nil {
+			return fmt.Errorf("message %s must be resolved before writing", slot.name)
+		}
+		id := *slot.value.StringTableID
+		if id < -2 {
+			return fmt.Errorf("message %s string_table_id %d invalid; use -2 or a non-negative id", slot.name, id)
+		}
+		if err := setIntField(messages, slot.name, "s32", id); err != nil {
+			return err
+		}
+		if err := setStringField(messages, "ascii_"+slot.name, "str16", *slot.value.Literal); err != nil {
+			return err
+		}
+		changed = true
+	}
+	if !changed {
+		return fmt.Errorf("messages recipe has no slots")
+	}
+	f.body = f.root.raw()
+	f.InflatedBytes = len(f.body)
+	return nil
 }
 
 func (f *File) ResizeMap(width, height int) error {

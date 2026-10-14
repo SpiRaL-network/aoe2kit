@@ -110,6 +110,11 @@ func DiffWithOptions(before, after *File, opts DiffOptions) DiffReport {
 	if before.InflatedBytes != after.InflatedBytes {
 		addChange("scenario", "inflated_body_bytes", before.InflatedBytes, after.InflatedBytes, "")
 	}
+	beforeColorMood := before.Settings().Map.ColorMood
+	afterColorMood := after.Settings().Map.ColorMood
+	if beforeColorMood != afterColorMood {
+		addChange("map", "color_mood", beforeColorMood, afterColorMood, "")
+	}
 	if before.Map != nil && after.Map != nil {
 		if before.Map.Width != after.Map.Width || before.Map.Height != after.Map.Height {
 			addChange("map", "dimensions", fmt.Sprintf("%dx%d", before.Map.Width, before.Map.Height), fmt.Sprintf("%dx%d", after.Map.Width, after.Map.Height), "")

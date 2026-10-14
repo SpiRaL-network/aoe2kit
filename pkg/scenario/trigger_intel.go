@@ -17,6 +17,7 @@ type triggerRow struct {
 	Effects          []EffectSummary
 	EffectNodes      []*parsedNode
 	Conditions       []map[string]any
+	ConditionData    []ConditionSummary
 	ConditionNodes   []*parsedNode
 }
 
@@ -188,6 +189,7 @@ func collectTriggerRows(f *File) []triggerRow {
 		}
 		for _, condition := range trigger.list("condition_data") {
 			row.Conditions = append(row.Conditions, summarizeCondition(condition))
+			row.ConditionData = append(row.ConditionData, summarizeConditionData(condition))
 			row.ConditionNodes = append(row.ConditionNodes, condition)
 		}
 		out = append(out, row)
@@ -207,6 +209,7 @@ func (row triggerRow) searchMatches(opts TriggerSearchOptions) []TriggerSearchMa
 			Looping:          row.Looping,
 			EffectCount:      len(row.Effects),
 			ConditionCount:   len(row.Conditions),
+			ConditionData:    append([]ConditionSummary(nil), row.ConditionData...),
 		}}
 	}
 	metaFields := row.metaMatchFields(strings.ToLower(opts.Grep))
@@ -218,6 +221,7 @@ func (row triggerRow) searchMatches(opts TriggerSearchOptions) []TriggerSearchMa
 			Looping:        row.Looping,
 			EffectCount:    len(row.Effects),
 			ConditionCount: len(row.Conditions),
+			ConditionData:  append([]ConditionSummary(nil), row.ConditionData...),
 			MatchedFields:  metaFields,
 		})
 	}
@@ -234,6 +238,7 @@ func (row triggerRow) searchMatches(opts TriggerSearchOptions) []TriggerSearchMa
 			Looping:        row.Looping,
 			EffectCount:    len(row.Effects),
 			ConditionCount: len(row.Conditions),
+			ConditionData:  append([]ConditionSummary(nil), row.ConditionData...),
 			EffectIndex:    &idx,
 			EffectType:     effect.Type,
 			EffectTypeName: effect.TypeName,
@@ -257,6 +262,7 @@ func (row triggerRow) searchMatches(opts TriggerSearchOptions) []TriggerSearchMa
 			ConditionIndex: &idx,
 			ConditionType:  condType,
 			ConditionName:  ConditionTypeName(condType),
+			ConditionData:  append([]ConditionSummary(nil), row.ConditionData...),
 			MatchedFields:  fields,
 		})
 	}

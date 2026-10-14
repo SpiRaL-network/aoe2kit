@@ -1,13 +1,29 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-10-14
 
 ### Added
-- GitHub Actions builds now attest release archives and standalone binaries;
-  monthly/manual refresh runs rebuild and attest the latest release's stable
-  workflow artifacts without changing the published release.
-- AI-container bootstrap guidance now prefers GitHub Actions artifacts when a
-  GitHub connector is available, with checksum and embedded-commit checks.
+- Scenario recipe operations `resize_map` and `regenerate_map` for measured
+  square editor presets, plus per-player architecture, starting age,
+  population limit, colour, active-slot and player-count settings.
+- Six scenario message slots with string-table IDs and literal fallback; when
+  game strings are unavailable, IDs are preserved and unresolved text is
+  reported with a warning.
+- Map colour mood authoring and `--game-dir` / `AOE2KIT_GAME_DIR` support for
+  message resolution, including `AoE2DE` game-directory discovery.
+- Byte-diff save-noise masking and section names, corrected player labels for
+  AI names and map-colour-mood diffs, condition editor fields in trigger
+  listings, and `scen units --text` output.
+- Trust and execution guidance for users and AI-mediated workflows, including
+  GitHub connector artifact discovery and verification details.
+- GitHub Actions release builds now attest archives and standalone binaries;
+  monthly/manual refresh runs rebuild stable artifacts without changing the
+  published release. Container bootstrap guidance covers connector artifacts,
+  checksum verification, and embedded commit checks.
+
+These scenario operations are structure-verified; they have not yet been
+engine-verified. A smoke scenario exists, but no in-game check has been
+reported.
 
 ## Experimental Geotrace — 2026-10-14
 

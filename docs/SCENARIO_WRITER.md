@@ -101,8 +101,9 @@ selectors and guarded delete dependencies for `remove_trigger`, `edit_trigger`,
 
 ## Write Primitives
 
-Current write primitives are append-only helper triggers, unit placement, map
-tile edits, player/diplomacy/resource setup, and XS embedding. See
+Current write primitives include helper triggers, unit placement, terrain and
+map-size edits, player/diplomacy/resource setup, scenario messages, and XS
+embedding. See
 `docs/SCEN_RECIPE_EXAMPLE.json` for a broad recipe and
 `docs/SCEN_WRITE_SMOKE_RECIPE.json` for the canonical smoke fixture.
 
@@ -124,6 +125,12 @@ slots. AoE2Kit also syncs the Units-section `number_of_players` field to
 player, diplomacy, and resource references use `1..8` for normal players;
 `0` is rejected there. Unit ownership is the deliberate exception: units use
 `0` for Gaia and `1..8` for normal player slots.
+
+The `players` recipe also accepts `architecture`, `starting_age`,
+`population_limit`, and `color`. Population limit and color update their
+measured mirrored fields in the scenario. `scenario.player_count` updates the
+FileHeader count and the eight player-slot `active` flags; the requested count
+must fit the available player data.
 
 `kit scen blank` keeps Gaia active by default, matching the editor-authored
 blank baseline and normal scenario authoring expectations. Do not assume
@@ -276,8 +283,18 @@ unit uses rotation as an artwork-addressing slot; scatter samples from that
 pool instead of using an arbitrary facing angle, which is useful for dense
 forests and other repeated visual variants.
 
+`resize_map` and `regenerate_map` use the measured square editor presets Tiny,
+Small, Medium, Normal, Large, Huge, and Ludicrous. `resize_map` preserves the
+overlapping terrain and translates known map coordinates; `regenerate_map`
+resets all terrain to `fill_terrain` and removes units after checking for
+references. The default anchor is `center`; `anchor:"offset"` requires both
+`offset_x` and `offset_y`. Units that would leave the resized map are removed
+only when no known trigger reference would dangle. These operations are
+structure-verified and have not been engine-verified. `set_map_color_mood`
+sets the map's color mood string.
+
 `set_terrain_rect` edits existing terrain tiles in an inclusive rectangle. It
-can set `terrain_id`, `elevation`, and/or `layer`; it does not resize maps.
+can set `terrain_id`, `elevation`, and/or `layer`.
 `set_terrain_circle` uses `x1,y1` as the center and requires `radius`.
 `set_terrain_line` uses `x1,y1` to `x2,y2` with Bresenham tile selection.
 `set_terrain_border` paints only the perimeter of an inclusive rectangle and
@@ -325,11 +342,21 @@ All map operations validate source and destination bounds. Paint operations can
 set `terrain_id`, `elevation`, and/or `layer`.
 
 `settings` is a read-only audit view for player slots, AI names/types,
-resources, diplomacy, allied-victory flags, and global victory fields.
+resources, diplomacy, allied-victory flags, global victory fields, map color
+mood, and six scenario message slots.
 
 The `players` recipe array edits fixed player slots. Supported fields are
-`active`, `human`, `tribe_name`, `civilization`, `lock_civilization`,
-`lock_personality`, `ai_name`, and `ai_type`.
+`active`, `human`, `tribe_name`, `civilization`, `architecture`, `starting_age`,
+`population_limit`, `color`, `lock_civilization`, `lock_personality`, `ai_name`,
+and `ai_type`.
+
+The `messages` recipe block supports `instructions`, `hints`, `victory`, `loss`,
+`history`, and `scouts`. A slot can specify `string_table_id` and/or `literal`.
+When game strings are available, the ID resolves to its literal; otherwise the
+ID is preserved, unresolved text stays empty, and the plan/patch reports a
+warning. `kit scen plan` and `kit scen patch` accept `--game-dir`; the
+`AOE2KIT_GAME_DIR` environment variable is the fallback. No game installation
+is required when each message uses a literal or the string table is not needed.
 
 The `diplomacy_options` recipe block edits section-wide diplomacy settings:
 `lock_teams`, `allow_players_choose_teams`, `random_start_points`,

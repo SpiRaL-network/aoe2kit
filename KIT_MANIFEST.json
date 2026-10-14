@@ -1,6 +1,6 @@
 {
   "name": "AoE2Kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "neutrality": "Project-neutral AoE2 tooling. Project facts belong in the bundle, not in shared kit code.",
   "runtime": {
     "durable_language": "Go",

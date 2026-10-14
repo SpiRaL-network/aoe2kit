@@ -3,6 +3,7 @@ package gamestrings
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -21,5 +22,27 @@ func TestLoadQuotedTable(t *testing.T) {
 	}
 	if _, ok := table.Lookup(1); ok {
 		t.Fatal("unexpected missing key")
+	}
+}
+
+func TestFindGameDirRecognizesAoE2DEFolder(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("this test exercises the Steam-on-Linux candidate list")
+	}
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	gameDir := filepath.Join(home, ".steam", "steam", "steamapps", "common", "AoE2DE")
+	if err := os.MkdirAll(filepath.Join(gameDir, "resources"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(gameDir, "resources", tableFileName), []byte("1 \"test\"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	got, err := FindGameDir()
+	if err != nil {
+		t.Fatalf("FindGameDir: %v", err)
+	}
+	if got != gameDir {
+		t.Fatalf("FindGameDir=%q, want %q", got, gameDir)
 	}
 }

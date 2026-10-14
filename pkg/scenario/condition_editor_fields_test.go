@@ -36,3 +36,19 @@ func TestConditionSummaryIncludesEditorFields(t *testing.T) {
 		t.Fatalf("flat chance editor_fields = %#v", flat["editor_fields"])
 	}
 }
+
+func TestTriggerSearchMatchCarriesConditionEditorFields(t *testing.T) {
+	row := triggerRow{
+		Index:         0,
+		Conditions:    []map[string]any{{"type": int32(20), "quantity": int32(44)}},
+		ConditionData: []ConditionSummary{{ConditionIndex: 0, Type: 20, TypeName: "Chance", KnownFields: map[string]any{"quantity": int32(44)}, EditorFields: []string{"Quantity"}}},
+	}
+	matches := row.searchMatches(TriggerSearchOptions{ConditionQuery: "chance"})
+	if len(matches) != 1 || len(matches[0].ConditionData) != 1 {
+		t.Fatalf("condition search matches=%+v", matches)
+	}
+	got := matches[0].ConditionData[0]
+	if got.TypeName != "Chance" || got.KnownFields["quantity"] != int32(44) || len(got.EditorFields) != 1 || got.EditorFields[0] != "Quantity" {
+		t.Fatalf("condition data=%+v", got)
+	}
+}

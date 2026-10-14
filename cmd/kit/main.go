@@ -3606,10 +3606,15 @@ func runScen(args []string) {
 		printJSON(scen.Analyze())
 	case "units":
 		named := false
+		textOut := false
 		for _, arg := range args[2:] {
 			switch arg {
 			case "--named":
 				named = true
+			case "--text":
+				textOut = true
+			case "--json":
+				textOut = false
 			default:
 				die("kit scen units", fmt.Errorf("unknown option %q", arg))
 			}
@@ -3625,7 +3630,9 @@ func runScen(args []string) {
 			fmt.Fprintf(os.Stderr, "kit scen units: partial parse (triggers not decoded): %v\n", err)
 			scen = scen2
 		}
-		if named {
+		if textOut {
+			printScenarioUnits(scen.Units, named)
+		} else if named {
 			printJSON(namedScenarioUnits(scen.Units))
 		} else {
 			printJSON(scen.Units)
@@ -4037,13 +4044,20 @@ func runScen(args []string) {
 			die("kit scen dump-body", err)
 		}
 	case "plan":
-		if len(args) != 4 || args[2] != "--recipe" {
-			fmt.Fprintln(os.Stderr, "usage: kit scen plan <in.aoe2scenario> --recipe recipe.json")
+		if len(args) < 4 || args[2] != "--recipe" {
+			fmt.Fprintln(os.Stderr, "usage: kit scen plan <in.aoe2scenario> --recipe recipe.json [--game-dir D]")
 			os.Exit(2)
+		}
+		gameDir, err := parseScenarioGameDir(args[4:])
+		if err != nil {
+			die("kit scen plan", err)
 		}
 		recipe, err := scenario.LoadRecipe(args[3])
 		if err != nil {
 			die("kit scen", err)
+		}
+		if gameDir != "" {
+			recipe.GameDir = gameDir
 		}
 		plan, err := scenario.PlanRecipeFile(args[1], recipe)
 		if err != nil {
@@ -4051,27 +4065,23 @@ func runScen(args []string) {
 		}
 		printJSON(plan)
 	case "patch":
-		const patchUsage = "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]"
+		const patchUsage = "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]"
 		if len(args) < 5 || args[3] != "--recipe" {
 			fmt.Fprintln(os.Stderr, patchUsage)
 			os.Exit(2)
 		}
-		text := false
-		for _, arg := range args[5:] {
-			switch arg {
-			case "--text":
-				text = true
-			case "--json":
-				text = false
-			default:
-				fmt.Fprintf(os.Stderr, "kit scen patch: unknown flag %q\n", arg)
-				fmt.Fprintln(os.Stderr, patchUsage)
-				os.Exit(2)
-			}
+		gameDir, text, err := parseScenarioPatchOptions(args[5:])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "kit scen patch: %v\n", err)
+			fmt.Fprintln(os.Stderr, patchUsage)
+			os.Exit(2)
 		}
 		recipe, err := scenario.LoadRecipe(args[4])
 		if err != nil {
 			die("kit scen", err)
+		}
+		if gameDir != "" {
+			recipe.GameDir = gameDir
 		}
 		report, err := scenario.PatchRecipeFile(args[1], args[2], recipe)
 		if err != nil {
@@ -4086,6 +4096,47 @@ func runScen(args []string) {
 		fmt.Fprintln(os.Stderr, "usage: kit scen <blank|info|check|describe|settings|field|strings|refs|delete-plan|delete|disconnect|effects|diff-effects|diff-series|watch|glossary|idioms|analyze|triggers|trigger-neighborhood|audit-player-coverage|mechanic|trigger-flow|units|map|terrain|palette-usage|regions|coverage|editor-coverage|verify|lint|xs|deploycheck|diff|diff-triggers|bytediff|write-check|dump-body|plan|patch|shop-catalog|import-triggers|smoke|smoke-recipe> <file.aoe2scenario> [args...]")
 		os.Exit(2)
 	}
+}
+
+func parseScenarioGameDir(args []string) (string, error) {
+	gameDir := ""
+	for i := 0; i < len(args); i++ {
+		if args[i] != "--game-dir" {
+			return "", fmt.Errorf("unknown option %q", args[i])
+		}
+		if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
+			return "", fmt.Errorf("--game-dir needs a path")
+		}
+		i++
+		gameDir = args[i]
+	}
+	if gameDir == "" {
+		gameDir = strings.TrimSpace(os.Getenv("AOE2KIT_GAME_DIR"))
+	}
+	return gameDir, nil
+}
+
+func parseScenarioPatchOptions(args []string) (gameDir string, text bool, err error) {
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--text":
+			text = true
+		case "--json":
+			text = false
+		case "--game-dir":
+			if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
+				return "", false, fmt.Errorf("--game-dir needs a path")
+			}
+			i++
+			gameDir = args[i]
+		default:
+			return "", false, fmt.Errorf("unknown flag %q", args[i])
+		}
+	}
+	if gameDir == "" {
+		gameDir = strings.TrimSpace(os.Getenv("AOE2KIT_GAME_DIR"))
+	}
+	return gameDir, text, nil
 }
 
 func runScenarioShopCatalog(args []string) {
@@ -5856,6 +5907,31 @@ func printScenarioPatch(report scenario.PatchReport) {
 	if report.TimestampOfLastSave > 0 {
 		fmt.Printf("timestamp_of_last_save: %d\n", report.TimestampOfLastSave)
 	}
+	for _, warning := range report.Warnings {
+		fmt.Printf("warning: %s\n", warning)
+	}
+}
+
+func printScenarioUnits(info *scenario.UnitInfo, named bool) {
+	if info == nil {
+		fmt.Println("units: unavailable")
+		return
+	}
+	fmt.Printf("units: total=%d sections=%d player_sections=%d\n", info.Total, info.NumberOfUnitSections, info.NumberOfPlayers)
+	for _, section := range info.Sections {
+		fmt.Printf("- player_section=%d units=%d\n", section.Player, section.Count)
+		for _, unit := range section.Units {
+			label := fmt.Sprintf("unit_const=%d", unit.UnitConst)
+			if named {
+				label = fmt.Sprintf("unit=%s (%d)", replay.UnitDisplayName(unit.UnitConst), unit.UnitConst)
+			}
+			fmt.Printf("  index=%d reference_id=%d %s position=(%.2f,%.2f,%.2f) rotation=%.4f status=%d", unit.Index, unit.ReferenceID, label, unit.X, unit.Y, unit.Z, unit.Rotation, unit.Status)
+			if unit.CaptionString != "" {
+				fmt.Printf(" caption=%q", unit.CaptionString)
+			}
+			fmt.Println()
+		}
+	}
 }
 
 func printScenarioBlank(report scenario.BlankReport) {
@@ -5919,6 +5995,21 @@ func printScenarioTriggerSearch(report scenario.TriggerSearchReport) {
 			for _, key := range keys {
 				fmt.Printf("  %s: %s\n", key, oneLine(fmt.Sprint(match.MatchedFields[key]), 180))
 			}
+		}
+		for _, condition := range match.ConditionData {
+			fmt.Printf("  condition=%d type=%d/%s", condition.ConditionIndex, condition.Type, condition.TypeName)
+			if len(condition.EditorFields) > 0 {
+				fmt.Printf(" editor_fields=%s", strings.Join(condition.EditorFields, ","))
+			}
+			keys := make([]string, 0, len(condition.KnownFields))
+			for key := range condition.KnownFields {
+				keys = append(keys, key)
+			}
+			sort.Strings(keys)
+			for _, key := range keys {
+				fmt.Printf(" %s=%v", key, condition.KnownFields[key])
+			}
+			fmt.Println()
 		}
 	}
 }
@@ -22137,7 +22228,7 @@ func usage() {
   kit scen glossary <file.aoe2scenario> [--limit N] [--max-mb N] [--text]
   kit scen idioms <file.aoe2scenario> [--text]
   kit scen analyze <file.aoe2scenario>
-  kit scen units <file.aoe2scenario> [--named]
+  kit scen units <file.aoe2scenario> [--named] [--text|--json]
   kit scen lint <file.aoe2scenario> [--text] [--include-provisional] [--load-safety] [--semantic]
   kit scen xs <file.aoe2scenario> [--deploy-tree dir] [--text|--json]
   kit scen xs attach <in.aoe2scenario> <out.aoe2scenario> --xs file.xs [--name Entry.xs] [--also-carrier] [--title TITLE] [--trigger-name NAME] [--text|--json]
@@ -22153,8 +22244,8 @@ func usage() {
   kit scen bytediff <before.aoe2scenario> <after.aoe2scenario> [--text|--json] [--include-noise]
   kit scen write-check <before.aoe2scenario> <after.aoe2scenario> [--text|--json] [--include-provisional]
   kit scen dump-body --inflated <file.aoe2scenario>
-  kit scen plan <in.aoe2scenario> --recipe recipe.json
-  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]
+  kit scen plan <in.aoe2scenario> --recipe recipe.json [--game-dir D]
+  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]
   kit scen shop-catalog <catalog.json> --out recipe.json [--text|--json]
   kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]
   kit scen smoke <in.aoe2scenario> <out.aoe2scenario> [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]

@@ -3049,12 +3049,13 @@ kit scen palette-usage <file.aoe2scenario> --dat <empires*.dat> [--json|--text]
 ### `scen patch`
 
 ```
-kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text|--json]
+kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]
 ```
 
 | flag | value |
 | --- | --- |
 | `--recipe` | `recipe.json` **(required)** |
+| `--game-dir` | `D` |
 
 **writes output files**
 
@@ -3063,12 +3064,13 @@ kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--text
 ### `scen plan`
 
 ```
-kit scen plan <in.aoe2scenario> --recipe recipe.json
+kit scen plan <in.aoe2scenario> --recipe recipe.json [--game-dir D]
 ```
 
 | flag | value |
 | --- | --- |
 | `--recipe` | `recipe.json` **(required)** |
+| `--game-dir` | `D` |
 
 **writes output files**
 
@@ -3148,7 +3150,6 @@ kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--e
 
 - probe: `ok`
 - JSON top-level keys: `map`, `triggers`, `units`
-- response type: `scenario.Recipe` (full nested shape in `api_schemas.json`)
 
 ### `scen strings`
 
@@ -3223,7 +3224,7 @@ kit scen triggers <file.aoe2scenario> [--grep TEXT] [--effect ID_OR_NAME] [--con
 ### `scen units`
 
 ```
-kit scen units <file.aoe2scenario> [--named]
+kit scen units <file.aoe2scenario> [--named] [--text|--json]
 ```
 
 | flag | value |

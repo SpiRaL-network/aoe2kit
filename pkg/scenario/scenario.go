@@ -1082,9 +1082,7 @@ func (r *parsedRoot) playerInfo() []PlayerInfo {
 			AIName:           stringAt(aiNames, i),
 			AIType:           intAt(aiTypes, i),
 		}
-		// The editor writes the first AI name in the zero-based player stream,
-		// while the following entry is in the Gaia-at-zero stream. Both entries
-		// can therefore describe P1 in one saved scenario; retain both raw refs.
+		// AI names use the same player slot ordering as the scenario's player rows.
 		info.FieldReferences["ai_name"] = aiNameReference(i)
 		out = append(out, info)
 	}
@@ -1111,13 +1109,7 @@ func playerFieldReferences(sectionIndex int) map[string]PlayerReference {
 }
 
 func aiNameReference(sectionIndex int) PlayerReference {
-	if sectionIndex == 0 {
-		return PlayerReference{Player: "P1", SectionIndex: 0, IndexBase: "players_from_1"}
-	}
-	if sectionIndex == 1 {
-		return PlayerReference{Player: "P1", SectionIndex: 1, IndexBase: "gaia_at_0"}
-	}
-	return PlayerReference{Player: fmt.Sprintf("P%d", sectionIndex), SectionIndex: sectionIndex, IndexBase: "gaia_at_0"}
+	return PlayerReference{Player: playerLabel(sectionIndex), SectionIndex: sectionIndex, IndexBase: "players_from_1"}
 }
 
 func (r *parsedRoot) aiInfo() []AIFileInfo {
@@ -1220,6 +1212,20 @@ type parsedNode struct {
 	Elements []*parsedNode
 	Raw      []byte
 	Value    any
+}
+
+func shiftParsedNodeOffsets(node *parsedNode, delta int) {
+	if node == nil || delta == 0 {
+		return
+	}
+	node.Start += delta
+	node.End += delta
+	for _, field := range node.Fields {
+		shiftParsedNodeOffsets(field, delta)
+	}
+	for _, element := range node.Elements {
+		shiftParsedNodeOffsets(element, delta)
+	}
 }
 
 func (n *parsedNode) raw() []byte {
@@ -1672,8 +1678,7 @@ func (p *parser) parseNode(name string, spec SectionSpec, parent *parsedNode) (*
 		if err != nil {
 			return nil, err
 		}
-		node.Start = p.off
-		node.End = p.off + consumed
+		shiftParsedNodeOffsets(node, p.off)
 		p.off += consumed
 		return node, nil
 	}
@@ -1682,8 +1687,7 @@ func (p *parser) parseNode(name string, spec SectionSpec, parent *parsedNode) (*
 		if err != nil {
 			return nil, err
 		}
-		node.Start = p.off
-		node.End = p.off + consumed
+		shiftParsedNodeOffsets(node, p.off)
 		p.off += consumed
 		return node, nil
 	}
@@ -1700,8 +1704,7 @@ func (p *parser) parseNode(name string, spec SectionSpec, parent *parsedNode) (*
 		if err != nil {
 			return nil, err
 		}
-		node.Start = p.off
-		node.End = p.off + consumed
+		shiftParsedNodeOffsets(node, p.off)
 		p.off += consumed
 		return node, nil
 	}
@@ -1890,8 +1893,7 @@ func (p *parser) parseUnitsNode(spec SectionSpec) (*parsedNode, error) {
 		if err != nil {
 			return nil, fmt.Errorf("player_data_4[%d]: %w", i, err)
 		}
-		child.Start = start
-		child.End = start + consumed
+		shiftParsedNodeOffsets(child, start)
 		p.off += consumed
 		playerData4.Elements = append(playerData4.Elements, child)
 	}
@@ -1912,8 +1914,7 @@ func (p *parser) parseUnitsNode(spec SectionSpec) (*parsedNode, error) {
 		if err != nil {
 			return nil, fmt.Errorf("player_data_3[%d]: %w", i, err)
 		}
-		child.Start = start
-		child.End = start + consumed
+		shiftParsedNodeOffsets(child, start)
 		p.off += consumed
 		playerData3.Elements = append(playerData3.Elements, child)
 	}
@@ -1932,8 +1933,7 @@ func (p *parser) parseUnitsNode(spec SectionSpec) (*parsedNode, error) {
 		if err != nil {
 			return nil, fmt.Errorf("players_units[%d]: %w", i, err)
 		}
-		child.Start = start
-		child.End = start + consumed
+		shiftParsedNodeOffsets(child, start)
 		p.off += consumed
 		playersUnits.Elements = append(playersUnits.Elements, child)
 	}

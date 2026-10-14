@@ -510,8 +510,7 @@ func DecodePlayerUnitsNode(data []byte, has159Byte bool) (*parsedNode, int, erro
 		if err != nil {
 			return nil, 0, fmt.Errorf("unit %d: %w", i, err)
 		}
-		unit.Start = c.off
-		unit.End = c.off + consumed
+		shiftParsedNodeOffsets(unit, c.off)
 		c.off += consumed
 		units.Elements = append(units.Elements, unit)
 	}

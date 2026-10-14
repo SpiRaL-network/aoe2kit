@@ -22,6 +22,7 @@ type SettingsReport struct {
 
 type MapSettings struct {
 	WaterDefinition string `json:"water_definition"`
+	ColorMood       string `json:"color_mood"`
 }
 
 type PlayerSettings struct {
@@ -180,7 +181,8 @@ func (f *File) mapSettings() MapSettings {
 		return MapSettings{}
 	}
 	waterDefinition, _ := mapSection.stringValue("water_definition")
-	return MapSettings{WaterDefinition: waterDefinition}
+	colorMood, _ := mapSection.stringValue("map_color_mood")
+	return MapSettings{WaterDefinition: waterDefinition, ColorMood: colorMood}
 }
 
 func victoryModeName(mode int) string {

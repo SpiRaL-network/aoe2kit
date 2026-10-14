@@ -87,21 +87,22 @@ type TriggerSearchReport struct {
 }
 
 type TriggerSearchMatch struct {
-	TriggerIndex     int               `json:"trigger_index"`
-	TriggerName      string            `json:"trigger_name,omitempty"`
-	Description      string            `json:"description,omitempty"`
-	ShortDescription string            `json:"short_description,omitempty"`
-	Enabled          uint32            `json:"enabled"`
-	Looping          int8              `json:"looping"`
-	EffectCount      int               `json:"effect_count"`
-	ConditionCount   int               `json:"condition_count"`
-	EffectIndex      *int              `json:"effect_index,omitempty"`
-	EffectType       int               `json:"effect_type,omitempty"`
-	EffectTypeName   string            `json:"effect_type_name,omitempty"`
-	ConditionIndex   *int              `json:"condition_index,omitempty"`
-	ConditionType    int               `json:"condition_type,omitempty"`
-	ConditionName    string            `json:"condition_name,omitempty"`
-	MatchedFields    map[string]string `json:"matched_fields"`
+	TriggerIndex     int                `json:"trigger_index"`
+	TriggerName      string             `json:"trigger_name,omitempty"`
+	Description      string             `json:"description,omitempty"`
+	ShortDescription string             `json:"short_description,omitempty"`
+	Enabled          uint32             `json:"enabled"`
+	Looping          int8               `json:"looping"`
+	EffectCount      int                `json:"effect_count"`
+	ConditionCount   int                `json:"condition_count"`
+	EffectIndex      *int               `json:"effect_index,omitempty"`
+	EffectType       int                `json:"effect_type,omitempty"`
+	EffectTypeName   string             `json:"effect_type_name,omitempty"`
+	ConditionIndex   *int               `json:"condition_index,omitempty"`
+	ConditionType    int                `json:"condition_type,omitempty"`
+	ConditionName    string             `json:"condition_name,omitempty"`
+	ConditionData    []ConditionSummary `json:"condition_data,omitempty"`
+	MatchedFields    map[string]string  `json:"matched_fields"`
 }
 
 type ScenarioGlossaryOptions struct {

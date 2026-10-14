@@ -22,6 +22,42 @@ func TestParseDatGraphicsOptions(t *testing.T) {
 	}
 }
 
+func TestParseScenarioGameDir(t *testing.T) {
+	t.Setenv("AOE2KIT_GAME_DIR", "from-env")
+	got, err := parseScenarioGameDir(nil)
+	if err != nil || got != "from-env" {
+		t.Fatalf("environment game dir = %q, %v", got, err)
+	}
+	got, err = parseScenarioGameDir([]string{"--game-dir", "from-flag"})
+	if err != nil || got != "from-flag" {
+		t.Fatalf("flag game dir = %q, %v", got, err)
+	}
+	if _, err := parseScenarioGameDir([]string{"--game-dir"}); err == nil {
+		t.Fatal("missing --game-dir value accepted")
+	}
+	if _, err := parseScenarioGameDir([]string{"--other"}); err == nil {
+		t.Fatal("unknown option accepted")
+	}
+}
+
+func TestParseScenarioPatchOptions(t *testing.T) {
+	t.Setenv("AOE2KIT_GAME_DIR", "from-env")
+	gameDir, text, err := parseScenarioPatchOptions([]string{"--text", "--game-dir", "from-flag"})
+	if err != nil || gameDir != "from-flag" || !text {
+		t.Fatalf("patch options = (%q, %t, %v)", gameDir, text, err)
+	}
+	gameDir, text, err = parseScenarioPatchOptions([]string{"--json"})
+	if err != nil || gameDir != "from-env" || text {
+		t.Fatalf("environment patch options = (%q, %t, %v)", gameDir, text, err)
+	}
+	if _, _, err := parseScenarioPatchOptions([]string{"--game-dir"}); err == nil {
+		t.Fatal("missing --game-dir value accepted")
+	}
+	if _, _, err := parseScenarioPatchOptions([]string{"--unknown"}); err == nil {
+		t.Fatal("unknown patch option accepted")
+	}
+}
+
 func TestHumanScenarioDiffChangeUsesEditorLabels(t *testing.T) {
 	field, before, after := humanScenarioDiffChange(scenario.DiffChange{
 		Field:  "player.P4.diplomacy",
