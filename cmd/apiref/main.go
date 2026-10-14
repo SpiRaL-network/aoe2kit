@@ -618,8 +618,8 @@ go run ./cmd/apiref --kit ./kit \
   with ` + "`AOE2KIT_MAX_SCENARIO_MB`" + ` or ` + "`AOE2KIT_ALLOW_HUGE_SCENARIO=1`" + `. A 1 GiB soft
   heap limit applies unless ` + "`GOMEMLIMIT`" + ` or ` + "`AOE2KIT_GOMEMLIMIT_MB`" + ` is set.
   Large listings truncate at 200 rows unless ` + "`--limit 0`" + `/` + "`--all`" + ` is passed.
-- **No external dependencies or network access**, except ` + "`replay fetch`" + ` and
-  ` + "`player stats`" + `, which call Microsoft's public endpoints.
+- **Small pure-Go dependency set.** Local commands do not require network access;
+  ` + "`replay fetch`" + ` and ` + "`player stats`" + ` call Microsoft's public endpoints.
 
 ## Probe status meanings
 

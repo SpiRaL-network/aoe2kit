@@ -31,8 +31,8 @@ go run ./cmd/apiref --kit ./kit \
   with `AOE2KIT_MAX_SCENARIO_MB` or `AOE2KIT_ALLOW_HUGE_SCENARIO=1`. A 1 GiB soft
   heap limit applies unless `GOMEMLIMIT` or `AOE2KIT_GOMEMLIMIT_MB` is set.
   Large listings truncate at 200 rows unless `--limit 0`/`--all` is passed.
-- **No external dependencies or network access**, except `replay fetch` and
-  `player stats`, which call Microsoft's public endpoints.
+- **Small pure-Go dependency set.** Local commands do not require network access;
+  `replay fetch` and `player stats` call Microsoft's public endpoints.
 
 ## Probe status meanings
 
@@ -142,8 +142,14 @@ kit docs <lint> ...
 ### `doctor`
 
 ```
-kit doctor
+kit doctor [--sandbox]
 ```
+
+| flag | value |
+| --- | --- |
+| `--sandbox` | _(boolean)_ |
+
+**writes output files**
 
 - probe: `non_json_output`
 - note: AoE2Kit doctor
@@ -357,8 +363,12 @@ kit verify-run <replay.aoe2record|replay.zip> --contract contract.json [--text]
 ### `version`
 
 ```
-kit version
+kit version [--json]
 ```
+
+| flag | value |
+| --- | --- |
+| `--json` | _(boolean)_ |
 
 - probe: `non_json_output`
 - note: 0.1.0

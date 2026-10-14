@@ -3,6 +3,7 @@
   "baseline_commit": "d27222d350cec278e6b9e208ec5d8116269c7d09",
   "files": [
     ".github/workflows/release.yml",
+    ".github/workflows/refresh-release-artifacts.yml",
     ".github/workflows/test.yml",
     ".gitignore",
     "AI_GUIDE.md",

@@ -7,10 +7,9 @@ import (
 )
 
 // ExportSQL emits a portable SQL script for the ladder site. Text rather than a
-// binary database file on purpose: writing SQLite directly would require a CGO/pure-Go
-// driver dependency, and AoE2Kit has none. Piping through the sqlite3 CLI (present both
-// locally and on the host) keeps the kit dependency-free, and the same script loads into
-// MySQL if the site ever outgrows a file.
+// binary database file on purpose: callers can load the portable SQL through
+// their chosen SQLite tool without this export path opening a database. The
+// same script loads into MySQL if the site ever outgrows a file.
 //
 //	kit cba export --sql > ladder.sql && sqlite3 ladder.db < ladder.sql
 //

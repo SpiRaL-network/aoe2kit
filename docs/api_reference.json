@@ -2753,10 +2753,15 @@
         "doctor"
       ],
       "name": "doctor",
-      "usage": "kit doctor",
-      "mutates": false,
+      "usage": "kit doctor [--sandbox]",
+      "flags": [
+        {
+          "name": "--sandbox"
+        }
+      ],
+      "mutates": true,
       "network": false,
-      "trait": "read_only",
+      "trait": "writes",
       "input": "none",
       "probe_status": "non_json_output",
       "probe_args": [
@@ -7034,7 +7039,12 @@
         "version"
       ],
       "name": "version",
-      "usage": "kit version",
+      "usage": "kit version [--json]",
+      "flags": [
+        {
+          "name": "--json"
+        }
+      ],
       "mutates": false,
       "network": false,
       "trait": "read_only",

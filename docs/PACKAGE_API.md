@@ -639,12 +639,10 @@ func Archive(queue []QueueItem, seen map[string]bool, client *aoems.Client, opts
 
 func CivRazeArchetype(civID int) string
 func ExportSQL(w io.Writer, c *Corpus, axes []PlayerAxes, names map[int]string) error
-    ExportSQL emits a portable SQL script for the ladder site. Text rather
-    than a binary database file on purpose: writing SQLite directly would
-    require a CGO/pure-Go driver dependency, and AoE2Kit has none. Piping
-    through the sqlite3 CLI (present both locally and on the host) keeps the
-    kit dependency-free, and the same script loads into MySQL if the site ever
-    outgrows a file.
+    ExportSQL emits a portable SQL script for the ladder site. Text rather than
+    a binary database file on purpose: callers can load the portable SQL through
+    their chosen SQLite tool without this export path opening a database.
+    The same script loads into MySQL if the site ever outgrows a file.
 
         kit cba export --sql > ladder.sql && sqlite3 ladder.db < ladder.sql
 
@@ -794,10 +792,9 @@ type Corpus struct {
 	Games []GameRecord
 }
     Corpus is the durable store behind the CBA ladder: one GameRecord per
-    ingested replay, persisted as JSONL. JSONL rather than SQLite deliberately
-    -- AoE2Kit has no external dependencies and that portability is worth more
-    than ad-hoc SQL for a corpus this size (hundreds of games, thousands of
-    rows, all loaded and grouped in memory anyway).
+    ingested replay, persisted as JSONL. JSONL rather than SQLite deliberately:
+    the corpus is loaded and grouped in memory, and a line-oriented file keeps
+    this workflow easy to inspect and regenerate.
 
 func LoadCorpus(path string) (*Corpus, error)
     LoadCorpus reads a JSONL corpus. A missing file is an empty corpus, not an
@@ -6101,7 +6098,14 @@ package kit // import "aoe2kit/pkg/kit"
 CONSTANTS
 
 const ProfileMarkerName = "KIT_PROFILE.json"
-const Version = "0.1.0"
+
+VARIABLES
+
+var (
+	Version   = "0.1.0"
+	Commit    = "unknown"
+	BuildType = "dev"
+)
 
 FUNCTIONS
 
@@ -6146,6 +6150,15 @@ type ArtifactLineageReport struct {
 }
 
 func BuildArtifactLineage(inputs, outputs []string, opts ArtifactLineageOptions) (ArtifactLineageReport, error)
+
+type BuildInfo struct {
+	Version   string `json:"version"`
+	Commit    string `json:"commit"`
+	Platform  string `json:"platform"`
+	BuildType string `json:"build_type"`
+}
+
+func CurrentBuildInfo(platform string) BuildInfo
 
 type Command struct {
 	Name        string   `json:"name"`
@@ -6412,6 +6425,30 @@ type RuntimeInfo struct {
 	DurableLanguage string `json:"durable_language"`
 	PythonRequired  bool   `json:"python_required"`
 	NetworkRequired bool   `json:"network_required"`
+}
+
+type SandboxDoctorCheck struct {
+	Name   string `json:"name"`
+	OK     bool   `json:"ok"`
+	Detail string `json:"detail,omitempty"`
+}
+
+type SandboxDoctorReport struct {
+	Platform        string               `json:"platform"`
+	NetworkRequired bool                 `json:"network_required"`
+	WritableDirs    []SandboxWritableDir `json:"writable_dirs"`
+	Checks          []SandboxDoctorCheck `json:"checks"`
+	Failures        []string             `json:"failures,omitempty"`
+	OK              bool                 `json:"ok"`
+}
+
+func RunSandboxDoctor() SandboxDoctorReport
+    RunSandboxDoctor exercises local scenario codec and writer primitives only.
+
+type SandboxWritableDir struct {
+	Path     string `json:"path"`
+	OK       bool   `json:"ok"`
+	Required bool   `json:"required"`
 }
 
 type VerifyReport struct {

@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 1038,
+  "type_count": 1042,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -22239,6 +22239,32 @@
         }
       ]
     },
+    "kit.BuildInfo": {
+      "package": "kit",
+      "name": "BuildInfo",
+      "fields": [
+        {
+          "name": "Version",
+          "json": "version",
+          "go_type": "string"
+        },
+        {
+          "name": "Commit",
+          "json": "commit",
+          "go_type": "string"
+        },
+        {
+          "name": "Platform",
+          "json": "platform",
+          "go_type": "string"
+        },
+        {
+          "name": "BuildType",
+          "json": "build_type",
+          "go_type": "string"
+        }
+      ]
+    },
     "kit.Command": {
       "package": "kit",
       "name": "Command",
@@ -23127,6 +23153,88 @@
         {
           "name": "NetworkRequired",
           "json": "network_required",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "kit.SandboxDoctorCheck": {
+      "package": "kit",
+      "name": "SandboxDoctorCheck",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "OK",
+          "json": "ok",
+          "go_type": "bool"
+        },
+        {
+          "name": "Detail",
+          "json": "detail",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "kit.SandboxDoctorReport": {
+      "package": "kit",
+      "name": "SandboxDoctorReport",
+      "fields": [
+        {
+          "name": "Platform",
+          "json": "platform",
+          "go_type": "string"
+        },
+        {
+          "name": "NetworkRequired",
+          "json": "network_required",
+          "go_type": "bool"
+        },
+        {
+          "name": "WritableDirs",
+          "json": "writable_dirs",
+          "go_type": "[]SandboxWritableDir",
+          "ref": "kit.SandboxWritableDir"
+        },
+        {
+          "name": "Checks",
+          "json": "checks",
+          "go_type": "[]SandboxDoctorCheck",
+          "ref": "kit.SandboxDoctorCheck"
+        },
+        {
+          "name": "Failures",
+          "json": "failures",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "OK",
+          "json": "ok",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "kit.SandboxWritableDir": {
+      "package": "kit",
+      "name": "SandboxWritableDir",
+      "fields": [
+        {
+          "name": "Path",
+          "json": "path",
+          "go_type": "string"
+        },
+        {
+          "name": "OK",
+          "json": "ok",
+          "go_type": "bool"
+        },
+        {
+          "name": "Required",
+          "json": "required",
           "go_type": "bool"
         }
       ]

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- GitHub Actions builds now attest release archives and standalone binaries;
+  monthly/manual refresh runs rebuild and attest the latest release's stable
+  workflow artifacts without changing the published release.
+- AI-container bootstrap guidance now prefers GitHub Actions artifacts when a
+  GitHub connector is available, with checksum and embedded-commit checks.
+
 ## Experimental Geotrace — 2026-10-14
 
 ### Added

@@ -13,10 +13,9 @@ import (
 )
 
 // Corpus is the durable store behind the CBA ladder: one GameRecord per ingested
-// replay, persisted as JSONL. JSONL rather than SQLite deliberately -- AoE2Kit has
-// no external dependencies and that portability is worth more than ad-hoc SQL for a
-// corpus this size (hundreds of games, thousands of rows, all loaded and grouped
-// in memory anyway).
+// replay, persisted as JSONL. JSONL rather than SQLite deliberately: the corpus
+// is loaded and grouped in memory, and a line-oriented file keeps this workflow
+// easy to inspect and regenerate.
 type Corpus struct {
 	Games []GameRecord
 }
