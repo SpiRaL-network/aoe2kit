@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to build and publish
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -14,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
@@ -42,18 +49,20 @@ jobs:
             goarch: amd64
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
           cache: true
       - name: Build static binary and package documentation
         env:
-          VERSION: ${{ github.ref_name }}
-          COMMIT: ${{ github.sha }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
           set -euo pipefail
+          COMMIT=$(git rev-parse HEAD)
           mkdir -p dist/package
           binary=kit
           if [ "$GOOS" = windows ]; then binary=kit.exe; fi
@@ -76,16 +85,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
           cache: true
       - name: Vendor and prove offline build
         env:
-          VERSION: ${{ github.ref_name }}
-          COMMIT: ${{ github.sha }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           set -euo pipefail
+          COMMIT=$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)
           mkdir -p "$RUNNER_TEMP/kit-source" dist
           jq -j '.files[] | select(test("\\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$"; "i") | not) + "\u0000"' release/public-files.json \
             | tar --null -T - -cf - \
@@ -135,7 +146,7 @@ jobs:
           path: release-assets
       - name: Add stable download names, validate archives, and write checksums
         env:
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           set -euo pipefail
           for platform in linux_amd64 linux_arm64 windows_amd64 darwin_arm64 darwin_amd64; do
@@ -151,4 +162,5 @@ jobs:
           sha256sum *.zip > SHA256SUMS
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --generate-notes
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
+        run: gh release create "$VERSION" release-assets/* --repo "$GITHUB_REPOSITORY" --generate-notes
