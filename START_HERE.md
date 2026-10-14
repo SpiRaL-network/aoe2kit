@@ -23,20 +23,33 @@ The following are available bootstrap paths, in preference order.
 
 1. **GitHub connector:** The latest published release tag is listed in
    [chrae/aoe2kit](https://github.com/chrae/aoe2kit/releases). The associated
-   run is the newest successful one for that tag across the `release` and
-   `refresh-release-artifacts` workflows. Its stable artifact is named
-   `kit-assets-<os>-<arch>` (for example, `kit-assets-linux-amd64`); the
-   connector's `download_workflow_artifact` action returns its contents.
-   Workflow and artifact IDs are time-sensitive: artifacts are refreshed
-   monthly and expire after 90 days. A refresh-run summary names the release
-   tag it refreshed. The downloaded artifact contains a standalone binary for
-   the selected platform.
+   run is a successful `release` run for that exact tag, or a successful
+   `refresh-release-artifacts` run whose summary names that tag. Do not select
+   a run only because it is the newest overall. Download the artifact named
+   `kit-assets-<os>-<arch>` for the container's platform:
 
-   The connector can read `SHA256SUMS` from the same official release; its
-   matching versioned binary digest can be compared with a locally computed
-   SHA-256. `kit version --json` reports the embedded version and commit for
-   comparison with the release tag and commit shown by GitHub. This
-   checksum-and-commit check does not verify the cryptographic attestation.
+   | Platform | Artifact name | Standalone file |
+   | --- | --- | --- |
+   | Linux x86-64 | `kit-assets-linux-amd64` | `aoe2kit_<tag>_linux_amd64` |
+   | Linux ARM64 | `kit-assets-linux-arm64` | `aoe2kit_<tag>_linux_arm64` |
+   | Windows x86-64 | `kit-assets-windows-amd64` | `aoe2kit_<tag>_windows_amd64.exe` |
+   | macOS ARM64 | `kit-assets-darwin-arm64` | `aoe2kit_<tag>_darwin_arm64` |
+   | macOS x86-64 | `kit-assets-darwin-amd64` | `aoe2kit_<tag>_darwin_amd64` |
+
+   The connector's `download_workflow_artifact` action returns the artifact
+   contents, including the standalone binary and platform archive. Workflow
+   and artifact IDs are time-sensitive: artifacts are refreshed monthly and
+   expire after 90 days. A refresh-run summary names the release tag it
+   refreshed.
+
+   For verification, read `SHA256SUMS` from that tag's official release and
+   select the line whose filename exactly matches the versioned standalone
+   name above (release entries begin `./`). Compare that digest with a
+   locally computed SHA-256 of the downloaded file. The release also has
+   unversioned aliases; the versioned name avoids ambiguity. `kit version
+   --json` reports the embedded version and commit for comparison with the
+   release tag and commit shown by GitHub. This checksum-and-commit check does
+   not verify the cryptographic attestation.
    The sandbox readiness report is available as:
 
    ```sh
@@ -44,10 +57,13 @@ The following are available bootstrap paths, in preference order.
    ```
 
 2. **Direct release download:** When the container can fetch GitHub release
-   assets, a compatible archive is available from the
-   [latest release](https://github.com/chrae/aoe2kit/releases/latest). For
-   example, Linux x86-64 uses
-   [aoe2kit_linux_amd64.zip](https://github.com/chrae/aoe2kit/releases/latest/download/aoe2kit_linux_amd64.zip).
+   assets, choose the platform archive from the
+   [latest release](https://github.com/chrae/aoe2kit/releases/latest):
+   `aoe2kit_<os>_<arch>.zip` (for example,
+   [Linux x86-64](https://github.com/chrae/aoe2kit/releases/latest/download/aoe2kit_linux_amd64.zip)).
+   The release also includes standalone binaries named
+   `aoe2kit_<tag>_<os>_<arch>` (with `.exe` on Windows) and unversioned
+   aliases. The platform table above gives the exact platform mapping.
    Online verification is available with
    `gh attestation verify <file> -R chrae/aoe2kit` when the GitHub CLI is
    available. Otherwise, `SHA256SUMS` from that release provides a matching
@@ -63,6 +79,15 @@ The following are available bootstrap paths, in preference order.
    release download is available, a compatible binary archive from the
    official latest release can be attached by the user. This route does not
    require the user to install Go or run commands.
+
+## Feedback
+
+GitHub Issues is the public channel for bug reports, capability gaps, and
+documentation problems. A useful report identifies the Kit version, commands
+and evidence, and its verification level: ran, structural, or engine. Agents
+prepare a report for their human to review before posting; when they cannot
+post, they can provide a ready-to-file issue body instead. See the same
+protocol in [AI_GUIDE.md](AI_GUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Known environments
 

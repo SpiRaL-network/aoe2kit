@@ -26,6 +26,15 @@ large game files, so memory discipline matters.
 - Unknown bytes, fields, commands, and semantics must remain labeled unknown
   until evidence closes them.
 
+## Feedback
+
+GitHub Issues is the channel for bugs, capability gaps, and documentation
+problems. Reports are most useful with the Kit version, exact commands,
+evidence, and verification level (ran, structural, or engine). Agents ask their
+human before posting; when direct posting is unavailable, the agent can
+provide a ready-to-file issue body. The same protocol is summarized in
+[START_HERE.md](START_HERE.md) and [AI_GUIDE.md](AI_GUIDE.md).
+
 ## Attribution
 
 Credits are first-class. If a tool, project, document, community source, or

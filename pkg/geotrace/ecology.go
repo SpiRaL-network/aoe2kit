@@ -454,6 +454,9 @@ func buildHabitatEcology(r Report, p EcologyProfile) ([]scenario.UnitRecipe, []L
 					resourceOccupied[[2]int{c.X, c.Y}] = true
 				}
 				rotation := hashUnitFloat(c.X, c.Y, seed+pass*31+83) * 2 * math.Pi
+				if variant, ok := visualVariantRotation(unit, c.ClimateZone, p.Biome, c.X, c.Y, seed+pass*31+83); ok {
+					rotation = variant
+				}
 				out = append(out, scenario.UnitRecipe{Op: "add_unit", Player: 0, UnitConst: unit, X: float64Ptr(x), Y: float64Ptr(y), Z: float64Ptr(0), Status: intPtr(2), Rotation: &rotation, Snap: snap})
 				if spacing > 0 {
 					bins[bucket] = append(bins[bucket], ecologyPoint{x, y})
@@ -560,6 +563,9 @@ func emitBuildingClusters(r Report, layer HabitatLayer, candidates []ecologyCand
 			unit := weightedChoice(available, hashUnitFloat(c.X, c.Y, seed+clusters*97+i))
 			x, y := float64(c.X)+0.5, float64(c.Y)+0.5
 			rotation := hashUnitFloat(c.X, c.Y, seed+clusters*97+i+31) * 2 * math.Pi
+			if variant, ok := visualVariantRotation(unit, c.ClimateZone, r.EcologyProfile.Biome, c.X, c.Y, seed+clusters*97+i+31); ok {
+				rotation = variant
+			}
 			out = append(out, scenario.UnitRecipe{Op: "add_unit", Player: 0, UnitConst: unit, X: float64Ptr(x), Y: float64Ptr(y), Z: float64Ptr(0), Status: intPtr(2), Rotation: &rotation, Snap: "grid"})
 			for _, tile := range memberFootprints[i] {
 				occupied[tile] = true

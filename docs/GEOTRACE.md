@@ -86,6 +86,16 @@ geometry proxy, not measured salinity or water depth. Source forest cover
 informs patches; individual trees are generated, not measured locations.
 USGS presence/absence informs a palette, not abundance or exact tree positions.
 
+For the units listed in `pkg/geotrace/visual_variants.json`, Geotrace writes
+the selected integer facet index directly to the scenario `rotation` field;
+it does not convert that index to radians. Only indices present in the
+selected non-empty state are written. The default state is `green`; an
+explicit seasonal word in a profile's `biome` selects a matching non-empty
+state when available. Selection is deterministic from the map seed and
+placement cell. The oak mapping is engine-verified; other entries remain
+classifier-derived and should not be treated as engine-confirmed state
+mappings. Units without a record retain their existing rotation behavior.
+
 Felt selectors replace explicit units with `functions`, optional `tags`,
 `materials`, `unit_consts` and a positive `weight`. Selection weight is shared
 among matches; the report records resolved palettes and the input checksum.

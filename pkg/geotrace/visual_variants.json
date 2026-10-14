@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "records": {
+    "1248": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [
+          0,
+          1,
+          4,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41
+        ],
+        "autumn-red": [
+          24,
+          25,
+          26,
+          27,
+          29,
+          30,
+          32
+        ],
+        "bare-dead": [
+          2,
+          3,
+          5,
+          28,
+          31
+        ],
+        "green": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "snow": []
+      },
+      "unit_const": 1248
+    },
+    "1249": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [
+          9,
+          10,
+          34,
+          37,
+          40
+        ],
+        "autumn-red": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          8,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          32,
+          38
+        ],
+        "bare-dead": [
+          6,
+          7,
+          11,
+          16,
+          19,
+          31,
+          33,
+          35,
+          36,
+          39,
+          41
+        ],
+        "green": [],
+        "snow": []
+      },
+      "unit_const": 1249
+    },
+    "1250": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [
+          0,
+          1,
+          3,
+          4,
+          6,
+          7
+        ],
+        "autumn-red": [
+          11
+        ],
+        "bare-dead": [
+          2,
+          5,
+          8,
+          9,
+          10,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "green": [],
+        "snow": [
+          12,
+          13,
+          14
+        ]
+      },
+      "unit_const": 1250
+    },
+    "1717": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41
+        ],
+        "autumn-red": [],
+        "bare-dead": [],
+        "green": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "snow": [
+          21,
+          22,
+          23,
+          30,
+          31,
+          32
+        ]
+      },
+      "unit_const": 1717
+    },
+    "2027": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [],
+        "bare-dead": [],
+        "green": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "snow": []
+      },
+      "unit_const": 2027
+    },
+    "2028": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        "autumn-red": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "bare-dead": [],
+        "green": [],
+        "snow": []
+      },
+      "unit_const": 2028
+    },
+    "2567": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [],
+        "bare-dead": [],
+        "green": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26
+        ],
+        "snow": []
+      },
+      "unit_const": 2567
+    },
+    "349": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "engine_verified",
+      "states": {
+        "autumn-gold": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "autumn-red": [],
+        "bare-dead": [
+          9,
+          10,
+          11,
+          15,
+          16,
+          17,
+          24,
+          25,
+          26
+        ],
+        "green": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          12,
+          13,
+          14,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41
+        ],
+        "snow": []
+      },
+      "unit_const": 349
+    },
+    "350": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [],
+        "bare-dead": [
+          0,
+          1,
+          2,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "green": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26
+        ],
+        "snow": []
+      },
+      "unit_const": 350
+    },
+    "404": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [
+          2
+        ],
+        "bare-dead": [
+          0,
+          1
+        ],
+        "green": [],
+        "snow": []
+      },
+      "unit_const": 404
+    },
+    "407": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [],
+        "bare-dead": [
+          0,
+          1,
+          2
+        ],
+        "green": [],
+        "snow": []
+      },
+      "unit_const": 407
+    },
+    "413": {
+      "address_field": "rotation",
+      "axis": "angle_variant",
+      "confidence": "classifier_derived",
+      "states": {
+        "autumn-gold": [],
+        "autumn-red": [
+          0,
+          1,
+          2,
+          18,
+          19,
+          20
+        ],
+        "bare-dead": [],
+        "green": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          21,
+          22,
+          23
+        ],
+        "snow": [
+          15,
+          16,
+          17,
+          24,
+          25,
+          26
+        ]
+      },
+      "unit_const": 413
+    }
+  },
+  "schema_version": 1
+}

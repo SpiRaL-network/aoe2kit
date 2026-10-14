@@ -5,7 +5,10 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
+
+	"aoe2kit/pkg/scenario"
 )
 
 func TestProfileOverlaysAreExplicitAndUseProjection(t *testing.T) {
@@ -44,7 +47,7 @@ func TestProfileRejectsInvalidInput(t *testing.T) {
 	}
 }
 
-func TestGeneratedRotationsAreRadians(t *testing.T) {
+func TestGeneratedRotationsAreValidForMappedUnits(t *testing.T) {
 	land := true
 	r := Report{BBox: BBox{MinLat: 0, MinLon: 0, MaxLat: 1, MaxLon: 1}, GridSize: 32, Orient: "grid", FloraDensity: 10, LandFaunaDensity: 10, EcologyProfile: defaultEcologyProfile()}
 	for y := 0; y < 32; y++ {
@@ -65,12 +68,72 @@ func TestGeneratedRotationsAreRadians(t *testing.T) {
 			t.Fatalf("unit %d leaves rotation to writer", u.UnitConst)
 		}
 		for _, a := range angles {
-			if a < 0 || a >= 2*math.Pi || !finite(a) {
-				t.Fatalf("invalid rotation %g", a)
+			if record, ok := visualVariantRecords[u.UnitConst]; ok {
+				allowed := false
+				for _, facets := range record.States {
+					for _, facet := range facets {
+						allowed = allowed || a == float64(facet)
+					}
+				}
+				if !allowed {
+					t.Fatalf("unit %d has invalid artwork index %g", u.UnitConst, a)
+				}
+			} else if a < 0 || a >= 2*math.Pi || !finite(a) {
+				t.Fatalf("unit %d has invalid rotation %g", u.UnitConst, a)
 			}
 		}
 	}
 	if _, err := json.Marshal(recipe); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestOakPlacementUsesManyAllowedFacetsDeterministically(t *testing.T) {
+	land := true
+	report := Report{GridSize: 40, Seed: 187, EcologyProfile: defaultEcologyProfile()}
+	report.EcologyProfile.Layers = []HabitatLayer{{
+		Name: "oak-test", Role: "resource", Units: []WeightedUnit{{UnitConst: 349, Weight: 1}},
+		Rate: 1, Limit: 1600,
+	}}
+	for y := 0; y < report.GridSize; y++ {
+		for x := 0; x < report.GridSize; x++ {
+			report.Cells = append(report.Cells, Cell{X: x, Y: y, Land: &land, LandcoverKey: "10_tree_cover", ClimateZone: "subtropical"})
+		}
+	}
+	first := BuildRecipe(report)
+	second := BuildRecipe(report)
+	allowed := map[int]bool{}
+	for _, facet := range visualVariantRecords[349].States["green"] {
+		allowed[facet] = true
+	}
+	histogram := map[int]int{}
+	var firstRotations, secondRotations []float64
+	for run, recipe := range []scenario.Recipe{first, second} {
+		rotations := &firstRotations
+		if run == 1 {
+			rotations = &secondRotations
+		}
+		for _, unit := range recipe.Units {
+			if unit.UnitConst != 349 || unit.Rotation == nil {
+				continue
+			}
+			facet := int(*unit.Rotation)
+			if float64(facet) != *unit.Rotation || !allowed[facet] {
+				t.Fatalf("oak rotation %g is outside the green facet list", *unit.Rotation)
+			}
+			*rotations = append(*rotations, *unit.Rotation)
+			if run == 0 {
+				histogram[facet]++
+			}
+		}
+	}
+	if len(firstRotations) < 500 {
+		t.Fatalf("oak placements = %d, want a large sample", len(firstRotations))
+	}
+	if !reflect.DeepEqual(firstRotations, secondRotations) {
+		t.Fatal("same seed produced different oak facet sequence")
+	}
+	if len(histogram) < 20 {
+		t.Fatalf("oak facet histogram has only %d distinct facets: %v", len(histogram), histogram)
 	}
 }

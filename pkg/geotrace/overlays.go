@@ -110,10 +110,14 @@ func buildLandmarks(report Report, profile EcologyProfile) []scenario.UnitRecipe
 		}
 		count := densityScaledCount(minInt(l.MaxCount, maxInt(l.MinCount, int(float64(len(cells))/l.CellsPerUnit))), l.Density)
 		exact := false
+		rotationChoices := visualVariantRotationChoices(l.UnitConst, profile.Biome)
+		if len(rotationChoices) == 0 {
+			rotationChoices = rotationAngles(16)
+		}
 		out = append(out, scenario.UnitRecipe{Op: "cluster_scatter", Player: 0, UnitConst: l.UnitConst, Count: intPtr(count),
 			Centers: representativeCenters(cells, minInt(l.CenterLimit, maxInt(4, count/90))), Snap: "auto", Distribution: "dispersed", Jitter: float64Ptr(0.25),
 			Spread: float64Ptr(l.Spread), MinDistance: float64Ptr(l.MinDistance), AllowedTerrainIDs: pruneUnbuildableTerrainIDs(l.AllowedTerrainIDs), Exact: &exact,
-			Seed: intPtr(layerSeed(l.Name, report.Seed)), RotationChoices: rotationAngles(16),
+			Seed: intPtr(layerSeed(l.Name, report.Seed)), RotationChoices: rotationChoices,
 			TargetAreaX1: float64Ptr(0), TargetAreaY1: float64Ptr(0), TargetAreaX2: float64Ptr(float64(report.GridSize)), TargetAreaY2: float64Ptr(float64(report.GridSize))})
 	}
 	return out

@@ -17,6 +17,15 @@ iterate. Distinguish structural checks from engine verification. Never claim a
 scenario loads or behaves correctly in-game unless a real engine run verified
 that claim.
 
+## Feedback
+
+Public bug reports, capability gaps, and documentation problems belong in
+GitHub Issues. A useful report includes the Kit version, commands, supporting
+evidence, and verification level (ran, structural, or engine). An agent checks
+with its human before posting. If it cannot post, it offers a ready-to-file
+issue body. The user-facing overview is in [START_HERE.md](START_HERE.md);
+contributor context is in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Rules
 
 1. One Go source tree, one local build command, no Python. Only the fetch

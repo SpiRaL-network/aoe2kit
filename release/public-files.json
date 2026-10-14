@@ -202,6 +202,8 @@
     "pkg/geotrace/starts_test.go",
     "pkg/geotrace/usgs.go",
     "pkg/geotrace/usgs_test.go",
+    "pkg/geotrace/visual_variants.go",
+    "pkg/geotrace/visual_variants.json",
     "pkg/geotrace/water_evidence_test.go",
     "pkg/geotrace/water_shelter.go",
     "pkg/geotrace/water_shelter_test.go",

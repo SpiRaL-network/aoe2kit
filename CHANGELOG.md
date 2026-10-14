@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 — 2026-10-14
+
+### Added
+- Deterministic Geotrace visual-facet selection for mapped units, using direct
+  scenario artwork indices and the selected non-empty visual state.
+- A discoverable GitHub Issues feedback protocol in the getting-started, AI,
+  and contributor guides.
+- Exact platform artifact names and release-run selection guidance for GitHub
+  connector users, including checksum matching.
+
+### Fixed
+- Geotrace no longer feeds random radian rotations to mapped multi-facet
+  objects; deterministic placement selects only indices in the unit's mapped
+  visual state. This is a structural correction; the rebuilt map still needs
+  an engine visual check.
+- Connector instructions identify the successful release run for the selected
+  tag (or a refresh run naming that tag), rather than assuming the newest run
+  is the correct artifact source.
+
 ## 0.2.0 — 2026-10-14
 
 ### Added
