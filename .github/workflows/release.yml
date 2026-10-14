@@ -72,8 +72,7 @@ jobs:
           cp README.md START_HERE.md AI_GUIDE.md LICENSE NOTICE.md dist/package/
           archive="aoe2kit_${VERSION}_${GOOS}_${GOARCH}.zip"
           (cd dist/package && zip -q -r "../$archive" .)
-          mv "dist/$archive" .
-          sha256sum "$archive"
+          sha256sum "dist/$archive"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: kit-assets-${{ matrix.goos }}-${{ matrix.goarch }}
