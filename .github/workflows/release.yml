@@ -69,6 +69,7 @@ jobs:
           CGO_ENABLED=0 go build -trimpath \
             -ldflags "-s -w -X aoe2kit/pkg/kit.Version=$VERSION -X aoe2kit/pkg/kit.Commit=$COMMIT -X aoe2kit/pkg/kit.BuildType=release" \
             -o "dist/package/$binary" ./cmd/kit
+          cp "dist/package/$binary" "dist/aoe2kit_${VERSION}_${GOOS}_${GOARCH}${binary#kit}"
           cp README.md START_HERE.md AI_GUIDE.md LICENSE NOTICE.md dist/package/
           archive="aoe2kit_${VERSION}_${GOOS}_${GOARCH}.zip"
           (cd dist/package && zip -q -r "../$archive" .)
@@ -76,7 +77,9 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: kit-assets-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/aoe2kit_*
           if-no-files-found: error
 
   build-source:
@@ -150,16 +153,25 @@ jobs:
           set -euo pipefail
           for platform in linux_amd64 linux_arm64 windows_amd64 darwin_arm64 darwin_amd64; do
             cp "release-assets/aoe2kit_${VERSION}_${platform}.zip" "release-assets/aoe2kit_${platform}.zip"
+            suffix=""
+            if [[ "$platform" == windows_* ]]; then suffix=".exe"; fi
+            cp "release-assets/aoe2kit_${VERSION}_${platform}${suffix}" "release-assets/aoe2kit_${platform}${suffix}"
           done
           cp "release-assets/aoe2kit_${VERSION}_source-vendored.zip" "release-assets/aoe2kit_source-vendored.zip"
           test "$(find release-assets -maxdepth 1 -type f -name '*.zip' | wc -l)" -eq 12
+          test "$(find release-assets -maxdepth 1 -type f -name "aoe2kit_${VERSION}_*" ! -name '*.zip' | wc -l)" -eq 5
           if for archive in release-assets/*.zip; do unzip -Z1 "$archive"; done | grep -Ei '\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$'; then
             echo "release archives contain a forbidden image or game-data file" >&2
             exit 1
           fi
           cd release-assets
-          sha256sum *.zip > SHA256SUMS
-      - env:
+          find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+      - name: Create release if needed, then upload build artifacts
+        env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ inputs.release_tag || github.ref_name }}
-        run: gh release create "$VERSION" release-assets/* --repo "$GITHUB_REPOSITORY" --generate-notes
+        run: |
+          if ! gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$VERSION" --repo "$GITHUB_REPOSITORY" --generate-notes
+          fi
+          gh release upload "$VERSION" release-assets/* --repo "$GITHUB_REPOSITORY" --clobber
