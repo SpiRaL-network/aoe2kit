@@ -1,3 +1,7 @@
+> **AI assistants:** If you are helping someone make AoE2 maps, start at
+> [START_HERE.md](START_HERE.md). Latest Linux x86-64 kit:
+> [download aoe2kit_linux_amd64.zip](https://github.com/chrae/aoe2kit/releases/latest/download/aoe2kit_linux_amd64.zip).
+
 # AoE2Kit
 
 [![License: LGPL-3.0-only](https://img.shields.io/badge/License-LGPL--3.0--only-blue.svg)](LICENSE)

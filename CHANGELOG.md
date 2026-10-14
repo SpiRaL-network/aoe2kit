@@ -158,6 +158,11 @@ writes DE 1.59, and ships a much tighter public release.
 - Some effect-command meanings (local-building types 202 and 204) remain
   strong hypotheses until an engine fixture confirms them.
 
+## v0.1.0 — 2026-10-14
+
+### Added
+- AI-container onboarding, stable latest-release downloads, build metadata, and `kit doctor --sandbox`.
+
 ## Geo-Trace & Felt — 2026-09-16
 
 AoE2Kit can now trace real Earth into playable maps, and author terrain by aesthetic *intent*

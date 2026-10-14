@@ -2,6 +2,8 @@
   "profile": "public",
   "baseline_commit": "d27222d350cec278e6b9e208ec5d8116269c7d09",
   "files": [
+    ".github/workflows/release.yml",
+    ".github/workflows/test.yml",
     ".gitignore",
     "AI_GUIDE.md",
     "CHANGELOG.md",
@@ -227,6 +229,8 @@
     "pkg/kit/manifest_test.go",
     "pkg/kit/pack.go",
     "pkg/kit/pack_test.go",
+    "pkg/kit/sandbox_doctor.go",
+    "pkg/kit/sandbox_doctor_test.go",
     "pkg/kit/path_safety_test.go",
     "pkg/kit/portable.go",
     "pkg/kit/portable_test.go",

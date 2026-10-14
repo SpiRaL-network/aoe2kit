@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"runtime/debug"
 	"sort"
 	"strconv"
@@ -55,11 +56,17 @@ func main() {
 
 	switch os.Args[1] {
 	case "version":
-		fmt.Println(kit.Version)
+		if len(os.Args) == 3 && os.Args[2] == "--json" {
+			printJSON(kit.CurrentBuildInfo(runtime.GOOS + "/" + runtime.GOARCH))
+		} else if len(os.Args) == 2 {
+			fmt.Println(kit.Version)
+		} else {
+			die("kit version", fmt.Errorf("usage: kit version [--json]"))
+		}
 	case "commands":
 		commandsCommand(os.Args[2:])
 	case "doctor":
-		doctor()
+		doctor(os.Args[2:])
 	case "docs":
 		runDocs(os.Args[2:])
 	case "inventory", "scan":
@@ -1454,7 +1461,14 @@ func printReleaseCheck(report releaseCheckReport) {
 	}
 }
 
-func doctor() {
+func doctor(args []string) {
+	if len(args) == 1 && args[0] == "--sandbox" {
+		doctorSandbox()
+		return
+	}
+	if len(args) != 0 {
+		die("kit doctor", fmt.Errorf("usage: kit doctor [--sandbox]"))
+	}
 	fmt.Println("AoE2Kit doctor")
 	fmt.Printf("- Version: %s\n", kit.Version)
 	if _, err := exec.LookPath("go"); err == nil {
@@ -1466,6 +1480,39 @@ func doctor() {
 	fmt.Println("- Python required: no")
 	fmt.Println("- Network required: no")
 	fmt.Println("- Use `kit inventory <folder>` to discover bundled scenarios, dat files, records, AI files, and mod folders.")
+}
+
+func doctorSandbox() {
+	report := kit.RunSandboxDoctor()
+	fmt.Println("AoE2Kit sandbox doctor")
+	fmt.Printf("platform: %s\n", report.Platform)
+	fmt.Printf("network_required: %t\n", report.NetworkRequired)
+	for _, dir := range report.WritableDirs {
+		fmt.Printf("writable_dir: %s (%t)\n", dir.Path, dir.OK)
+	}
+	for _, check := range report.Checks {
+		fmt.Printf("%s: %s\n", check.Name, passFail(check.OK))
+		if check.Detail != "" {
+			fmt.Printf("  %s\n", check.Detail)
+		}
+	}
+	if report.OK {
+		fmt.Println("READY_FOR_AUTHORING")
+		fmt.Println("scope: tested local codec/writer primitives only; this is not engine verification")
+		return
+	}
+	fmt.Println("NOT_READY_FOR_AUTHORING")
+	for _, failure := range report.Failures {
+		fmt.Printf("failure: %s\n", failure)
+	}
+	os.Exit(1)
+}
+
+func passFail(ok bool) string {
+	if ok {
+		return "PASS"
+	}
+	return "FAIL"
 }
 
 func manifest() {
@@ -21918,8 +21965,8 @@ func die(prefix string, err error) {
 
 func usage() {
 	fmt.Fprint(os.Stderr, `Usage:
-  kit version
-  kit doctor
+  kit version [--json]
+  kit doctor [--sandbox]
   kit docs <lint> ...
   kit docs lint [folder] [--text|--json]
   kit inventory [folder]

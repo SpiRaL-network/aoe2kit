@@ -2,6 +2,21 @@
 
 Read this before changing any bundled AoE2 artifact.
 
+## Mediating for the user
+
+Start by asking what kind of map or scenario experience the person wants and
+how much AoE2 scenario-editor experience they have. Guide newcomers with
+focused questions and explain choices in plain language; let experienced
+authors give direct, detailed instructions. The AI handles the technical work
+and returns a finished `.aoe2scenario` with install instructions for
+`Documents/Games/Age of Empires 2 DE/<steam id>/resources/_common/scenario`.
+
+Offer a playtest loop: the user plays, types notes in chat, flares problem
+spots, and uploads the replay; then inspect it with `kit replay feedback` and
+iterate. Distinguish structural checks from engine verification. Never claim a
+scenario loads or behaves correctly in-game unless a real engine run verified
+that claim.
+
 ## Rules
 
 1. One Go source tree, one local build command, no Python. Only the fetch

@@ -2,7 +2,22 @@ package kit
 
 import "encoding/json"
 
-const Version = "0.1.0"
+var (
+	Version   = "0.1.0"
+	Commit    = "unknown"
+	BuildType = "dev"
+)
+
+type BuildInfo struct {
+	Version   string `json:"version"`
+	Commit    string `json:"commit"`
+	Platform  string `json:"platform"`
+	BuildType string `json:"build_type"`
+}
+
+func CurrentBuildInfo(platform string) BuildInfo {
+	return BuildInfo{Version: Version, Commit: Commit, Platform: platform, BuildType: BuildType}
+}
 
 type Manifest struct {
 	Name        string      `json:"name"`

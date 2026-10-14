@@ -1,0 +1,153 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Test with bounded parallelism
+        run: GOMAXPROCS=2 go test -p 2 ./...
+      - name: Sandbox doctor
+        run: go run ./cmd/kit doctor --sandbox
+
+  build-binaries:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build static binary and package documentation
+        env:
+          VERSION: ${{ github.ref_name }}
+          COMMIT: ${{ github.sha }}
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist/package
+          binary=kit
+          if [ "$GOOS" = windows ]; then binary=kit.exe; fi
+          CGO_ENABLED=0 go build -trimpath \
+            -ldflags "-s -w -X aoe2kit/pkg/kit.Version=$VERSION -X aoe2kit/pkg/kit.Commit=$COMMIT -X aoe2kit/pkg/kit.BuildType=release" \
+            -o "dist/package/$binary" ./cmd/kit
+          cp README.md START_HERE.md AI_GUIDE.md LICENSE NOTICE.md dist/package/
+          archive="aoe2kit_${VERSION}_${GOOS}_${GOARCH}.zip"
+          (cd dist/package && zip -q -r "../$archive" .)
+          mv "dist/$archive" .
+          sha256sum "$archive"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: kit-assets-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+  build-source:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Vendor and prove offline build
+        env:
+          VERSION: ${{ github.ref_name }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kit-source" dist
+          jq -j '.files[] | select(test("\\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$"; "i") | not) + "\u0000"' release/public-files.json \
+            | tar --null -T - -cf - \
+            | tar -xf - -C "$RUNNER_TEMP/kit-source"
+          cd "$RUNNER_TEMP/kit-source"
+          if find . -type f | grep -Ei '\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$'; then
+            echo "public source allowlist contains image or game data" >&2
+            exit 1
+          fi
+          go build -buildvcs=false \
+            -ldflags "-X aoe2kit/pkg/kit.Version=$VERSION -X aoe2kit/pkg/kit.Commit=$COMMIT -X aoe2kit/pkg/kit.BuildType=release" \
+            -o "$RUNNER_TEMP/kit-manifest" ./cmd/kit
+          "$RUNNER_TEMP/kit-manifest" manifest > KIT_MANIFEST.json
+          printf '{"profile":"public","kit_version":"%s"}\n' "$VERSION" > KIT_PROFILE.json
+          GOFLAGS=-buildvcs=false GOMAXPROCS=2 \
+            "$RUNNER_TEMP/kit-manifest" portable-check . --profile public
+          go mod vendor
+          find . -type f \( \
+            -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o \
+            -iname '*.bmp' -o -iname '*.dds' -o -iname '*.sld' -o -iname '*.slp' -o \
+            -iname '*.smx' -o -iname '*.smp' -o -iname '*.dat' -o -iname '*.drs' -o \
+            -iname '*.aoe2scenario' -o -iname '*.aoe2campaign' -o -iname '*.aoe2record' \
+          \) -delete
+          if find . -type f | grep -Ei '\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$'; then
+            echo "vendored source contains image or game data" >&2
+            exit 1
+          fi
+          GOPROXY=off GOSUMDB=off GOMODCACHE="$(mktemp -d)" \
+            go build -mod=vendor -buildvcs=false -trimpath \
+            -ldflags "-s -w -X aoe2kit/pkg/kit.Version=$VERSION -X aoe2kit/pkg/kit.Commit=$COMMIT -X aoe2kit/pkg/kit.BuildType=release" \
+            -o "$RUNNER_TEMP/kit-offline-build" ./cmd/kit
+          zip -q -r "$GITHUB_WORKSPACE/dist/aoe2kit_${VERSION}_source-vendored.zip" .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: kit-assets-source
+          path: dist/*_source-vendored.zip
+          if-no-files-found: error
+
+  publish:
+    needs: [build-binaries, build-source]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: kit-assets-*
+          merge-multiple: true
+          path: release-assets
+      - name: Add stable download names, validate archives, and write checksums
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          for platform in linux_amd64 linux_arm64 windows_amd64 darwin_arm64 darwin_amd64; do
+            cp "release-assets/aoe2kit_${VERSION}_${platform}.zip" "release-assets/aoe2kit_${platform}.zip"
+          done
+          cp "release-assets/aoe2kit_${VERSION}_source-vendored.zip" "release-assets/aoe2kit_source-vendored.zip"
+          test "$(find release-assets -maxdepth 1 -type f -name '*.zip' | wc -l)" -eq 12
+          if for archive in release-assets/*.zip; do unzip -Z1 "$archive"; done | grep -Ei '\.(png|jpe?g|gif|bmp|dds|sld|slp|smx|smp|dat|drs|aoe2scenario|aoe2campaign|aoe2record)$'; then
+            echo "release archives contain a forbidden image or game-data file" >&2
+            exit 1
+          fi
+          cd release-assets
+          sha256sum *.zip > SHA256SUMS
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --generate-notes
