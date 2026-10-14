@@ -6498,25 +6498,30 @@ func parseTerrainRestrictions(c *cursor, restrictionCount, terrainsUsed int) ([]
 			TerrainRows: make([]TerrainRestrictionTerrain, 0, terrainsUsed),
 		}
 		for terrain := 0; terrain < terrainsUsed; terrain++ {
-			rowStart := c.off
 			passStart := c.off
 			passability, err := c.f32()
 			if err != nil {
 				return nil, err
 			}
 			passabilitySpan := Span{Name: fmt.Sprintf("terrain_restriction[%d].terrain[%d].passability", i, terrain), Start: passStart, End: c.off}
-			graphicStart := c.off
-			if err := c.skip(16); err != nil {
-				return nil, err
-			}
 			restriction.TerrainRows = append(restriction.TerrainRows, TerrainRestrictionTerrain{
 				Index:              terrain,
 				Passability:        passability,
 				PassGraphicRawSize: 16,
-				Span:               Span{Name: fmt.Sprintf("terrain_restriction[%d].terrain[%d]", i, terrain), Start: rowStart, End: c.off},
+				Span:               Span{Name: fmt.Sprintf("terrain_restriction[%d].terrain[%d]", i, terrain), Start: passStart, End: c.off},
 				PassabilitySpan:    passabilitySpan,
-				PassGraphicSpan:    Span{Name: fmt.Sprintf("terrain_restriction[%d].terrain[%d].pass_graphic", i, terrain), Start: graphicStart, End: c.off},
 			})
+		}
+		// Multipliers and graphics are separate arrays, not interleaved rows.
+		for terrain := range restriction.TerrainRows {
+			graphicStart := c.off
+			if err := c.skip(16); err != nil {
+				return nil, err
+			}
+			row := &restriction.TerrainRows[terrain]
+			row.PassGraphicSpan = Span{Name: fmt.Sprintf("terrain_restriction[%d].terrain[%d].pass_graphic", i, terrain), Start: graphicStart, End: c.off}
+			// The envelope includes other entries; component spans own the bytes.
+			row.Span.End = c.off
 		}
 		restriction.Span = Span{Name: fmt.Sprintf("terrain_restriction[%d]", i), Start: start, End: c.off}
 		out = append(out, restriction)

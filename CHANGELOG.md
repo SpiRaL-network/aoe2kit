@@ -1,5 +1,20 @@
 # Changelog
 
+## DAT, Fetch, and Scenario Writer Fixes — 2026-10-14
+
+### Fixed
+- DAT terrain-restriction decoding now reads passability multipliers and pass
+  graphics from their separate arrays, preserving accurate byte spans.
+- Scenario unit placement carries its resolved grid/fractional snap policy
+  through the AddUnits handoff.
+- Batch scenario unit removal validates references before mutation and removes
+  all requested records without shifting later indices.
+
+### Added
+- `pkg/fetch` provides bounded, resumable HTTP fetch sessions with validated,
+  atomic cache writes. It is a standalone package; providers and callers own
+  source-specific validation and attribution.
+
 ## First Community Pull Requests — 2026-10-06
 
 Kit's first pull requests from outside, all from SpiRaL (#1-#4).

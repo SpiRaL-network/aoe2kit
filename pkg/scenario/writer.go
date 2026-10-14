@@ -2621,11 +2621,15 @@ func resolveUnitPlacement(recipe UnitRecipe, resolver *clusterFootprintResolver)
 			}
 		}
 		if fractional {
+			// AddUnits resolves placement again without the DAT. Carry the
+			// decision, not "auto", across that boundary.
+			recipe.Snap = "fractional"
 			return recipe, nil
 		}
 		snap = "grid"
 	}
 	if snap == "grid" {
+		recipe.Snap = "grid"
 		if recipe.X != nil {
 			x := math.Floor(*recipe.X) + 0.5
 			recipe.X = &x
@@ -2695,6 +2699,11 @@ func (r *clusterFootprintResolver) unitCanUseFractional(unitConst int) (bool, er
 // in-game for cactus and rugs, 2026-09-17). Trees and statues have
 // z of 2-3 and block.
 func footprintBlocks(x, y, z float32) bool {
+	return CollisionFootprintBlocks(x, y, z)
+}
+
+// CollisionFootprintBlocks is the shared DAT collision gate for object placement.
+func CollisionFootprintBlocks(x, y, z float32) bool {
 	if x == 0 && y == 0 {
 		return false
 	}
@@ -3040,6 +3049,15 @@ func (f *File) RemoveUnit(recipe UnitRecipe) error {
 		return err
 	}
 	return f.refreshUnits()
+}
+
+// RemoveUnits removes a batch by stable reference ID, preserving all retained
+// records. Reference validation completes before any mutation.
+func (f *File) RemoveUnits(referenceIDs []int) error {
+	if err := f.ensureUnitsNotReferenced(intSet(referenceIDs)); err != nil {
+		return err
+	}
+	return f.removeUnitsByReferenceIDs(referenceIDs)
 }
 
 type unitAreaMatch struct {
@@ -4107,20 +4125,25 @@ func (f *File) removeUnitsByReferenceIDs(referenceIDs []int) error {
 		}
 	}
 	for _, matches := range byPlayer {
-		sort.Slice(matches, func(i, j int) bool {
-			return matches[i].Index > matches[j].Index
-		})
 		playerSection := matches[0].PlayerSection
 		unitField := playerSection.field("units")
 		if unitField == nil {
 			return fmt.Errorf("missing units field for player %d", matches[0].Player)
 		}
+		remove := map[int]bool{}
 		for _, target := range matches {
 			if target.Index < 0 || target.Index >= len(unitField.Elements) || unitField.Elements[target.Index] != target.Unit {
 				return fmt.Errorf("unit index changed before system-prefix removal for player %d index %d", target.Player, target.Index)
 			}
-			unitField.Elements = append(unitField.Elements[:target.Index], unitField.Elements[target.Index+1:]...)
+			remove[target.Index] = true
 		}
+		kept := unitField.Elements[:0]
+		for index, unit := range unitField.Elements {
+			if !remove[index] {
+				kept = append(kept, unit)
+			}
+		}
+		unitField.Elements = kept
 		if err := setIntField(playerSection, "unit_count", "u32", len(unitField.Elements)); err != nil {
 			return err
 		}
@@ -4317,12 +4340,17 @@ func countIntsLessThan(values []int, target int) int {
 }
 
 func (f *File) ensureUnitNotReferenced(referenceID int) error {
+	return f.ensureUnitsNotReferenced(map[int]bool{referenceID: true})
+}
+
+func (f *File) ensureUnitsNotReferenced(targets map[int]bool) error {
 	units := f.root.section("Units")
 	if units != nil {
 		for player, playerSection := range units.list("players_units") {
 			for unitIndex, unit := range playerSection.list("units") {
 				ref, ok := unit.intValue("garrisoned_in_id")
-				if ok && ref == referenceID {
+				if ok && targets[ref] {
+					referenceID := ref
 					sourceRef, _ := unit.intValue("reference_id")
 					return fmt.Errorf("refuses to remove unit reference_id %d because player %d unit %d reference_id %d field garrisoned_in_id references it", referenceID, player, unitIndex, sourceRef)
 				}
@@ -4342,7 +4370,8 @@ func (f *File) ensureUnitNotReferenced(referenceID int) error {
 		for conditionIndex, condition := range trigger.list("condition_data") {
 			for _, field := range []string{"unit_object", "next_object"} {
 				ref, ok := condition.intValue(field)
-				if ok && ref == referenceID {
+				if ok && targets[ref] {
+					referenceID := ref
 					return fmt.Errorf("refuses to remove unit reference_id %d because trigger %d %q condition %d field %s references it", referenceID, triggerIndex, triggerName, conditionIndex, field)
 				}
 			}
@@ -4350,12 +4379,14 @@ func (f *File) ensureUnitNotReferenced(referenceID int) error {
 		for effectIndex, effect := range trigger.list("effect_data") {
 			for _, field := range []string{"legacy_location_object_reference", "location_object_reference"} {
 				ref, ok := effect.intValue(field)
-				if ok && ref == referenceID {
+				if ok && targets[ref] {
+					referenceID := ref
 					return fmt.Errorf("refuses to remove unit reference_id %d because trigger %d %q effect %d field %s references it", referenceID, triggerIndex, triggerName, effectIndex, field)
 				}
 			}
 			for selectedIndex, ref := range effect.intList("selected_object_ids") {
-				if ref == referenceID {
+				if targets[ref] {
+					referenceID := ref
 					return fmt.Errorf("refuses to remove unit reference_id %d because trigger %d %q effect %d selected_object_ids[%d] references it", referenceID, triggerIndex, triggerName, effectIndex, selectedIndex)
 				}
 			}
