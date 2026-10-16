@@ -16,6 +16,23 @@ the network. Whether a binary is executed depends on the user's request and
 the environment's execution rules; this section describes trust properties,
 not an instruction to run it.
 
+## Preview a map
+
+`kit preview` renders flat maps, minimaps, sprites, textured terrain, and
+supported particle units. `--crop x1,y1,x2,y2` and `--scale N` select a view;
+`--sprites --textures --shadows --mood scenario` enables the installed-art
+preview stack. Use `--out file.png` for the local output.
+
+Local agents can use `--game-dir GAME`, `AOE2KIT_GAME_DIR`, or Steam discovery.
+Kit reads the user's DAT, sprites, textures, palettes, blend masks, mood
+definitions and particle atlases at runtime; none are shipped. In containers
+without those files, use flat previews, or explicitly supplied local assets.
+`kit preview assets` lists missing sprite dependencies without fetching them.
+
+The preview is not an engine screenshot: water edges differ, mood grading is
+approximate, beach and road brightness is off, and geometric elevation is not
+rendered. See [Visual Previews](docs/PREVIEW.md) for commands and limits.
+
 ## Running inside an AI container
 
 The container platform determines the operating-system and architecture pair.

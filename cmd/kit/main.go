@@ -30,6 +30,7 @@ import (
 	"aoe2kit/pkg/diagnostics"
 	"aoe2kit/pkg/enginefacts"
 	"aoe2kit/pkg/fx"
+	"aoe2kit/pkg/gameinstall"
 	"aoe2kit/pkg/gamestrings"
 	"aoe2kit/pkg/geom"
 	"aoe2kit/pkg/geotrace"
@@ -55,6 +56,8 @@ func main() {
 	}
 
 	switch os.Args[1] {
+	case "preview":
+		runPreview(os.Args[2:])
 	case "version":
 		if len(os.Args) == 3 && os.Args[2] == "--json" {
 			printJSON(kit.CurrentBuildInfo(runtime.GOOS + "/" + runtime.GOARCH))
@@ -1462,12 +1465,21 @@ func printReleaseCheck(report releaseCheckReport) {
 }
 
 func doctor(args []string) {
-	if len(args) == 1 && args[0] == "--sandbox" {
-		doctorSandbox()
-		return
-	}
-	if len(args) != 0 {
-		die("kit doctor", fmt.Errorf("usage: kit doctor [--sandbox]"))
+	gameDir := ""
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--sandbox":
+			doctorSandbox()
+			return
+		case "--game-dir":
+			if i+1 >= len(args) {
+				die("kit doctor", fmt.Errorf("--game-dir needs a path"))
+			}
+			i++
+			gameDir = args[i]
+		default:
+			die("kit doctor", fmt.Errorf("usage: kit doctor [--sandbox] [--game-dir DIR]"))
+		}
 	}
 	fmt.Println("AoE2Kit doctor")
 	fmt.Printf("- Version: %s\n", kit.Version)
@@ -1479,12 +1491,25 @@ func doctor(args []string) {
 	fmt.Println("- Durable language: Go")
 	fmt.Println("- Python required: no")
 	fmt.Println("- Network required: no")
+	status := gameinstall.Inspect(gameDir)
+	if status.Found {
+		fmt.Printf("- AoE2DE install: found (%s)\n", status.GameDir)
+		fmt.Printf("- Loose SLD sprites readable: %t (%d assets)\n", status.SpritesReadable, status.SpriteAssetCount)
+	} else {
+		fmt.Println("- AoE2DE install: not found; flat previews only")
+		fmt.Println("- Set --game-dir or AOE2KIT_GAME_DIR, or use a standard Steam install")
+	}
+	if status.Found && !status.SpritesReadable {
+		fmt.Println("- Sprite preview: no loose SLD assets found; packed game archives are not yet read by preview")
+	}
 	fmt.Println("- Use `kit inventory <folder>` to discover bundled scenarios, dat files, records, AI files, and mod folders.")
 }
 
 func doctorSandbox() {
 	report := kit.RunSandboxDoctor()
+	assets := gameinstall.Inspect("")
 	fmt.Println("AoE2Kit sandbox doctor")
+	fmt.Printf("preview_assets: %s\n", assets.Message)
 	fmt.Printf("platform: %s\n", report.Platform)
 	fmt.Printf("network_required: %t\n", report.NetworkRequired)
 	for _, dir := range report.WritableDirs {
@@ -2448,6 +2473,10 @@ func runFacts(args []string) {
 }
 
 func runScen(args []string) {
+	if len(args) > 0 && (args[0] == "hotspots" || args[0] == "census") {
+		runArtworkStudy(args[0], args[1:])
+		return
+	}
 	if len(args) < 1 {
 		fmt.Fprintln(os.Stderr, "usage: kit scen <blank|info|check|describe|settings|field|strings|refs|delete-plan|delete|disconnect|effects|diff-effects|diff-series|watch|glossary|idioms|analyze|triggers|trigger-neighborhood|audit-player-coverage|mechanic|trigger-flow|units|map|terrain|palette-usage|regions|coverage|editor-coverage|verify|lint|xs|deploycheck|diff|diff-triggers|bytediff|write-check|dump-body|plan|patch|shop-catalog|import-triggers|smoke|smoke-recipe> <file.aoe2scenario> [args...]")
 		os.Exit(2)
@@ -4098,47 +4127,6 @@ func runScen(args []string) {
 	}
 }
 
-func parseScenarioGameDir(args []string) (string, error) {
-	gameDir := ""
-	for i := 0; i < len(args); i++ {
-		if args[i] != "--game-dir" {
-			return "", fmt.Errorf("unknown option %q", args[i])
-		}
-		if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
-			return "", fmt.Errorf("--game-dir needs a path")
-		}
-		i++
-		gameDir = args[i]
-	}
-	if gameDir == "" {
-		gameDir = strings.TrimSpace(os.Getenv("AOE2KIT_GAME_DIR"))
-	}
-	return gameDir, nil
-}
-
-func parseScenarioPatchOptions(args []string) (gameDir string, text bool, err error) {
-	for i := 0; i < len(args); i++ {
-		switch args[i] {
-		case "--text":
-			text = true
-		case "--json":
-			text = false
-		case "--game-dir":
-			if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
-				return "", false, fmt.Errorf("--game-dir needs a path")
-			}
-			i++
-			gameDir = args[i]
-		default:
-			return "", false, fmt.Errorf("unknown flag %q", args[i])
-		}
-	}
-	if gameDir == "" {
-		gameDir = strings.TrimSpace(os.Getenv("AOE2KIT_GAME_DIR"))
-	}
-	return gameDir, text, nil
-}
-
 func runScenarioShopCatalog(args []string) {
 	if len(args) == 1 && args[0] == "--example" {
 		printJSON(scenario.ShopCatalogExample())
@@ -4196,6 +4184,46 @@ func runScenarioShopCatalog(args []string) {
 		}
 		printJSON(outputReport{ShopCatalogReport: report, RecipePath: outPath})
 	}
+}
+
+func parseScenarioGameDir(args []string) (string, error) {
+	gameDir := ""
+	for i := 0; i < len(args); i++ {
+		if args[i] != "--game-dir" {
+			return "", fmt.Errorf("unknown option %q", args[i])
+		}
+		if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
+			return "", fmt.Errorf("--game-dir needs a path")
+		}
+		i++
+		gameDir = args[i]
+	}
+	return resolveOptionalGameDir(gameDir)
+}
+
+func parseScenarioPatchOptions(args []string) (gameDir string, text bool, err error) {
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--text":
+			text = true
+		case "--json":
+			text = false
+		case "--game-dir":
+			if i+1 >= len(args) || strings.HasPrefix(args[i+1], "--") {
+				return "", false, fmt.Errorf("--game-dir needs a path")
+			}
+			i++
+			gameDir = args[i]
+		default:
+			return "", false, fmt.Errorf("unknown flag %q", args[i])
+		}
+	}
+	resolved, err := resolveOptionalGameDir(gameDir)
+	return resolved, text, err
+}
+
+func resolveOptionalGameDir(explicit string) (string, error) {
+	return gameinstall.ResolveOptional(explicit)
 }
 
 func printScenarioShopCatalogReport(report scenario.ShopCatalogReport, outPath string) {
@@ -4276,6 +4304,28 @@ func namedScenarioUnits(info *scenario.UnitInfo) *namedScenarioUnitInfo {
 		out.Sections = append(out.Sections, namedSection)
 	}
 	return out
+}
+
+func printScenarioUnits(info *scenario.UnitInfo, named bool) {
+	if info == nil {
+		fmt.Println("units: unavailable")
+		return
+	}
+	fmt.Printf("units: total=%d sections=%d player_sections=%d\n", info.Total, info.NumberOfUnitSections, info.NumberOfPlayers)
+	for _, section := range info.Sections {
+		fmt.Printf("- player_section=%d units=%d\n", section.Player, section.Count)
+		for _, unit := range section.Units {
+			label := fmt.Sprintf("unit_const=%d", unit.UnitConst)
+			if named {
+				label = fmt.Sprintf("unit=%s (%d)", replay.UnitDisplayName(unit.UnitConst), unit.UnitConst)
+			}
+			fmt.Printf("  index=%d reference_id=%d %s position=(%.2f,%.2f,%.2f) rotation=%.4f status=%d", unit.Index, unit.ReferenceID, label, unit.X, unit.Y, unit.Z, unit.Rotation, unit.Status)
+			if unit.CaptionString != "" {
+				fmt.Printf(" caption=%q", unit.CaptionString)
+			}
+			fmt.Println()
+		}
+	}
 }
 
 func printScenarioLint(report scenario.LintReport) {
@@ -5909,28 +5959,6 @@ func printScenarioPatch(report scenario.PatchReport) {
 	}
 	for _, warning := range report.Warnings {
 		fmt.Printf("warning: %s\n", warning)
-	}
-}
-
-func printScenarioUnits(info *scenario.UnitInfo, named bool) {
-	if info == nil {
-		fmt.Println("units: unavailable")
-		return
-	}
-	fmt.Printf("units: total=%d sections=%d player_sections=%d\n", info.Total, info.NumberOfUnitSections, info.NumberOfPlayers)
-	for _, section := range info.Sections {
-		fmt.Printf("- player_section=%d units=%d\n", section.Player, section.Count)
-		for _, unit := range section.Units {
-			label := fmt.Sprintf("unit_const=%d", unit.UnitConst)
-			if named {
-				label = fmt.Sprintf("unit=%s (%d)", replay.UnitDisplayName(unit.UnitConst), unit.UnitConst)
-			}
-			fmt.Printf("  index=%d reference_id=%d %s position=(%.2f,%.2f,%.2f) rotation=%.4f status=%d", unit.Index, unit.ReferenceID, label, unit.X, unit.Y, unit.Z, unit.Rotation, unit.Status)
-			if unit.CaptionString != "" {
-				fmt.Printf(" caption=%q", unit.CaptionString)
-			}
-			fmt.Println()
-		}
 	}
 }
 
@@ -19669,7 +19697,7 @@ func parseDATGameDir(args []string) (string, error) {
 		i++
 		gameDir = args[i]
 	}
-	return gameDir, nil
+	return resolveOptionalGameDir(gameDir)
 }
 
 func loadDATUnitNames(gameDir string) *gamestrings.Table {
@@ -22057,7 +22085,7 @@ func die(prefix string, err error) {
 func usage() {
 	fmt.Fprint(os.Stderr, `Usage:
   kit version [--json]
-  kit doctor [--sandbox]
+  kit doctor [--sandbox] [--game-dir DIR]
   kit docs <lint> ...
   kit docs lint [folder] [--text|--json]
   kit inventory [folder]
@@ -22087,6 +22115,13 @@ func usage() {
   kit rpg shop-demo [--out-dir DIR] [--name TEXT] [--timestamp UNIX] [--text|--json]
   kit rpg custom-store [--out-dir DIR] [--name TEXT] [--unit N] [--instances N] [--players N] [--timestamp UNIX] [--xs-check PATH] [--text|--json]
   kit font glyphs <font.ttf> [--chars TEXT] [--material N] [--rotation DEGREES] [--out FILE]
+  kit preview <scenario|replay|snapshot> --out file.png [--minimap] [--minimap-orientation normal|transpose|flipx|flipy|rotate90|rotate180|rotate270 (default rotate270)] [--projection topdown|diamond] [--scale N] [--layers LIST] [--crop x1,y1,x2,y2] [--sprites] [--dat FILE] [--palette FILE] [--game-dir DIR] [--textures] [--terrain-repeat TILES] [--texture-repeat TILES] [--no-terrain-edges] [--mood NAME|scenario|none]
+  kit preview snapshot <scenario> --out file.json [--stage NAME] [--dat FILE]
+  kit preview assets <scenario> [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--missing-only] [--paths]
+  kit preview calibrate-mood --manifest FILE [--game-dir DIR] [--fit --holdout MOOD] [--out FILE]
+  kit preview calibrate-mood --samples REPORT [--fit --holdout MOOD] [--out FILE]
+    Textured previews accept --mood-model REPORT to opt into a fitted grade.
+    Sprite previews accept --shadows and --shadow-overlap max|sum (experimental).
   kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--road-width-tiles N] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
     EXPERIMENTAL geography: cartographic exaggeration; static placement checks are not engine verification.
   kit identify <file.aoe2scenario|file.aoe2record> [--registry known_scenarios.json] [--ai-registry known_ais.json] [--register NAME] [--family FAMILY] [--description TEXT]
@@ -22229,6 +22264,8 @@ func usage() {
   kit scen idioms <file.aoe2scenario> [--text]
   kit scen analyze <file.aoe2scenario>
   kit scen units <file.aoe2scenario> [--named] [--text|--json]
+  kit scen census <scenario> [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--gaia]
+  kit scen hotspots <scenario> [--dat FILE] [--game-dir DIR] [--gaia=false] [--cell 8] [--top 20] [--rank variety|count] [--include-forest-fish]
   kit scen lint <file.aoe2scenario> [--text] [--include-provisional] [--load-safety] [--semantic]
   kit scen xs <file.aoe2scenario> [--deploy-tree dir] [--text|--json]
   kit scen xs attach <in.aoe2scenario> <out.aoe2scenario> --xs file.xs [--name Entry.xs] [--also-carrier] [--title TITLE] [--trigger-name NAME] [--text|--json]

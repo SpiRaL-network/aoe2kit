@@ -26,6 +26,16 @@ func TestSeekDEPlayerMarkerAcceptsCurrentTeamIDs(t *testing.T) {
 	}
 }
 
+func TestSeekDEPlayerMarkerMissingDoesNotPoisonCursor(t *testing.T) {
+	c := &cursor{data: make([]byte, 64), off: 12}
+	if _, err := seekDEPlayerMarker(c, 2); err == nil {
+		t.Fatal("missing marker returned no error")
+	}
+	if c.err != nil {
+		t.Fatalf("optional-slot search mutated cursor error: %v", c.err)
+	}
+}
+
 func TestParseInitialPlayerAttributesSupportsLegacyAndCurrentStartCoordinates(t *testing.T) {
 	t.Run("legacy", func(t *testing.T) {
 		header := makeInitialPlayerAttributePayload(t, false)

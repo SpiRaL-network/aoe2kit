@@ -1253,20 +1253,29 @@ func (r *CoverageReport) coverHeader(rec *File, refs commandObjectRefs) {
 		"terrain_sha256": mapInfo.TerrainSHA256,
 	})
 	knownEnd := mapEnd
+	spineLimit := len(header)
 	if rec.TriggerRegion != nil {
-		spine, spineRegions, spineWarnings := parseHeaderSpine(header, mapEnd, numPlayers, rec.TriggerRegion.Start, rec.SaveVersion, mapInfo.Width, mapInfo.Height, refs)
-		if spine != nil {
-			r.HeaderSpine = spine
-			for _, region := range spineRegions {
-				r.Regions = append(r.Regions, region)
-				if region.End > knownEnd {
-					knownEnd = region.End
-				}
+		spineLimit = rec.TriggerRegion.Start
+	}
+	spine, spineRegions, spineWarnings := parseHeaderSpine(header, mapEnd, numPlayers, spineLimit, rec.SaveVersion, mapInfo.Width, mapInfo.Height, refs)
+	if spine != nil {
+		r.HeaderSpine = spine
+		if rec.TriggerRegion == nil {
+			spine.TriggerBoundarySource = "inflated_header_end"
+			spine.TriggerBoundaryCheck = "not_applicable_no_trigger_region"
+			spine.Notes = append(spine.Notes, "no trigger region was located; initial-state parsing is bounded by the inflated header end")
+		}
+		for _, region := range spineRegions {
+			r.Regions = append(r.Regions, region)
+			if region.End > knownEnd {
+				knownEnd = region.End
 			}
 		}
-		for _, warning := range spineWarnings {
-			r.Warnings = append(r.Warnings, "header spine: "+warning)
-		}
+	}
+	for _, warning := range spineWarnings {
+		r.Warnings = append(r.Warnings, "header spine: "+warning)
+	}
+	if rec.TriggerRegion != nil {
 		if rec.TriggerRegion.Start > knownEnd {
 			r.add("inflated_header", "v68_tail_before_trigger_graph", knownEnd, rec.TriggerRegion.Start, "bounded_opaque", "sequential_spine_stops_before_trigger_graph", map[string]any{
 				"trigger_boundary_source": "triggergraph_region_locator",

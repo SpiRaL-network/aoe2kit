@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.0 - 2026-10-16
+
+### Added
+- Local flat, minimap, sprite and textured previews with crop/scale controls,
+  layered terrain masks, blendomatic edges, optional shadows, approximate mood
+  grading, and supported particle units. All game assets are runtime inputs.
+- Mood calibration from local captures and texture samples, with explicit
+  fitted-model opt-in and shader-stage audit helpers.
+- Read-only terrain/unit projection for measured legacy campaign formats
+  1.36, 1.37 and 1.40-1.57; no expansion of full-format write support.
+- Asset manifests, named crop censuses and ranked Gaia hotspots.
+- Deterministic Go composition helpers for terrain, units, spacing, cliffs,
+  terraces, wooden roads, rivers and mixed tracks.
+- Public packaging checks rejecting image files, including disguised images.
+
+### Limits
+- Water edges differ from the engine; mood grading is approximate; beach and
+  road brightness is off; geometric elevation is not rendered.
+- Generated images, installed game data, campaign files and private metadata
+  are not included in this release.
+
 ## 0.3.0 — 2026-10-14
 
 ### Added

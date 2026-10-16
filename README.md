@@ -32,6 +32,27 @@ built so an AI agent can drive it as easily as a person can.
 
 ---
 
+## Visual previews
+
+Render a scenario, replay's initial state, or snapshot without opening the game:
+
+```sh
+kit preview map.aoe2scenario --minimap --out minimap.png
+kit preview map.aoe2scenario --sprites --textures --shadows --mood scenario --crop 40,20,80,60 --scale 32 --game-dir GAME --out scene.png
+kit scen hotspots map.aoe2scenario --game-dir GAME --cell 8 --top 10
+```
+
+Flat previews need no installed art. Sprites, terrain textures, palettes,
+blend masks, mood definitions and particle atlases are read at runtime from
+your own game installation (`--game-dir`, `AOE2KIT_GAME_DIR`, or Steam discovery).
+No images or extracted game data ship with Kit. PNGs are local outputs only.
+
+Water edges differ from the engine; mood grading is approximate; beach and
+road brightness is off; geometric elevation is not rendered. Reports expose
+missing assets and approximations. See [Visual Previews](docs/PREVIEW.md) for
+asset manifests, crop censuses, legacy campaign artwork and
+the reusable Go composition library.
+
 ## Start here
 
 Requires Go 1.23+. Pure Go, no CGO; one `go build` produces one binary.

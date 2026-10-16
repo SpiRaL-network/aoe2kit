@@ -6,6 +6,20 @@
   "dependencies": [],
   "references": [
     {
+      "id": "openage-blendomatic",
+      "category": "documentation",
+      "credit_class": "reference",
+      "name": "openage blendomatic documentation",
+      "authors": ["SFTtech/openage contributors"],
+      "url": "https://github.com/SFTtech/openage/blob/master/doc/media/blendomatic.md",
+      "role": "Blendomatic format and classic directional and terrain-pair mapping reference",
+      "relationship": "format_facts_only",
+      "rung_earned": "credited",
+      "correction_state": "open_to_correction",
+      "credit": "The openage documentation informed Kit's independent Go decoder and neighbour-mask selector. Binary layout and classic mask meanings were checked against installed files and editor evidence; DE differences remain explicit candidates.",
+      "notes": ["No upstream implementation code or game assets are copied or distributed."]
+    },
+    {
       "id": "openstreetmap",
       "category": "dataset",
       "credit_class": "reference",

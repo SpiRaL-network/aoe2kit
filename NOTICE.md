@@ -105,7 +105,20 @@ AoE2Kit's DAT codec work was designed in conversation with the shape and risks o
 
 Notes:
 - AoE2Kit does not vendor genieutils source code.
+- Terrain.cpp corroborates the positions of the DAT terrain blend-priority and blend-type words. Kit's terrain renderer is independently implemented; its edge policy remains an explicitly uncalibrated candidate.
 - The codec architecture favors explicit spans, roundtrip gates, and narrow verified writes.
+
+### openage blendomatic documentation
+
+- Authors: SFTtech/openage contributors
+- URL: https://github.com/SFTtech/openage/blob/master/doc/media/blendomatic.md
+- Role: Reference for blendomatic binary layout, directional mask meanings and classic terrain-type pair mappings.
+- Relationship: Format facts only; no implementation code or game assets copied or vendored.
+
+Kit's independently implemented Go decoder and selector use those documented
+facts, checked against installed files and editor screenshots. DE applicability
+is reported separately from the classic reference; unresolved water-ring and
+shader behavior are not represented as engine-verified.
 
 ### aoe2-genie-tooling
 

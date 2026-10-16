@@ -113,6 +113,8 @@ func DecodeUnitFields(record []byte, version string) (map[string]any, error) {
 		"clearance_size_y":     unit.ClearanceSizeY,
 		"terrain_table_id":     unit.TerrainTableID,
 		"movement_type":        unit.MovementType,
+		"map_draw_level":       unit.MapDrawLevel,
+		"map_color":            unit.MapColor,
 		"fly_mode":             unit.FlyMode,
 		"obstruction_type_id":  unit.ObstructionTypeID,
 		"obstruction_class_id": unit.ObstructionClassID,

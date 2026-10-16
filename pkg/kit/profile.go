@@ -170,10 +170,19 @@ func publicReleaseForbidden(rel string) bool {
 			return true
 		}
 	}
-	for _, ext := range []string{".aoe2scenario", ".aoe2campaign", ".sld", ".png", ".bmp", ".dds", ".slp", ".dat", ".exe"} {
+	for _, ext := range []string{".aoe2scenario", ".aoe2campaign", ".sld", ".dds", ".slp", ".dat", ".exe"} {
 		if strings.HasSuffix(low, ext) {
 			return true
 		}
 	}
-	return false
+	return isImageFileName(low)
+}
+
+func isImageFileName(name string) bool {
+	switch strings.ToLower(filepath.Ext(name)) {
+	case ".png", ".apng", ".jpg", ".jpeg", ".jpe", ".jfif", ".gif", ".bmp", ".dib", ".tif", ".tiff", ".webp", ".avif", ".heic", ".heif", ".ico", ".icns", ".svg", ".svgz", ".eps", ".tga", ".targa", ".jxl", ".jp2", ".j2k", ".jpf", ".jpx", ".psd", ".xcf", ".kra", ".ppm", ".pgm", ".pbm", ".pnm", ".exr", ".hdr", ".raw":
+		return true
+	default:
+		return false
+	}
 }

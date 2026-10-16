@@ -12723,9 +12723,8 @@ type RawTriggerSection struct {
     WE3_Hautevilles_3 is intentionally parked here: the original/editor-saved
     Rosetta pair proves a five-byte separator after a valid first record,
     tombstone/padding records, and a legacy condition-marker form, but does not
-    yet provide a second oracle for the per-effect legacy layout. The original
-    and twin are retained in the private workshop under runs/convert-official;
-    do not promote guessed semantics. Opaque preservation remains exact.
+    yet provide a second oracle for the per-effect legacy layout. Do not promote
+    guessed semantics from that pair. Opaque preservation remains exact.
 
 func (s RawTriggerSection) Rebuild() []byte
 

@@ -106,16 +106,17 @@ type PlayerUnitsInfo struct {
 }
 
 type UnitSummary struct {
-	Index           int     `json:"index"`
-	ReferenceID     int     `json:"reference_id"`
-	UnitConst       int     `json:"unit_const"`
-	X               float64 `json:"x"`
-	Y               float64 `json:"y"`
-	Z               float64 `json:"z"`
-	Rotation        float64 `json:"rotation"`
-	Status          int     `json:"status"`
-	CaptionStringID int     `json:"caption_string_id,omitempty"`
-	CaptionString   string  `json:"caption_string,omitempty"`
+	Index                 int     `json:"index"`
+	ReferenceID           int     `json:"reference_id"`
+	UnitConst             int     `json:"unit_const"`
+	X                     float64 `json:"x"`
+	Y                     float64 `json:"y"`
+	Z                     float64 `json:"z"`
+	Rotation              float64 `json:"rotation"`
+	Status                int     `json:"status"`
+	InitialAnimationFrame int     `json:"initial_animation_frame,omitempty"`
+	CaptionStringID       int     `json:"caption_string_id,omitempty"`
+	CaptionString         string  `json:"caption_string,omitempty"`
 }
 
 type MapInfo struct {
@@ -970,6 +971,7 @@ func (r *parsedRoot) unitInfo() (*UnitInfo, error) {
 			refID, _ := unit.intValue("reference_id")
 			unitConst, _ := unit.intValue("unit_const")
 			status, _ := unit.intValue("status")
+			frame, _ := unit.intValue("initial_animation_frame")
 			captionStringID, _ := unit.intValue("caption_string_id")
 			captionString, _ := unit.stringValue("caption_string")
 			x, _ := unit.floatValue("x")
@@ -977,16 +979,17 @@ func (r *parsedRoot) unitInfo() (*UnitInfo, error) {
 			z, _ := unit.floatValue("z")
 			rotation, _ := unit.floatValue("rotation")
 			playerInfo.Units = append(playerInfo.Units, UnitSummary{
-				Index:           j,
-				ReferenceID:     refID,
-				UnitConst:       unitConst,
-				X:               x,
-				Y:               y,
-				Z:               z,
-				Rotation:        rotation,
-				Status:          status,
-				CaptionStringID: captionStringID,
-				CaptionString:   captionString,
+				Index:                 j,
+				ReferenceID:           refID,
+				UnitConst:             unitConst,
+				X:                     x,
+				Y:                     y,
+				Z:                     z,
+				Rotation:              rotation,
+				Status:                status,
+				InitialAnimationFrame: frame,
+				CaptionStringID:       captionStringID,
+				CaptionString:         captionString,
 			})
 		}
 		info.Sections = append(info.Sections, playerInfo)

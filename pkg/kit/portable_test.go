@@ -115,6 +115,32 @@ func TestPortablePublicRejectsExecutablePayloads(t *testing.T) {
 	t.Fatal("missing third_party_binaries check")
 }
 
+func TestPortablePublicRejectsImageFilesByExtensionAndContent(t *testing.T) {
+	if !publicReleaseForbidden("preview.webp") {
+		t.Fatal("public allowlist accepted a WebP image path")
+	}
+	root := t.TempDir()
+	mustWritePortable(t, filepath.Join(root, "README.md"), "portable root\n")
+	mustWritePortable(t, filepath.Join(root, "LICENSE"), "license\n")
+	if err := os.WriteFile(filepath.Join(root, "extensionless"), []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\x0dIHDR\x00\x00\x00\x01\x00\x00\x00\x01"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	writePublicAllowlistForTest(t, root, "README.md", "LICENSE", "extensionless")
+	report, err := PortableCheckRootWithOptions(root, PortableCheckOptions{Profile: ProfilePublic})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, check := range report.Checks {
+		if check.Name == "public_images" {
+			if check.OK || !strings.Contains(check.Detail, "extensionless") {
+				t.Fatalf("image gate did not identify extensionless image payload: %+v", check)
+			}
+			return
+		}
+	}
+	t.Fatal("missing public_images check")
+}
+
 func writePublicAllowlistForTest(t *testing.T, root string, files ...string) {
 	t.Helper()
 	data := `{"profile":"public","baseline_commit":"test-baseline","files":[` + `"` + strings.Join(files, `","`) + `"]}`

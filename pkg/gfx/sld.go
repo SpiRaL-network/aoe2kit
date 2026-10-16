@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -354,6 +355,10 @@ func ExportSLD(path string, options SLDExportOptions) (SLDExportReport, error) {
 }
 
 func (f *SLD) decodeMainLayer(frame SLDFrame, layer SLDLayer, previous *image.RGBA) (*image.RGBA, error) {
+	return f.decodeGraphicsLayer(frame, layer, previous, false)
+}
+
+func (f *SLD) decodeGraphicsLayer(frame SLDFrame, layer SLDLayer, previous *image.RGBA, shadow bool) (*image.RGBA, error) {
 	img := image.NewRGBA(image.Rect(0, 0, frame.Width, frame.Height))
 	if previous != nil && len(previous.Pix) == len(img.Pix) && (layer.Flag1&0x80 != 0 || layer.Flag1&0x01 != 0) {
 		copy(img.Pix, previous.Pix)
@@ -387,6 +392,12 @@ func (f *SLD) decodeMainLayer(frame SLDFrame, layer SLDLayer, previous *image.RG
 				return nil, fmt.Errorf("compressed block data truncated")
 			}
 			block := decodeBC1Block(f.raw[dataPos : dataPos+8])
+			if shadow {
+				coverage := decodeBC4Block(f.raw[dataPos : dataPos+8])
+				for k, a := range coverage {
+					block[k] = color.RGBA{A: a}
+				}
+			}
 			dataPos += 8
 			bx := blockIndex % blockWidth
 			by := blockIndex / blockWidth
@@ -398,6 +409,150 @@ func (f *SLD) decodeMainLayer(frame SLDFrame, layer SLDLayer, previous *image.RG
 		return nil, fmt.Errorf("unused compressed block bytes: %d", layer.End-dataPos)
 	}
 	return img, nil
+}
+
+// RenderShadowFrame returns BC4 coverage in the alpha channel on the full
+// frame canvas. Its hotspot is identical to the main sprite's. A missing
+// shadow layer returns a nil image, not an invented silhouette.
+func (f *SLD) RenderShadowFrame(ordinal int) (*image.RGBA, SLDFrame, error) {
+	if ordinal < 0 || ordinal >= len(f.Frames) {
+		return nil, SLDFrame{}, fmt.Errorf("frame ordinal %d outside 0..%d", ordinal, len(f.Frames)-1)
+	}
+	var previous *image.RGBA
+	for i := 0; i <= ordinal; i++ {
+		frame := f.Frames[i]
+		layer, ok := frame.layer("shadow")
+		if !ok {
+			previous = nil
+			continue
+		}
+		img, err := f.decodeGraphicsLayer(frame, layer, previous, true)
+		if err != nil {
+			return nil, SLDFrame{}, fmt.Errorf("frame %d shadow layer: %w", i, err)
+		}
+		previous = img
+	}
+	return previous, f.Frames[ordinal], nil
+}
+
+// RenderFrame decodes one main sprite frame. Frames with delta encoding are
+// reconstructed from preceding main frames; the returned image retains the
+// frame canvas, so callers place its top-left at tile-(hotspot).
+func (f *SLD) RenderFrame(ordinal int, playerColor color.RGBA) (*image.RGBA, SLDFrame, error) {
+	if ordinal < 0 || ordinal >= len(f.Frames) {
+		return nil, SLDFrame{}, fmt.Errorf("frame ordinal %d outside 0..%d", ordinal, len(f.Frames)-1)
+	}
+	var previous *image.RGBA
+	var selected *image.RGBA
+	for i := 0; i <= ordinal; i++ {
+		frame := f.Frames[i]
+		layer, ok := frame.layer("main")
+		if !ok {
+			previous = nil
+			continue
+		}
+		img, err := f.decodeMainLayer(frame, layer, previous)
+		if err != nil {
+			return nil, SLDFrame{}, fmt.Errorf("frame %d main layer: %w", i, err)
+		}
+		previous = img
+		if i == ordinal {
+			selected = img
+		}
+	}
+	if selected == nil {
+		return nil, SLDFrame{}, fmt.Errorf("frame %d has no main layer", ordinal)
+	}
+	frame := f.Frames[ordinal]
+	if playerColor.A != 0 {
+		if layer, ok := frame.layer("playercolor"); ok {
+			mask, err := f.decodeMaskLayer(frame, layer)
+			if err != nil {
+				return nil, SLDFrame{}, fmt.Errorf("frame %d player-color layer: %w", ordinal, err)
+			}
+			for y := 0; y < frame.Height; y++ {
+				for x := 0; x < frame.Width; x++ {
+					if amount := int(mask.RGBAAt(x, y).A); amount != 0 {
+						base := selected.RGBAAt(x, y)
+						if base.A == 0 {
+							continue
+						}
+						selected.SetRGBA(x, y, color.RGBA{
+							R: uint8((int(base.R)*(255-amount) + int(playerColor.R)*int(base.A)*amount/255) / 255),
+							G: uint8((int(base.G)*(255-amount) + int(playerColor.G)*int(base.A)*amount/255) / 255),
+							B: uint8((int(base.B)*(255-amount) + int(playerColor.B)*int(base.A)*amount/255) / 255), A: base.A,
+						})
+					}
+				}
+			}
+		}
+	}
+	return selected, frame, nil
+}
+
+func (f *SLD) decodeMaskLayer(frame SLDFrame, layer SLDLayer) (*image.RGBA, error) {
+	img := image.NewRGBA(image.Rect(0, 0, frame.Width, frame.Height))
+	start := layer.Start + 4
+	if start+4 > layer.End {
+		return nil, errors.New("mask layer body too short")
+	}
+	count := int(binary.LittleEndian.Uint16(f.raw[start+2 : start+4]))
+	commands := start + 4
+	blocks := commands + count*2
+	if blocks > layer.End {
+		return nil, errors.New("mask command array exceeds layer")
+	}
+	bw, bh := divCeil(frame.Width, 4), divCeil(frame.Height, 4)
+	blockIndex, pos := 0, blocks
+	for i := 0; i < count; i++ {
+		cmd := f.raw[commands+i*2 : commands+i*2+2]
+		blockIndex += int(cmd[0])
+		for j := 0; j < int(cmd[1]); j++ {
+			if blockIndex >= bw*bh || pos+8 > layer.End {
+				return nil, errors.New("mask block data exceeds layer")
+			}
+			block := decodeBC4Block(f.raw[pos : pos+8])
+			pos += 8
+			bx, by := blockIndex%bw, blockIndex/bw
+			for py := 0; py < 4; py++ {
+				for px := 0; px < 4; px++ {
+					x, y := bx*4+px, by*4+py
+					if x < frame.Width && y < frame.Height {
+						img.SetRGBA(x, y, color.RGBA{A: block[py*4+px]})
+					}
+				}
+			}
+			blockIndex++
+		}
+	}
+	if pos != layer.End {
+		return nil, fmt.Errorf("unused mask bytes: %d", layer.End-pos)
+	}
+	return img, nil
+}
+
+func decodeBC4Block(data []byte) [16]uint8 {
+	table := [8]uint8{data[0], data[1]}
+	if table[0] > table[1] {
+		for i := 2; i < 8; i++ {
+			table[i] = uint8(((8-i)*int(table[0]) + (i-1)*int(table[1])) / 7)
+		}
+	} else {
+		for i := 2; i < 6; i++ {
+			table[i] = uint8(((6-i)*int(table[0]) + (i-1)*int(table[1])) / 5)
+		}
+		table[6], table[7] = 0, 255
+	}
+	var bits uint64
+	for i := 0; i < 6; i++ {
+		bits |= uint64(data[i+2]) << (8 * i)
+	}
+	var out [16]uint8
+	for i := range out {
+		out[i] = table[bits&7]
+		bits >>= 3
+	}
+	return out
 }
 
 func parseSLDLayer(data []byte, start int, frame SLDFrame, kind sldLayerKind) (SLDLayer, int, error) {

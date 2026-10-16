@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"image"
+	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -36,6 +38,118 @@ func TestParseSLDMainLayer(t *testing.T) {
 	got := img.RGBAAt(0, 0)
 	if got.R < 248 || got.G != 0 || got.B != 0 || got.A != 255 {
 		t.Fatalf("pixel = %#v, want opaque red", got)
+	}
+}
+
+func TestRenderFramePreservesHotspotCanvas(t *testing.T) {
+	file, err := ParseSLD(syntheticSLD())
+	if err != nil {
+		t.Fatal(err)
+	}
+	img, frame, err := file.RenderFrame(0, color.RGBA{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if img.Bounds() != image.Rect(0, 0, 4, 4) || frame.HotspotX != 2 || frame.HotspotY != 3 {
+		t.Fatalf("render bounds=%v frame=%+v", img.Bounds(), frame)
+	}
+	if got := img.RGBAAt(0, 0); got.R < 248 || got.A != 255 {
+		t.Fatalf("render pixel=%+v", got)
+	}
+}
+
+func TestRenderFramePlayerMaskUsesBC4(t *testing.T) {
+	b := syntheticSLD()
+	b[24] |= 0x10
+	// BC4 endpoints 0,255, indices: first pixel 0, second pixel 1.
+	body := []byte{0, 1, 1, 0, 0, 1, 0, 255, 8, 0, 0, 0, 0, 0}
+	b = binary.LittleEndian.AppendUint32(b, uint32(len(body)+4))
+	b = append(b, body...)
+	for len(b)%4 != 0 {
+		b = append(b, 0)
+	}
+	s, err := ParseSLD(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pc := color.RGBA{G: 255, A: 255}
+	im, _, err := s.RenderFrame(0, pc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if im.RGBAAt(0, 0) != (color.RGBA{R: 255, A: 255}) || im.RGBAAt(1, 0) != pc {
+		t.Fatalf("mask colors = %v, %v", im.RGBAAt(0, 0), im.RGBAAt(1, 0))
+	}
+}
+
+func TestBC4EndpointModes(t *testing.T) {
+	for _, tc := range []struct {
+		a, b uint8
+		want [8]uint8
+	}{
+		{255, 0, [8]uint8{255, 0, 218, 182, 145, 109, 72, 36}},
+		{0, 255, [8]uint8{0, 255, 51, 102, 153, 204, 0, 255}},
+	} {
+		var bits uint64
+		for i := 0; i < 16; i++ {
+			bits |= uint64(i%8) << (3 * i)
+		}
+		data := []byte{tc.a, tc.b}
+		for i := 0; i < 6; i++ {
+			data = append(data, uint8(bits>>(8*i)))
+		}
+		out := decodeBC4Block(data)
+		for i, v := range out {
+			if v != tc.want[i%8] {
+				t.Fatalf("%d,%d pixel%d=%d want%d", tc.a, tc.b, i, v, tc.want[i%8])
+			}
+		}
+	}
+}
+
+func TestRenderShadowFrame(t *testing.T) {
+	b := syntheticSLD()
+	b[24] |= 2
+	// Shadow graphics have a 12-byte header, unlike the player-color mask.
+	body := []byte{1, 0, 1, 0, 4, 0, 4, 0, 0, 1, 1, 0, 0, 1, 80, 0, 0, 0, 0, 0, 0, 0}
+	b = binary.LittleEndian.AppendUint32(b, uint32(len(body)+4))
+	b = append(b, body...)
+	for len(b)%4 != 0 {
+		b = append(b, 0)
+	}
+	s, err := ParseSLD(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	img, frame, err := s.RenderShadowFrame(0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if frame.HotspotX != 2 || frame.HotspotY != 3 || img.Bounds() != image.Rect(0, 0, 4, 4) {
+		t.Fatalf("canvas/hotspot: %+v", frame)
+	}
+	if img.RGBAAt(0, 0).A != 0 || img.RGBAAt(1, 1) != (color.RGBA{A: 80}) || img.RGBAAt(3, 3).A != 80 {
+		t.Fatal("shadow offsets/coverage lost")
+	}
+	if _, _, err := s.RenderShadowFrame(1); err == nil {
+		t.Fatal("accepted invalid ordinal")
+	}
+	l, _ := frame.layer("shadow")
+	previous := image.NewRGBA(img.Bounds())
+	previous.SetRGBA(0, 0, color.RGBA{A: 40})
+	l.Flag1 = 0x80
+	delta, err := s.decodeGraphicsLayer(frame, l, previous, true)
+	if err != nil || delta.RGBAAt(0, 0).A != 40 {
+		t.Fatalf("delta preservation: %v", err)
+	}
+	l.End--
+	if _, err := s.decodeGraphicsLayer(frame, l, nil, true); err == nil {
+		t.Fatal("accepted truncated shadow")
+	}
+	s, _ = ParseSLD(syntheticSLD())
+	img, _, err = s.RenderShadowFrame(0)
+	if err != nil || img != nil {
+		t.Fatal("invented missing shadow")
 	}
 }
 

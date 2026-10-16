@@ -794,16 +794,9 @@ func readDEPlayers(c *cursor, save float64) ([]PlayerSlot, error) {
 		return nil, fmt.Errorf("unreasonable DE player count %d", numPlayers)
 	}
 	players := make([]PlayerSlot, 0, int(numPlayers))
-	slotRecords := int(numPlayers)
-	if slotRecords < 8 {
-		slotRecords = 8
-	}
-	for i := 0; i < slotRecords; i++ {
+	for i := 0; i < int(numPlayers); i++ {
 		marker, err := seekDEPlayerMarker(c, i)
 		if err != nil {
-			if i >= int(numPlayers) {
-				break
-			}
 			return nil, err
 		}
 		dlcID := int(binary.LittleEndian.Uint32(c.data[marker-8:]))
@@ -1031,8 +1024,7 @@ func seekDEPlayerMarker(c *cursor, slot int) (int, error) {
 		}
 		return off, nil
 	}
-	c.err = fmt.Errorf("player %d marker not found near header offset %d", slot+1, c.off)
-	return 0, c.err
+	return 0, fmt.Errorf("player %d marker not found near header offset %d", slot+1, c.off)
 }
 
 func plausibleDETeamByte(value byte) bool {

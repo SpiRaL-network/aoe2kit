@@ -127,11 +127,18 @@ type SoundItem struct {
 }
 
 type Terrain struct {
-	Index           int         `json:"index"`
-	Name            DebugString `json:"name"`
-	Name2           DebugString `json:"name_2"`
-	OverlayMaskName DebugString `json:"overlay_mask_name"`
-	Span            Span        `json:"span"`
+	Index                  int         `json:"index"`
+	Name                   DebugString `json:"name"`
+	Name2                  DebugString `json:"name_2"`
+	OverlayMaskName        DebugString `json:"overlay_mask_name"`
+	BlendPriority          int32       `json:"blend_priority"`
+	BlendType              int32       `json:"blend_type"`
+	MinimapColorHigh       uint8       `json:"minimap_color_high"`
+	MinimapColorMedium     uint8       `json:"minimap_color_medium"`
+	MinimapColorLow        uint8       `json:"minimap_color_low"`
+	MinimapColorCliffLeft  uint8       `json:"minimap_color_cliff_left"`
+	MinimapColorCliffRight uint8       `json:"minimap_color_cliff_right"`
+	Span                   Span        `json:"span"`
 }
 
 type RandomMapInfo struct {
@@ -368,6 +375,8 @@ type UnitSummary struct {
 	ClearanceSizeY     float32           `json:"clearance_size_y"`
 	TerrainTableID     int16             `json:"terrain_table_id"`
 	MovementType       uint8             `json:"movement_type"`
+	MapDrawLevel       uint8             `json:"map_draw_level"`
+	MapColor           uint8             `json:"map_color"`
 	FlyMode            uint8             `json:"fly_mode"`
 	ObstructionTypeID  uint8             `json:"obstruction_type_id"`
 	ObstructionClassID uint8             `json:"obstruction_class_id"`
@@ -424,6 +433,8 @@ type UnitFieldSpans struct {
 	ClearanceSizeY     Span `json:"clearance_size_y"`
 	TerrainTableID     Span `json:"terrain_table_id"`
 	MovementType       Span `json:"movement_type"`
+	MapDrawLevel       Span `json:"map_draw_level"`
+	MapColor           Span `json:"map_color"`
 	ObstructionTypeID  Span `json:"obstruction_type_id"`
 	ObstructionClassID Span `json:"obstruction_class_id"`
 	StandingGraphic1   Span `json:"standing_graphic_1"`
@@ -5704,13 +5715,37 @@ func parseTerrain(c *cursor, index int) (Terrain, error) {
 	if terrain.Name2, err = c.debugString("terrain_name_2"); err != nil {
 		return terrain, err
 	}
-	if err := c.skip(4 + 4 + 4 + 4 + 4 + 4 + 4); err != nil {
+	if err := c.skip(5 * 4); err != nil {
+		return terrain, err
+	}
+	// The two words before the mask string are the DAT blend priority/type.
+	// Layout corroborated by genieutils Terrain.cpp; rendering semantics are
+	// separate evidence and are not implied by these names.
+	if terrain.BlendPriority, err = c.i32(); err != nil {
+		return terrain, err
+	}
+	if terrain.BlendType, err = c.i32(); err != nil {
 		return terrain, err
 	}
 	if terrain.OverlayMaskName, err = c.debugString("terrain_overlay_mask_name"); err != nil {
 		return terrain, err
 	}
-	if err := c.skip(3 + 2 + 3 + 2 + 2 + 4 + 4 + 2 + 2 + 4 + 1 + 1); err != nil {
+	if terrain.MinimapColorHigh, err = c.u8(); err != nil {
+		return terrain, err
+	}
+	if terrain.MinimapColorMedium, err = c.u8(); err != nil {
+		return terrain, err
+	}
+	if terrain.MinimapColorLow, err = c.u8(); err != nil {
+		return terrain, err
+	}
+	if terrain.MinimapColorCliffLeft, err = c.u8(); err != nil {
+		return terrain, err
+	}
+	if terrain.MinimapColorCliffRight, err = c.u8(); err != nil {
+		return terrain, err
+	}
+	if err := c.skip(25); err != nil {
 		return terrain, err
 	}
 	if err := c.skip(tileTypeCount * 6); err != nil {
@@ -6773,7 +6808,25 @@ func parseUnit(c *cursor, civIndex, unitIndex int, versionAtLeast88 bool) (UnitS
 	}
 	unit.FieldSpans.MovementType = Span{Name: "movement_type", Start: start, End: c.off}
 	unit.FlyMode = unit.MovementType
-	if err := c.skip(2 + 4 + 1 + 1 + 1 + 1 + 1 + 4 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + 1); err != nil {
+	if err := c.skip(2 + 4 + 1 + 1 + 1); err != nil {
+		return UnitSummary{}, err
+	}
+	start = c.off
+	unit.MapDrawLevel, err = c.u8()
+	if err != nil {
+		return UnitSummary{}, err
+	}
+	unit.FieldSpans.MapDrawLevel = Span{Name: "map_draw_level", Start: start, End: c.off}
+	if err := c.skip(1 + 4); err != nil {
+		return UnitSummary{}, err
+	}
+	start = c.off
+	unit.MapColor, err = c.u8()
+	if err != nil {
+		return UnitSummary{}, err
+	}
+	unit.FieldSpans.MapColor = Span{Name: "map_color", Start: start, End: c.off}
+	if err := c.skip(4 + 4 + 4 + 1 + 1 + 1 + 1 + 1); err != nil {
 		return UnitSummary{}, err
 	}
 	start = c.off

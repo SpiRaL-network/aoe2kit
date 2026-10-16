@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -132,6 +133,16 @@ func PortableCheckRootWithOptions(root string, opts PortableCheckOptions) (Porta
 		return report, err
 	}
 	if opts.Profile == ProfilePublic {
+		imageLeaks, imageErr := portableImageLeaksForProfile(root, opts.Profile)
+		if imageErr != nil {
+			add("public_images", false, "public image scan failed: "+imageErr.Error())
+		} else {
+			detail := "none"
+			if len(imageLeaks) > 0 {
+				detail = fmt.Sprintf("image files: %s", strings.Join(imageLeaks, ", "))
+			}
+			add("public_images", len(imageLeaks) == 0, detail)
+		}
 		binaryLeaks, binaryErr := portableExecutableLeaksForProfile(root, opts.Profile)
 		if binaryErr != nil {
 			add("third_party_binaries", false, "public binary scan failed: "+binaryErr.Error())
@@ -174,6 +185,30 @@ func PortableCheckRootWithOptions(root string, opts PortableCheckOptions) (Porta
 	}
 	report.OK = len(report.Errors) == 0
 	return report, nil
+}
+
+func portableImageLeaksForProfile(root string, profile PackProfile) ([]string, error) {
+	rootAbs, files, err := portableProfileFiles(root, profile)
+	if err != nil {
+		return nil, err
+	}
+	var leaks []string
+	for _, path := range files {
+		rel, err := filepath.Rel(rootAbs, path)
+		if err != nil {
+			return nil, err
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+		contentType := http.DetectContentType(data)
+		if isImageFileName(rel) || strings.HasPrefix(contentType, "image/") {
+			leaks = append(leaks, filepath.ToSlash(rel))
+		}
+	}
+	sort.Strings(leaks)
+	return leaks, nil
 }
 
 func portableHandoffFiles(root string) (string, []string, error) {

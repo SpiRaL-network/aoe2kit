@@ -4,13 +4,13 @@ package gamestrings
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
+
+	"aoe2kit/pkg/gameinstall"
 )
 
 const tableFileName = "key-value-strings-utf8.txt"
@@ -107,37 +107,14 @@ func LoadFromGameDir(gameDir string) (Table, error) {
 // contains the string table. It is deliberately conservative and returns an
 // error when no local installation is discoverable.
 func FindGameDir() (string, error) {
-	home, err := os.UserHomeDir()
+	dir, err := gameinstall.Discover()
 	if err != nil {
 		return "", err
 	}
-	var candidates []string
-	if runtime.GOOS == "windows" {
-		candidates = []string{
-			filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Steam", "steamapps", "common", "Age of Empires II Definitive Edition"),
-			filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Steam", "steamapps", "common", "AoE2DE"),
-			filepath.Join(os.Getenv("PROGRAMFILES"), "Steam", "steamapps", "common", "Age of Empires II Definitive Edition"),
-			filepath.Join(os.Getenv("PROGRAMFILES"), "Steam", "steamapps", "common", "AoE2DE"),
-		}
-	} else {
-		for _, root := range []string{
-			filepath.Join(home, ".steam", "steam"),
-			filepath.Join(home, ".local", "share", "Steam"),
-			filepath.Join(home, ".steam", "root"),
-		} {
-			candidates = append(candidates, filepath.Join(root, "steamapps", "common", "Age of Empires II Definitive Edition"))
-			candidates = append(candidates, filepath.Join(root, "steamapps", "common", "AoE2DE"))
-		}
+	if _, err := LoadFromGameDir(dir); err != nil {
+		return "", err
 	}
-	for _, dir := range candidates {
-		if dir == "" {
-			continue
-		}
-		if _, err := LoadFromGameDir(dir); err == nil {
-			return dir, nil
-		}
-	}
-	return "", errors.New("could not find a local Age of Empires II installation; use --game-dir")
+	return dir, nil
 }
 
 // LoadAuto uses an explicit directory when provided, otherwise it tries the
@@ -147,7 +124,7 @@ func LoadAuto(gameDir string) (Table, error) {
 	if strings.TrimSpace(gameDir) != "" {
 		return LoadFromGameDir(gameDir)
 	}
-	dir, err := FindGameDir()
+	dir, err := gameinstall.Resolve("")
 	if err != nil {
 		return Table{}, err
 	}
