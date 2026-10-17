@@ -82,3 +82,42 @@ func mustWrite(t *testing.T, path, data string) {
 		t.Fatal(err)
 	}
 }
+
+// The upward search for mod-status.json must end at the filesystem root even
+// when no "mods" folder is on the way, for absolute and relative mod paths.
+func TestFindModStatusStopsAtFilesystemRoot(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("AOE2KIT_MOD_STATUS", "")
+
+	root := t.TempDir()
+	mod := filepath.Join(root, "work", "MyMod")
+	if err := os.MkdirAll(mod, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if got := findModStatus(mod); got != "" {
+		t.Fatalf("findModStatus found %q with no mod-status.json anywhere", got)
+	}
+
+	status := filepath.Join(root, "mod-status.json")
+	if err := os.WriteFile(status, []byte(`{}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got := findModStatus(mod); got != status {
+		t.Fatalf("findModStatus = %q, want %q two levels up", got, status)
+	}
+
+	// go.mod targets Go 1.23, which has no t.Chdir.
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(filepath.Join(root, "work")); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.Chdir(wd) })
+	if got := findModStatus("MyMod"); got != status {
+		t.Fatalf("relative path: findModStatus = %q, want %q", got, status)
+	}
+}
