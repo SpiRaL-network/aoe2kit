@@ -302,6 +302,11 @@ func portableExecutableLeaksForProfile(root string, profile PackProfile) ([]stri
 }
 
 func isExecutableMagic(data []byte) bool {
+	// A script with an interpreter line: the mode check above cannot see it on
+	// Windows, which has no executable permission bits.
+	if len(data) >= 2 && data[0] == '#' && data[1] == '!' {
+		return true
+	}
 	if len(data) >= 4 && data[0] == 0x7f && data[1] == 'E' && data[2] == 'L' && data[3] == 'F' {
 		return true
 	}

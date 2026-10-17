@@ -115,6 +115,28 @@ func TestPortablePublicRejectsExecutablePayloads(t *testing.T) {
 	t.Fatal("missing third_party_binaries check")
 }
 
+func TestIsExecutableMagicRecognizesScriptsAndBinaries(t *testing.T) {
+	cases := []struct {
+		name string
+		data string
+		want bool
+	}{
+		{"shebang script", "#!/bin/sh\necho hi\n", true},
+		{"env shebang", "#!/usr/bin/env python3\n", true},
+		{"ELF", "\x7fELF\x02\x01", true},
+		{"PE", "MZ\x90\x00", true},
+		{"Mach-O", "\xcf\xfa\xed\xfe", true},
+		{"markdown heading", "# Title\n", false},
+		{"text", "portable root\n", false},
+		{"empty", "", false},
+	}
+	for _, c := range cases {
+		if got := isExecutableMagic([]byte(c.data)); got != c.want {
+			t.Errorf("%s: isExecutableMagic = %t, want %t", c.name, got, c.want)
+		}
+	}
+}
+
 func TestPortablePublicRejectsImageFilesByExtensionAndContent(t *testing.T) {
 	if !publicReleaseForbidden("preview.webp") {
 		t.Fatal("public allowlist accepted a WebP image path")
