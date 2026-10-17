@@ -254,6 +254,9 @@ func publicAllowlistLeaks(root string, allowed map[string]bool) ([]string, error
 		if rel == ProfileMarkerName || strings.HasSuffix(rel, ".aoe2kit-portable-check-output.zip") || ignore.ignored(rel, false) {
 			return nil
 		}
+		if rel == ".git" { // a git worktree's .git is a file, not a directory
+			return nil
+		}
 		if !allowed[rel] {
 			leaks = append(leaks, rel)
 		}

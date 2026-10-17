@@ -1,6 +1,7 @@
 package kit
 
 import (
+	"bytes"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -30,5 +31,26 @@ func TestVerifyParsesDatArtifacts(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("expected dat parse error, got %#v", report.Errors)
+	}
+}
+
+func TestSameManifestTextIgnoresCRLFCheckouts(t *testing.T) {
+	generated, err := ManifestJSON()
+	if err != nil {
+		t.Fatal(err)
+	}
+	crlf := bytes.ReplaceAll(generated, []byte("\n"), []byte("\r\n"))
+	if !sameManifestText(append(crlf, '\r', '\n'), generated) {
+		t.Fatal("a CRLF checkout of the current manifest was reported as drift")
+	}
+	if !sameManifestText(append(append([]byte(nil), generated...), '\n'), generated) {
+		t.Fatal("a trailing newline was reported as drift")
+	}
+	changed := bytes.Replace(generated, []byte(`"AoE2Kit"`), []byte(`"AoE2Kit-stale"`), 1)
+	if bytes.Equal(changed, generated) {
+		t.Fatal("test setup: manifest has no \"AoE2Kit\" name to change")
+	}
+	if sameManifestText(changed, generated) {
+		t.Fatal("a changed manifest was not reported as drift")
 	}
 }

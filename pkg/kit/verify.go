@@ -60,7 +60,7 @@ func Verify(root string, runGoChecks bool) VerifyReport {
 		snapshot, err := os.ReadFile(snapshotPath)
 		if err != nil {
 			report.Errors = append(report.Errors, fmt.Sprintf("read KIT_MANIFEST.json: %v", err))
-		} else if !bytes.Equal(bytes.TrimSpace(snapshot), bytes.TrimSpace(generated)) {
+		} else if !sameManifestText(snapshot, generated) {
 			report.Errors = append(report.Errors, "KIT_MANIFEST.json drift: regenerate with `kit manifest > KIT_MANIFEST.json`")
 		} else {
 			report.ManifestOK = true
@@ -118,6 +118,17 @@ func Verify(root string, runGoChecks bool) VerifyReport {
 
 func (r VerifyReport) OK() bool {
 	return len(r.Errors) == 0
+}
+
+// sameManifestText compares the KIT_MANIFEST.json snapshot with the generated
+// manifest, ignoring surrounding whitespace and CRLF line endings: a Git for
+// Windows checkout (core.autocrlf=true) rewrites the snapshot with CRLF.
+func sameManifestText(snapshot, generated []byte) bool {
+	crlf := []byte("\r\n")
+	lf := []byte("\n")
+	a := bytes.TrimSpace(bytes.ReplaceAll(snapshot, crlf, lf))
+	b := bytes.TrimSpace(bytes.ReplaceAll(generated, crlf, lf))
+	return bytes.Equal(a, b)
 }
 
 func runCommand(dir, name string, args ...string) error {

@@ -156,3 +156,18 @@ func mustWritePortable(t *testing.T, path, text string) {
 		t.Fatalf("write %s: %v", path, err)
 	}
 }
+
+// In a git worktree, .git is a file pointing at the main repository.
+func TestPublicAllowlistIgnoresWorktreeGitFile(t *testing.T) {
+	root := t.TempDir()
+	mustWritePortable(t, filepath.Join(root, "README.md"), "portable root\n")
+	mustWritePortable(t, filepath.Join(root, ".git"), "gitdir: /elsewhere/.git/worktrees/x\n")
+	mustWritePortable(t, filepath.Join(root, "stray.txt"), "not listed\n")
+	leaks, err := publicAllowlistLeaks(root, map[string]bool{"README.md": true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(leaks) != 1 || leaks[0] != "stray.txt" {
+		t.Fatalf("leaks = %v, want only stray.txt", leaks)
+	}
+}
