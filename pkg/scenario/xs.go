@@ -156,7 +156,10 @@ func (f *File) XSCensus(opts XSCensusOptions) (XSCensusReport, error) {
 			if i == 0 {
 				entryPath = path
 			}
-			sources = append(sources, xsauthor.SourceFile{Path: path, Content: carrier.Source})
+			// Content, not Source: Source starts with the carrier title line, which
+			// would shift every finding one line past the script (as extracted by
+			// scen xs extract, or as given to the recipe's xs.content_file).
+			sources = append(sources, xsauthor.SourceFile{Path: path, Content: carrier.Content})
 		}
 		// Carrier triggers are independent entry points, not include descendants.
 		entryPath = ""

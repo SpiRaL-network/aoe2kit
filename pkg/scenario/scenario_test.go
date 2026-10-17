@@ -1920,6 +1920,42 @@ func TestPatchRecipeXSCarrierMode(t *testing.T) {
 	}
 }
 
+// Findings on an embedded carrier use the line numbers of the script itself
+// (the recipe's content, or scen xs extract output), not of the carrier text,
+// whose first line is the carrier title.
+func TestXSCensusCarrierFindingsUseScriptLines(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "blank.aoe2scenario")
+	if _, err := WriteBlankScenarioFile(input, BlankOptions{PlayerCount: 2, HumanSlots: 1}); err != nil {
+		t.Fatalf("WriteBlankScenarioFile: %v", err)
+	}
+	out := filepath.Join(dir, "xs_lines.aoe2scenario")
+	source := "void probe(int a = 0) {\n  int b = 0;\n  if (a - b > 3) { b = 1; }\n}\n"
+	recipe := Recipe{XS: &XSRecipe{Mode: "inline_runtime", Name: "Lines.xs", Content: source}}
+	if _, err := PatchRecipeFile(input, out, recipe); err != nil {
+		t.Fatalf("PatchRecipeFile: %v", err)
+	}
+	report, err := XSCensusFile(out, XSCensusOptions{AllowMissingXSCheck: true})
+	if err != nil {
+		t.Fatalf("XSCensusFile: %v", err)
+	}
+	if report.Analysis == nil {
+		t.Fatal("no analysis for the embedded carrier")
+	}
+	found := false
+	for _, finding := range report.Analysis.Findings {
+		if finding.Code == "xs_condition_arithmetic" {
+			found = true
+			if finding.Line != 3 {
+				t.Fatalf("finding on line %d, want 3 (the if line of the script)", finding.Line)
+			}
+		}
+	}
+	if !found {
+		t.Fatalf("no xs_condition_arithmetic finding: %+v", report.Analysis.Findings)
+	}
+}
+
 func TestPatchRecipeXSInlineRuntimeInsertsEnabledTriggerZero(t *testing.T) {
 	dir := t.TempDir()
 	input := filepath.Join(dir, "blank.aoe2scenario")
