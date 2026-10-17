@@ -784,6 +784,9 @@ func newDECursor(header []byte, saveVersion float64, label string) (*cursor, err
 	return c, nil
 }
 
+// deLobbySlots is the number of player records a DE header always carries.
+const deLobbySlots = 8
+
 func readDEPlayers(c *cursor, save float64) ([]PlayerSlot, error) {
 	settings, numPlayers, err := readDELobbySettingsPrefix(c)
 	if err != nil {
@@ -794,7 +797,14 @@ func readDEPlayers(c *cursor, save float64) ([]PlayerSlot, error) {
 		return nil, fmt.Errorf("unreasonable DE player count %d", numPlayers)
 	}
 	players := make([]PlayerSlot, 0, int(numPlayers))
-	for i := 0; i < int(numPlayers); i++ {
+	// DE writes a record for every lobby slot, used or not; only the first
+	// numPlayers are players. Stopping after numPlayers leaves the cursor in
+	// the unused slots, and everything parsed after the players is misaligned.
+	slots := int(numPlayers)
+	if slots < deLobbySlots {
+		slots = deLobbySlots
+	}
+	for i := 0; i < slots; i++ {
 		marker, err := seekDEPlayerMarker(c, i)
 		if err != nil {
 			return nil, err
