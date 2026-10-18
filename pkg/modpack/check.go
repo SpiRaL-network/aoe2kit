@@ -227,9 +227,17 @@ func findModStatus(modPath string) string {
 	if env := os.Getenv("AOE2KIT_MOD_STATUS"); env != "" {
 		candidates = append(candidates, env)
 	}
-	for dir := modPath; dir != "" && dir != string(filepath.Separator); dir = filepath.Dir(dir) {
+	start := modPath
+	if abs, err := filepath.Abs(modPath); err == nil {
+		start = abs
+	}
+	// Stop when Dir reaches a fixed point, including Windows volume roots.
+	for dir := start; dir != ""; dir = filepath.Dir(dir) {
 		candidates = append(candidates, filepath.Join(dir, "mod-status.json"))
 		if filepath.Base(dir) == "mods" {
+			break
+		}
+		if filepath.Dir(dir) == dir {
 			break
 		}
 	}

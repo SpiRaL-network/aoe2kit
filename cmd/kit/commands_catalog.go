@@ -141,7 +141,7 @@ var commandCatalog = []CommandSpec{
 	{Name: "preview assets", Usage: "kit preview assets <scenario> [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--missing-only] [--paths]", Trait: TraitReadOnly, Input: "scenario"},
 	{Name: "preview calibrate-mood", Usage: "kit preview calibrate-mood --manifest FILE | --samples REPORT [--game-dir DIR] [--fit --holdout MOOD] [--out FILE]", Trait: TraitWrites, Input: "calibration manifest or sample report"},
 	{Name: "fx bind", Usage: "kit fx bind --atlas file.png|--dds file.dds --grid RxC|--frames N --frame-size WxH --into resources/_common --dat empires*.dat --unit N --slot flying|standing|attack|dying --from graphic_id --name fx_name [--dry-run]", Trait: TraitWrites, Input: "dat"},
-	{Name: "fx lint", Usage: "kit fx lint <mod-or-resources/_common> [--dat empires*.dat] [--text]", Trait: TraitReadOnly, Input: "dat"},
+	{Name: "fx lint", Usage: "kit fx lint <mod-or-resources/_common> [--dat empires*.dat] [--text]", Trait: TraitReadOnly, Input: "folder"},
 	{Name: "fx new", Usage: "kit fx new <name> --preset trail|explosion|aura|projectile-fire [--grid RxC] [descriptor overrides]", Trait: TraitWrites, Input: "other"},
 	{Name: "geo trace-dem", Usage: strings.TrimPrefix(geoTraceUsage(), "usage: "), Trait: TraitWrites, Input: "other"},
 	{Name: "gfx export", Usage: "kit gfx export <file.sld> [--out dir] [--limit N] [--text]", Trait: TraitWrites, Input: "other"},

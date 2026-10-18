@@ -115,6 +115,28 @@ func TestPortablePublicRejectsExecutablePayloads(t *testing.T) {
 	t.Fatal("missing third_party_binaries check")
 }
 
+func TestIsExecutableMagicRecognizesScriptsAndBinaries(t *testing.T) {
+	cases := []struct {
+		name string
+		data string
+		want bool
+	}{
+		{"shebang script", "#!/bin/sh\necho hi\n", true},
+		{"env shebang", "#!/usr/bin/env python3\n", true},
+		{"ELF", "\x7fELF\x02\x01", true},
+		{"PE", "MZ\x90\x00", true},
+		{"Mach-O", "\xcf\xfa\xed\xfe", true},
+		{"markdown heading", "# Title\n", false},
+		{"text", "portable root\n", false},
+		{"empty", "", false},
+	}
+	for _, c := range cases {
+		if got := isExecutableMagic([]byte(c.data)); got != c.want {
+			t.Errorf("%s: isExecutableMagic = %t, want %t", c.name, got, c.want)
+		}
+	}
+}
+
 func TestPortablePublicRejectsImageFilesByExtensionAndContent(t *testing.T) {
 	if !publicReleaseForbidden("preview.webp") {
 		t.Fatal("public allowlist accepted a WebP image path")
@@ -154,5 +176,20 @@ func mustWritePortable(t *testing.T, path, text string) {
 	}
 	if err := os.WriteFile(path, []byte(text), 0o644); err != nil {
 		t.Fatalf("write %s: %v", path, err)
+	}
+}
+
+// In a git worktree, .git is a file pointing at the main repository.
+func TestPublicAllowlistIgnoresWorktreeGitFile(t *testing.T) {
+	root := t.TempDir()
+	mustWritePortable(t, filepath.Join(root, "README.md"), "portable root\n")
+	mustWritePortable(t, filepath.Join(root, ".git"), "gitdir: ../main/.git/worktrees/x\n")
+	mustWritePortable(t, filepath.Join(root, "stray.txt"), "not listed\n")
+	leaks, err := publicAllowlistLeaks(root, map[string]bool{"README.md": true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(leaks) != 1 || leaks[0] != "stray.txt" {
+		t.Fatalf("leaks = %v, want only stray.txt", leaks)
 	}
 }

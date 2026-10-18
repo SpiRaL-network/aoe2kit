@@ -12,6 +12,18 @@ import (
 // its traits and the build fails here, which is the whole point of moving the
 // classification out of downstream tooling.
 
+func TestFXLintAcceptsFolder(t *testing.T) {
+	for _, spec := range commandCatalog {
+		if spec.Name == "fx lint" {
+			if spec.Input != "folder" {
+				t.Fatalf("fx lint input = %q, want folder", spec.Input)
+			}
+			return
+		}
+	}
+	t.Fatal("fx lint missing from command catalog")
+}
+
 func TestCommandCatalogCoversUsage(t *testing.T) {
 	declared := map[string]bool{}
 	for _, spec := range commandCatalog {

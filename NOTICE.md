@@ -213,7 +213,7 @@ Notes:
 - Authors: SpiRaL
 - URL: https://github.com/SpiRaL-network
 - Permission: contributed by pull request to chrae/aoe2kit
-- Gave: Code contributions by pull request (#1-#4, October 2026): xs-check discovery on Windows, a Windows test hang fix, --text/--json on scen patch, and one-based player labels in lint and blank output.
+- Gave: Code contributions by pull request (#1-#4 and #8-#14, October 2026): xs-check discovery on Windows, test and root-search hang fixes, cache rename portability, complete lobby-slot consumption, CRLF manifest comparison, worktree and script detection, CLI flag validation, carrier finding line numbers, and scenario command output improvements. Issues #15/#16 corrected fx lint's input classification and narrowed XS condition rules using engine observations.
 - Role: Code contributor
 - Relationship: code_contributor
 - Rung earned: credited
@@ -224,6 +224,7 @@ SpiRaL contributed AoE2Kit's first external pull requests, including the Windows
 
 Notes:
 - PRs #2-#4 were ported as submitted; #1 was ported in part because recipe player numbering changed in the same release window.
+- PRs #8-#14 were ported individually into the private development tree and sanitized release history; the public PR branches cannot be merged directly because those histories differ. Regression tests accompany the ports. Close errors are checked in the cache rename port, and the worktree fixture uses a portable relative gitdir.
 - Personal thanks to SpiRaL is a human action and remains owed until it is actually given.
 
 ### CB Front Towers OG Enhanced

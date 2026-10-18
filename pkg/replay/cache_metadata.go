@@ -29,9 +29,9 @@ func OpenMetadata(path string) (*File, error) {
 // Metadata inspects bounded prefix/tail windows. Full snapshot bytes remain on
 // disk. An unavailable graph is explicit, never a guessed successful parse.
 func (c *ReplayCache) Metadata() (*File, error) {
-	// v3 invalidates metadata produced before the embedded 1.59 trigger
-	// section fallback was added.
-	target := filepath.Join(c.Dir, "metadata-v3.json")
+	// v4 invalidates player/AI metadata produced before complete lobby-slot
+	// consumption and active-slot marker support. Raw cached bytes remain valid.
+	target := filepath.Join(c.Dir, "metadata-v4.json")
 	if f, e := os.Open(target); e == nil {
 		var rec File
 		e = json.NewDecoder(io.LimitReader(f, maxReportBytes)).Decode(&rec)

@@ -254,6 +254,9 @@ func publicAllowlistLeaks(root string, allowed map[string]bool) ([]string, error
 		if rel == ProfileMarkerName || strings.HasSuffix(rel, ".aoe2kit-portable-check-output.zip") || ignore.ignored(rel, false) {
 			return nil
 		}
+		if rel == ".git" { // a git worktree's .git is a file, not a directory
+			return nil
+		}
 		if !allowed[rel] {
 			leaks = append(leaks, rel)
 		}
@@ -302,6 +305,11 @@ func portableExecutableLeaksForProfile(root string, profile PackProfile) ([]stri
 }
 
 func isExecutableMagic(data []byte) bool {
+	// A script with an interpreter line: the mode check above cannot see it on
+	// Windows, which has no executable permission bits.
+	if len(data) >= 2 && data[0] == '#' && data[1] == '!' {
+		return true
+	}
 	if len(data) >= 4 && data[0] == 0x7f && data[1] == 'E' && data[2] == 'L' && data[3] == 'F' {
 		return true
 	}

@@ -136,6 +136,10 @@ func OpenReplayCache(path string) (*ReplayCache, error) {
 		if staged != "" {
 			c.Source = filepath.Join(dir, "record.bin")
 			if _, err := os.Stat(c.Source); os.IsNotExist(err) {
+				// Windows refuses to rename the staged file while it is open.
+				if err := f.Close(); err != nil {
+					return nil, err
+				}
 				if err := os.Rename(staged, c.Source); err != nil {
 					return nil, err
 				}
@@ -208,6 +212,9 @@ func OpenReplayCache(path string) (*ReplayCache, error) {
 	}
 	// Cache zip extraction as well, so random access never re-inflates the zip.
 	if staged != "" {
+		if e = f.Close(); e != nil {
+			return nil, e
+		}
 		if e = os.Rename(staged, filepath.Join(tmp, "record.bin")); e != nil {
 			return nil, e
 		}

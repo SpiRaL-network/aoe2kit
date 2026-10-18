@@ -92,9 +92,11 @@ func main() {
 		root := "."
 		runGoChecks := false
 		for _, arg := range os.Args[2:] {
-			switch arg {
-			case "--go-checks":
+			switch {
+			case arg == "--go-checks":
 				runGoChecks = true
+			case strings.HasPrefix(arg, "-"):
+				die("kit verify", fmt.Errorf("unknown flag %q (usage: kit verify [folder] [--go-checks])", arg))
 			default:
 				root = arg
 			}
@@ -1663,11 +1665,13 @@ func runDocs(args []string) {
 		root := "docs"
 		textOut := false
 		for _, arg := range args[1:] {
-			switch arg {
-			case "--text":
+			switch {
+			case arg == "--text":
 				textOut = true
-			case "--json":
+			case arg == "--json":
 				textOut = false
+			case strings.HasPrefix(arg, "-"):
+				die("kit docs lint", fmt.Errorf("unknown flag %q (usage: kit docs lint [folder] [--text|--json])", arg))
 			default:
 				root = arg
 			}

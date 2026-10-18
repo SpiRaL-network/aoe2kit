@@ -784,6 +784,9 @@ func newDECursor(header []byte, saveVersion float64, label string) (*cursor, err
 	return c, nil
 }
 
+// deLobbySlots is the number of player records a DE header always carries.
+const deLobbySlots = 8
+
 func readDEPlayers(c *cursor, save float64) ([]PlayerSlot, error) {
 	settings, numPlayers, err := readDELobbySettingsPrefix(c)
 	if err != nil {
@@ -794,7 +797,14 @@ func readDEPlayers(c *cursor, save float64) ([]PlayerSlot, error) {
 		return nil, fmt.Errorf("unreasonable DE player count %d", numPlayers)
 	}
 	players := make([]PlayerSlot, 0, int(numPlayers))
-	for i := 0; i < int(numPlayers); i++ {
+	// DE writes a record for every lobby slot, used or not; only the first
+	// numPlayers are players. Stopping after numPlayers leaves the cursor in
+	// the unused slots, and everything parsed after the players is misaligned.
+	slots := int(numPlayers)
+	if slots < deLobbySlots {
+		slots = deLobbySlots
+	}
+	for i := 0; i < slots; i++ {
 		marker, err := seekDEPlayerMarker(c, i)
 		if err != nil {
 			return nil, err
@@ -1014,12 +1024,17 @@ func seekDEPlayerMarker(c *cursor, slot int) (int, error) {
 		limit = len(c.data) - 16
 	}
 	for off := c.off + 8; off <= limit; off++ {
-		if c.data[off] != 0xff || !plausibleDETeamByte(c.data[off+1]) || !plausibleDETeamByte(c.data[off+2]) {
+		if !plausibleDETeamByte(c.data[off+1]) || !plausibleDETeamByte(c.data[off+2]) {
 			continue
 		}
 		dlcID := binary.LittleEndian.Uint32(c.data[off-8:])
 		colorID := binary.LittleEndian.Uint32(c.data[off-4:])
 		if dlcID != 15 || (colorID > 15 && colorID != 0xffffffff) {
+			continue
+		}
+		// Active slots can repeat the color byte here; closed slots use ff.
+		// Requiring ff skipped real active records and counted closed slots instead.
+		if c.data[off] != 0xff && (colorID > 15 || c.data[off] != byte(colorID)) {
 			continue
 		}
 		return off, nil

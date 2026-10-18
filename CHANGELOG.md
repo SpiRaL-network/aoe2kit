@@ -1,4 +1,28 @@
 # Changelog
+## v0.4.1 - 2026-10-17
+
+### Fixed
+- SpiRaL-network PR #8: terminate mod-status discovery at filesystem roots,
+  including Windows volume roots and relative inputs.
+- SpiRaL-network PR #9: close staged replay files before cache renames on Windows.
+- SpiRaL-network PR #10: consume all eight DE lobby-slot records while returning
+  only the declared players, keeping subsequent header reads aligned.
+  Corpus follow-up: recognize active color markers as well as closed-slot `ff`
+  markers, and invalidate derived player metadata from the old parser.
+- SpiRaL-network PR #11: tolerate CRLF manifest checkouts and ignore the worktree
+  `.git` control file in public allowlist scans.
+- SpiRaL-network PR #12: recognize shebang scripts as executable payloads even
+  when executable permission bits are unavailable.
+- SpiRaL-network PR #13: reject unknown `verify` and `docs lint` flags with usage.
+- SpiRaL-network PR #14: report embedded XS findings on script-relative lines.
+- SpiRaL-network issue #15: classify `fx lint` input as a folder, not a DAT.
+- SpiRaL-network issue #16: narrow XS hard errors to arithmetic-led logical
+  operands and four-or-more ungrouped Boolean terms. Disputed standalone/RHS
+  arithmetic and three-term chains are warnings with build-scoped evidence.
+
+These fixes are tested structurally; conflicting historical engine observations
+remain documented rather than being silently discarded.
+
 
 ## 0.4.0 - 2026-10-16
 

@@ -82,3 +82,37 @@ func mustWrite(t *testing.T, path, data string) {
 		t.Fatal(err)
 	}
 }
+
+// The upward search must terminate for both absolute and relative mod paths.
+func TestFindModStatusStopsAtFilesystemRoot(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("AOE2KIT_MOD_STATUS", "")
+	root := t.TempDir()
+	mod := filepath.Join(root, "work", "MyMod")
+	if err := os.MkdirAll(mod, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if got := findModStatus(mod); got != "" {
+		t.Fatalf("unexpected status %q", got)
+	}
+	status := filepath.Join(root, "mod-status.json")
+	if err := os.WriteFile(status, []byte(`{}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got := findModStatus(mod); got != status {
+		t.Fatalf("got %q, want %q", got, status)
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(filepath.Join(root, "work")); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.Chdir(wd) })
+	if got := findModStatus("MyMod"); got != status {
+		t.Fatalf("relative: got %q, want %q", got, status)
+	}
+}

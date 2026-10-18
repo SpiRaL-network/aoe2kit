@@ -135,6 +135,28 @@ func TestReplayCacheParityAndZipHit(t *testing.T) {
 	}
 }
 
+func TestMetadataInvalidatesOldLobbyParse(t *testing.T) {
+	t.Setenv("AOE2KIT_REPLAY_CACHE", t.TempDir())
+	path := cacheFixture(t, 1024, nil)
+	c, err := OpenReplayCache(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(c.Dir, "metadata-v3.json"), []byte(`{"game_version":"stale-players"}`), 0600); err != nil {
+		t.Fatal(err)
+	}
+	r, err := c.Metadata()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.GameVersion == "stale-players" {
+		t.Fatal("reused metadata from the old lobby parser")
+	}
+	if _, err := os.Stat(filepath.Join(c.Dir, "metadata-v4.json")); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestReplayCacheMemoryContract(t *testing.T) {
 	if os.Getenv("AOE2KIT_CACHE_MEMORY_CHILD") == "1" {
 		stop := TrackMemory(os.Stdout)

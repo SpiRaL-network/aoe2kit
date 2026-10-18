@@ -101,16 +101,22 @@ func LintSourceWithOptions(path, source string, opts SourceLintOptions) []Source
 			}
 			logical := []int{0}
 			modulo, arithmetic, chain := false, false, false
+			longChain, hasLogical, compared, arithmeticLead := false, false, false, false
 			for j, c := range tokens[i+2 : end] {
 				if c.literal {
 					continue
 				}
 				switch c.text {
+				case "==", "!=", "<", "<=", ">", ">=":
+					compared = true
 				case "%":
 					modulo = true
 				case "+", "-", "*", "/":
 					if isBinaryArithmetic(tokens, i+2+j) {
 						arithmetic = true
+						if !compared && !insideConditionCall(tokens, i+2, i+2+j) {
+							arithmeticLead = true
+						}
 					}
 				case "(":
 					logical = append(logical, 0)
@@ -119,9 +125,13 @@ func LintSourceWithOptions(path, source string, opts SourceLintOptions) []Source
 						logical = logical[:len(logical)-1]
 					}
 				case "&&", "||":
+					hasLogical, compared = true, false
 					logical[len(logical)-1]++
 					if logical[len(logical)-1] > 1 {
 						chain = true
+					}
+					if logical[len(logical)-1] > 2 {
+						longChain = true
 					}
 				}
 			}
@@ -129,10 +139,22 @@ func LintSourceWithOptions(path, source string, opts SourceLintOptions) []Source
 				add("xs_condition_modulo", "error", t, "Modulo inside a condition triggers the observed Error 0308 class.", "Compute the remainder in an int assignment before the condition.")
 			}
 			if arithmetic {
-				add("xs_condition_arithmetic", "error", t, "Arithmetic inside a condition triggers the observed Error 0308 class.", "Compute the arithmetic result in a named variable before the condition.")
+				severity := "warning"
+				message := "Condition arithmetic has conflicting engine evidence: standalone subtraction failed in the 101.103.48987.0 ledger scope, but standalone/RHS arithmetic runs in Front Towers on 101.103.54800."
+				if hasLogical && arithmeticLead && t.text == "if" {
+					severity = "error"
+					message = "Arithmetic before the comparison in a logical operand is reported to fail with Error 0308 on 101.103.54800 (issue #16)."
+				}
+				add("xs_condition_arithmetic", severity, t, message, "Compute the arithmetic result in a named variable before the condition.")
 			}
 			if chain {
-				add("xs_condition_boolean_chain", "error", t, "More than two ungrouped Boolean terms trigger the observed Error 0308 class.", "Group Boolean terms pairwise with parentheses.")
+				severity := "warning"
+				message := "Ungrouped Boolean chain: three terms run on 101.103.54800; the ledger failure was a four-term if, not every condition context."
+				if longChain && t.text == "if" {
+					severity = "error"
+					message = "Four or more ungrouped Boolean terms match the observed four-term Error 0308 form."
+				}
+				add("xs_condition_boolean_chain", severity, t, message, "Group Boolean terms pairwise with parentheses.")
 			}
 		}
 	}
@@ -695,6 +717,28 @@ func matchingOpenParen(ts []lintToken, close int) int {
 	return -1
 }
 
+// Arithmetic in call arguments does not make the surrounding logical operand
+// an arithmetic-led expression.
+func insideConditionCall(ts []lintToken, start, index int) bool {
+	depth := 0
+	for j := index - 1; j >= start; j-- {
+		if ts[j].literal {
+			continue
+		}
+		switch ts[j].text {
+		case ")":
+			depth++
+		case "(":
+			if depth > 0 {
+				depth--
+			} else if j > start && lintIdentifier(ts[j-1].text) && isCallName(ts, j-1) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func isBinaryArithmetic(tokens []lintToken, index int) bool {
 	if index == 0 || index+1 >= len(tokens) {
 		return false
@@ -711,6 +755,8 @@ func isBinaryArithmetic(tokens []lintToken, index int) bool {
 func evidenceFor(code string) string {
 	if strings.HasPrefix(code, "xs_") {
 		switch code {
+		case "xs_condition_arithmetic", "xs_condition_boolean_chain":
+			return "docs/XS_ENGINE_VERIFIED_2026-09.md#parser-landmines-game-tokenizer-not-xs-check; https://github.com/chrae/aoe2kit/issues/16"
 		case "xs_int_bool_comparison":
 			return "references/ugc-guide/docs/general/xs/bugs/Language Syntax.md#3-function-parameters-and-return-statements-do-not-implicitly-type-cast"
 		case "xs_call_argument_limit":
