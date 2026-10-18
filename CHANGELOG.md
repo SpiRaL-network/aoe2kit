@@ -1,4 +1,42 @@
 # Changelog
+
+## v0.4.2 - 2026-10-17
+
+### Added
+- Connector grammar: factual variant roles, axes, evidence labels and explicit
+  rotation mappings for 14 unit types, plus `felt grammar` to render installed
+  artwork into local labelled review sheets and editable grammar JSON.
+- Multi-scenario `scen census` with filters and comparison corpora; unit-focused
+  and diverse-Gaia hotspots with crop suggestions; serial processing and optional
+  per-file peak-memory reporting.
+- `scen extract` for provenance-bearing placed-unit motifs and optional terrain;
+  patch motifs with `--at` and reviewed connector-only quarter-turn mappings.
+- Preview project defaults in `kit-preview.json`, crop shortcuts `--around` /
+  `--fit-units`, and opt-in experimental slope shading with `--elevation`.
+- Local missing-SLD repair with `preview assets --fetch --from --to`, and
+  `preview --strict` to fail on in-view sprite-render failures without counting
+  intentional crop exclusions. Defaults accept `scale` with CLI overrides.
+- `scen facets` reports stored rotations against DAT-declared angle slots,
+  including missing, unexpected and unknown coverage; animation frames are not
+  counted as visual variants.
+- Explicit preview rotation-model candidates and a version-scoped calibration
+  table. Legacy visual semantics remain unverified pending engine comparisons.
+
+### Fixed
+- XS Error 0308 lint now follows the six isolated current-build probes:
+  arithmetic-led logical `if` operands remain errors; standalone/RHS arithmetic
+  and Boolean chains are informational notes. Historical evidence is retained.
+- XS sidecar documentation identifies the nested `profile` directory and
+  distinguishes heuristic `decode.values` from schema-specific rows. Synthetic
+  short unaligned-stream regressions cover text/JSON output; text now surfaces
+  the existing heuristic-ambiguity warning. Direct decoding also corrected the
+  probe ledger's game-time readout from 3 to 1 without changing the outcomes.
+
+No game assets, images, renders, external scenarios, recordings or private
+metadata are bundled. Grammar facts are preview-reviewed, not engine collision
+proof; elevation and alternate rotation models are explicitly experimental.
+General felt-sheet query/paging features remain outside this release.
+
 ## v0.4.1 - 2026-10-17
 
 ### Fixed

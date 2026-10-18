@@ -51,6 +51,49 @@ func TestInspectDataBytesAutoV9Payload(t *testing.T) {
 	}
 }
 
+func TestAutoShortUnalignedMixedStream(t *testing.T) {
+	var data []byte
+	str := func(s string) {
+		data = binary.LittleEndian.AppendUint32(data, uint32(len(s)))
+		data = append(data, s...)
+	}
+	word := func(v uint32) { data = binary.LittleEndian.AppendUint32(data, v) }
+	str("SMALL_STREAM")
+	word(1)
+	str("form")
+	str("Q")
+	word(1)
+	word(3)
+	str("end")
+	word(1)
+	if len(data) != 52 {
+		t.Fatalf("test stream is %d bytes", len(data))
+	}
+	r := InspectDataBytes(data, DataInspectOptions{})
+	if !r.OK || r.Mode != "auto_heuristic" || len(r.Values) != 8 || len(r.HeuristicWarnings) == 0 {
+		t.Fatalf("%+v", r)
+	}
+	offsets := []int{0, 16, 20, 28, 33, 37, 41, 48}
+	for i, v := range r.Values {
+		if v.Offset != offsets[i] || !v.Heuristic || v.RawHex == "" {
+			t.Fatalf("value %d: %+v", i, v)
+		}
+	}
+	if r.Values[0].String != "SMALL_STREAM" || r.Values[2].String != "form" || r.Values[3].String != "Q" || r.Values[6].String != "end" {
+		t.Fatalf("strings: %+v", r.Values)
+	}
+	for i, want := range map[int]int32{1: 1, 4: 1, 5: 3, 7: 1} {
+		v := r.Values[i]
+		if v.Type != "int_or_float" || v.Int == nil || *v.Int != want || v.FloatCandidate == nil {
+			t.Fatalf("word %d: %+v", i, v)
+		}
+	}
+	typed := InspectDataBytes(data, DataInspectOptions{Types: []string{"string", "int", "string", "string", "int", "int", "string", "int"}})
+	if !typed.OK || len(typed.Values) != 8 || typed.Values[5].Int == nil || *typed.Values[5].Int != 3 {
+		t.Fatalf("typed: %+v", typed)
+	}
+}
+
 func TestInspectDataBytesTypedV9Payload(t *testing.T) {
 	types, err := ParseDataTypes("string,int,string,int,string,int,int,int,string,int")
 	if err != nil {

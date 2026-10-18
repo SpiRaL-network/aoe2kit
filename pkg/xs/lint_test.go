@@ -47,12 +47,12 @@ func TestEngineHazardLint(t *testing.T) {
 		{"modulo", "if (e % 2 == 0) {}", "xs_condition_modulo", "error"},
 		{"snake c2 mixed modulo", "void updateShell(int ticks=0) { int blink=0; if (ticks <= 120 && gTick % 2 == 0) blink=1; }", "xs_condition_modulo", "error"},
 		{"while modulo", "while ((e % 2) == 0) {}", "xs_condition_modulo", "error"},
-		{"condition subtraction", "if (now - born >= 12) {}", "xs_condition_arithmetic", "warning"},
-		{"chain", "if ((a) && (b) || (c)) {}", "xs_condition_boolean_chain", "warning"},
+		{"condition subtraction", "if (now - born >= 12) {}", "xs_condition_arithmetic", "note"},
+		{"chain", "if ((a) && (b) || (c)) {}", "xs_condition_boolean_chain", "note"},
 		{"logical arithmetic lead", "if (a == 0 && now - start >= 1000) {}", "xs_condition_arithmetic", "error"},
 		{"logical arithmetic first", "if (now - start >= 1000 || a == 0) {}", "xs_condition_arithmetic", "error"},
-		{"logical arithmetic rhs", "if (idx >= 0 && idx < MaxUnits - 1) {}", "xs_condition_arithmetic", "warning"},
-		{"four terms", "if (a && b && c && d) {}", "xs_condition_boolean_chain", "error"},
+		{"logical arithmetic rhs", "if (idx >= 0 && idx < MaxUnits - 1) {}", "xs_condition_arithmetic", "note"},
+		{"four terms", "if (a && b && c && d) {}", "xs_condition_boolean_chain", "note"},
 		{"logical call", "void f() { if (ready && xsCreateFile(true)) {} }", "xs_logical_operand_call", "error"},
 		{"logical type", "int probe() { return (1); } void f() { if (false && probe()) {} }", "xs_logical_operand_type", "error"},
 		{"condition type", "int probe() { return (1); } void f() { if (probe()) {} }", "xs_condition_non_bool", "error"},
@@ -99,10 +99,13 @@ func TestConditionEvidenceNarrowing(t *testing.T) {
 		"if (ready && check(idx + 1)) {}",
 		"if (p < 1 || p > 8 || gColorArr < 0) {}",
 		"if ((a && b) && (c && d)) {}",
+		"if (now - born >= -12) {}",
+		"if (a || b || c) {}",
+		"if (a && b && c && d) {}",
 	} {
 		for _, f := range LintSource("test.xs", source) {
-			if (f.Code == "xs_condition_arithmetic" || f.Code == "xs_condition_boolean_chain") && f.Severity == "error" {
-				t.Fatalf("overbroad hard error for %q: %+v", source, f)
+			if (f.Code == "xs_condition_arithmetic" || f.Code == "xs_condition_boolean_chain") && f.Severity != "note" {
+				t.Fatalf("expected informational note for %q: %+v", source, f)
 			}
 		}
 	}

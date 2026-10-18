@@ -5,6 +5,22 @@
 recipes are in [`SCENARIO_WRITER.md`](SCENARIO_WRITER.md). Flags and output
 keys for every command are in [`API_REFERENCE.md`](API_REFERENCE.md).
 
+`units` (including `--named` and `--text`), `map`, `terrain`, and `kit preview`
+also read artwork from older measured versions: 1.36, 1.37, and 1.40 through
+1.57 (`1.5` is accepted as 1.50). These are **read-only terrain/unit queries**,
+not full scenario support. Versions 1.38 and 1.39 have no corpus evidence and
+remain unsupported. Triggers, messages and AI are not decoded by this path;
+old files cannot be patched, rebuilt or written.
+
+`units` JSON retains the usual sections and adds `version`, `scope`, and
+`rotation_interpretation`. Legacy rotations are the stored values, without
+conversion to radians or a claim that every old version's visual semantics
+have been engine-tested. Map/terrain queries stop before Units, so they also
+work when later sections cannot be decoded. Terrain ids, elevations, layers
+and opaque tile bytes are retained; terrain filters and component reports
+work as on modern files. Preview uses the user's installed art, which may
+differ from the assets originally used by an old campaign.
+
 ## Orientation
 
 Start with an unfamiliar scenario here:
@@ -31,6 +47,77 @@ Start with an unfamiliar scenario here:
 - `info`, `check`, `units --named`, `strings`, `map`, and `terrain` are the
   focused readers. `terrain` reports per-terrain counts, bounds, centroids, and
   connected components.
+
+## Campaign Census And Hotspots
+
+`kit scen census campaigns/ more.aoe2scenario --gaia --min-maps 3 --json`
+counts objects across directories or files, serially, deduplicating file aliases.
+Each unit reports counts, scenario spread (`maps`), players, and stored rotations.
+`--against our-maps/` adds comparison counts, map spread, deltas and
+`only_in_input`. The same `--gaia`, `--player N` and `--crop` filters apply to
+both sets. Names come from `--dat`/`--game-dir` when available, otherwise the
+built-in unit name table. `--verbose` measures each read in a separate child
+process and logs that file's post-exec peak RSS on Linux; other platforms report
+measurement unavailable. This measures the reader, excluding the parent's
+optional DAT index. It is not the process-lifetime high-water mark reused for
+every file, or the parent's footprint inherited briefly during fork. `scen units
+--peak-rss` emits the underlying memory JSON on stderr after its normal output.
+Unsupported or malformed files fail the command with their path.
+
+`kit scen hotspots map.aoe2scenario --unit 1062,1888 --cell 20 --dat game.dat`
+finds occupied cells for chosen units, including explicitly requested trees or
+fish. Each cell reports matching anchor bounds and a ready `--crop` argument.
+`--text` prints these directly; JSON is the default.
+
+`kit scen hotspots map.aoe2scenario --diverse --top 10 --min-count 5 --dat game.dat`
+finds composed Gaia art without choosing units in advance. Default cells are
+16x16 and the default count floor is three. Decorative candidates are known DAT
+types below 70 or classes 3/14/27/30, excluding tree/fish classes; unknown types
+are excluded. This is a declared study filter, not an engine category. The score
+is the sum over distinct cell unit ids of `1 + ln(total qualifying map objects /
+frequency of that id across the map)`. Rare types weigh more, repeated copies
+of one type do not increase diversity, and frequencies remain map-wide when
+`--crop` restricts the search. Ties break deterministically by count, variety,
+then coordinates. Use `--unit` for targeted study and `--diverse` for discovery.
+
+## Extract And Paste Motifs
+
+```sh
+kit scen extract source.aoe2scenario --crop 20,30,36,46 --terrain --relative --out motif.json
+kit scen patch base.aoe2scenario pasted.aoe2scenario --recipe motif.json --at 60,60
+```
+
+Extraction selects unit anchors inside half-open tile bounds, not sprite or
+footprint extents. Optional terrain includes terrain ids, layers and elevation.
+Relative mode subtracts the crop origin; `--at` places either relative or absolute
+motifs by their crop origin. Terrain pastes require integer origins. Unit-only
+motifs allow fractional placement. Normal recipe patch bounds checks still apply.
+
+The recipe records source basename, version and original crop. Transforms record
+the current placement separately, leaving that provenance intact. It preserves
+unit z, status, stored rotation, initial animation frame and literal caption text.
+It does not copy triggers, AI, string-table links or garrison/reference links;
+the patch writer allocates fresh unit references.
+
+`--rotate 90|180|270` rotates terrain and anchors together. Every unit must have
+an explicit reviewed rotation mapping in the built-in connector grammar or a
+`--grammar review.json` subset. Unknown mappings and fractional legacy rotation
+values are rejected rather than guessed. Old supported artwork can be extracted
+into a recipe, but its source scenario remains read-only.
+
+## Connector Grammar
+
+`kit felt grammar 1062 --out fence.png --json fence.json --game-dir game`
+renders every DAT facing at its first animation frame on labelled grass patches
+(and water for bridge/boardwalk families). The sheet is 1000 pixels wide with
+large labels. Images are generated locally from installed assets. The JSON is
+an editable felt compendium subset: each entry has `grammar` variants with
+`axis` (`x`, `y`, `diag_ne`, `diag_nw`, `none`), `role`, optional
+`renders_along`, `evidence`, and optional `rotates_to` degree-to-variant maps.
+Use `--compendium fence.json` to load a reviewed subset on subsequent runs.
+Unobserved fields remain unmapped. Built-in seeds are preview-reviewed visual
+claims, not engine collision or passability guarantees. Explicit rotation maps
+are required to rotate motifs; an axis does not establish corner polarity.
 
 ## Triggers
 

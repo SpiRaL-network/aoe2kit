@@ -55,14 +55,15 @@ type Object struct {
 }
 
 type Snapshot struct {
-	Schema         string      `json:"schema"`
-	Stage          string      `json:"stage"`
-	Width          int         `json:"width"`
-	Height         int         `json:"height"`
-	Terrain        []Tile      `json:"terrain"`
-	Objects        []Object    `json:"objects,omitempty"`
-	PlayerColors   map[int]int `json:"player_colors,omitempty"`
-	SourceWarnings []string    `json:"source_warnings,omitempty"`
+	ScenarioVersion string      `json:"scenario_version,omitempty"`
+	Schema          string      `json:"schema"`
+	Stage           string      `json:"stage"`
+	Width           int         `json:"width"`
+	Height          int         `json:"height"`
+	Terrain         []Tile      `json:"terrain"`
+	Objects         []Object    `json:"objects,omitempty"`
+	PlayerColors    map[int]int `json:"player_colors,omitempty"`
+	SourceWarnings  []string    `json:"source_warnings,omitempty"`
 }
 
 type Crop struct {
@@ -84,6 +85,8 @@ type Options struct {
 	Dat                *datfile.Index
 	Textures           *TerrainTextureOptions
 	Shadows            *ShadowOptions
+	Elevation          bool // Experimental slope shading only, not displaced geometry.
+	RotationModel      string
 }
 
 type Report struct {
@@ -111,6 +114,8 @@ type Report struct {
 	Mood               *MoodReport           `json:"mood,omitempty"`
 	Shadows            *ShadowReport         `json:"shadows,omitempty"`
 	Particles          []ParticleReport      `json:"particles,omitempty"`
+	RotationModel      string                `json:"rotation_model,omitempty"`
+	ScenarioVersion    string                `json:"scenario_version,omitempty"`
 }
 
 type Skipped struct {
@@ -131,7 +136,9 @@ func ScenarioSnapshot(file *scenario.File, stage string, dat *datfile.Index) (Sn
 		// Player settings are zero-based; unit owners reserve zero for Gaia.
 		colors[player.Player+1] = player.Color
 	}
-	return scenarioSnapshot(stage, terrain.Width, terrain.Height, terrain.Tiles, file.Units, colors, dat), nil
+	snap := scenarioSnapshot(stage, terrain.Width, terrain.Height, terrain.Tiles, file.Units, colors, dat)
+	snap.ScenarioVersion = file.Version
+	return snap, nil
 }
 
 // ArtworkSnapshot accepts the read-only map/unit projection, including older
@@ -141,6 +148,7 @@ func ArtworkSnapshot(art *scenario.Artwork, stage string, dat *datfile.Index) (S
 		return Snapshot{}, errors.New("scenario has no artwork projection")
 	}
 	snap := scenarioSnapshot(stage, art.Width, art.Height, art.Tiles, &art.Units, art.PlayerColors, dat)
+	snap.ScenarioVersion = art.Version
 	snap.SourceWarnings = append(snap.SourceWarnings, "scenario "+art.Version+": read-only terrain/units projection; triggers, XS and gameplay settings not decoded; not full-format verification")
 	return snap, nil
 }
@@ -579,6 +587,9 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 			if layerEnabled(opts.Layers, "elevation") {
 				c = shadeElevation(c, tile.Elevation)
 			}
+			if opts.Elevation {
+				c = slopeShade(c, terrain, s.Width, s.Height, x, y)
+			}
 			drawTile(img, x-crop.X1, y-crop.Y1, crop, scale, projection, c)
 		}
 	}
@@ -600,6 +611,9 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.Textures = &textureReport
 		report.TerrainColors = "installed DDS textures with named layer masks; inspect textures report for assumptions and fallbacks"
 		report.ElevationMode = "flat textured surface; geometric elevation and lighting not modeled"
+	}
+	if opts.Elevation {
+		report.ElevationMode = "experimental slope shading; flat geometry, not engine-calibrated"
 	}
 	for _, o := range depthSortedObjects(s.Objects, crop, scale, projection) {
 		if o.X < float64(crop.X1) || o.Y < float64(crop.Y1) || o.X >= float64(crop.X2) || o.Y >= float64(crop.Y2) {

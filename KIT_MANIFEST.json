@@ -1,6 +1,6 @@
 {
   "name": "AoE2Kit",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "neutrality": "Project-neutral AoE2 tooling. Project facts belong in the bundle, not in shared kit code.",
   "runtime": {
     "durable_language": "Go",
@@ -58,6 +58,7 @@
         "version",
         "doctor",
         "preview",
+        "felt",
         "docs",
         "summary",
         "inventory",
@@ -93,12 +94,27 @@
     },
     {
       "name": "kit preview",
-      "summary": "Render local flat, minimap, sprite and textured previews; inspect dependencies and calibrate mood",
+      "summary": "Render local flat, minimap, sprite and textured previews; inspect or repair dependencies and calibrate mood",
       "subcommands": [
         "snapshot",
         "assets",
         "calibrate-mood"
       ]
+    },
+    {
+      "name": "kit felt",
+      "summary": "Render installed connector artwork and emit factual variant grammar",
+      "subcommands": [
+        "grammar"
+      ]
+    },
+    {
+      "name": "kit scen extract",
+      "summary": "Extract placed artwork and optional terrain into provenance-bearing recipes; patch motifs with explicit translation and reviewed connector rotations"
+    },
+    {
+      "name": "kit scen facets",
+      "summary": "Report stored rotation coverage against DAT standing-graphic angle slots, with missing and unverified values explicit"
     },
     {
       "name": "kit credits",
@@ -331,6 +347,8 @@
         "units",
         "census",
         "hotspots",
+        "facets",
+        "extract",
         "map",
         "terrain",
         "palette-usage",

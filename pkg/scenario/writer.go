@@ -20,6 +20,7 @@ import (
 )
 
 type Recipe struct {
+	Source           *RecipeSource           `json:"source,omitempty"`
 	DatPath          string                  `json:"dat_path,omitempty"`
 	Scenario         *ScenarioRecipe         `json:"scenario,omitempty"`
 	XS               *XSRecipe               `json:"xs,omitempty"`
@@ -3267,6 +3268,51 @@ func validScatterPoint(x, y, x1, y1, x2, y2 float64, width, height int, terrainI
 		}
 	}
 	return true
+}
+
+// SetUnitRotations updates reference-ID-addressed rotations in one traversal
+// and refresh. Validate every target before writing any field.
+func (f *File) SetUnitRotations(rotations map[int]float64) error {
+	if len(rotations) == 0 {
+		return nil
+	}
+	section := f.root.section("Units")
+	if section == nil {
+		return fmt.Errorf("missing Units section")
+	}
+	targets := map[int]*parsedNode{}
+	for _, p := range section.list("players_units") {
+		for _, u := range p.list("units") {
+			id, ok := u.intValue("reference_id")
+			if !ok {
+				return fmt.Errorf("unit missing reference_id")
+			}
+			if _, ok := rotations[id]; !ok {
+				continue
+			}
+			if targets[id] != nil {
+				return fmt.Errorf("duplicate unit reference_id %d", id)
+			}
+			targets[id] = u
+		}
+	}
+	for id, v := range rotations {
+		if targets[id] == nil {
+			return fmt.Errorf("unit reference_id %d not found", id)
+		}
+		if math.IsNaN(v) || math.IsInf(v, 0) || math.Abs(v) > math.MaxFloat32 {
+			return fmt.Errorf("invalid rotation for unit %d", id)
+		}
+		if targets[id].field("rotation") == nil {
+			return fmt.Errorf("unit %d missing rotation field", id)
+		}
+	}
+	for id, v := range rotations {
+		if err := setFloatField(targets[id], "rotation", "f32", v); err != nil {
+			return err
+		}
+	}
+	return f.refreshUnits()
 }
 
 func (f *File) EditUnit(recipe UnitRecipe) error {

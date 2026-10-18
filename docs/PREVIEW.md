@@ -414,20 +414,159 @@ Arctic, Winter and Misty. It therefore was **not promoted**. Recovering the
 remaining runtime buffers/options is more informative than fitting more shape
 constants; the equations alone do not determine the captured engine state.
 
-## Installed Sprites
+## Installed Sprites And Connector Grammar
 
-Asset resolution uses `--game-dir`, `AOE2KIT_GAME_DIR`, then platform Steam
-discovery. `kit doctor` reports the resolved install and loose SLD availability.
-The renderer reads assets locally and never copies them into a release.
+Local agents can use game assets from an installed copy of AoE2DE. Asset
+resolution order is `--game-dir`, `AOE2KIT_GAME_DIR`, then platform Steam
+discovery. `kit doctor` reports the resolved install and whether loose SLD
+sprites are readable. No game assets are copied into the repository, packed
+bundle, or release.
 
-Sprite previews require diamond projection. `--scale` sets output tile width;
-`--sprite-tile-width` sets the native reference width (default 96 pixels, a
-preview convention). Hotspots and sprites scale together. The renderer uses
-standing graphics, direct rotation indices and the first animation frame of
-the selected angle. Building annexes and running animations are not composed.
-Use `--shadows` for the separate experimental shadow pass.
+```text
+kit preview scenario.aoe2scenario --out crop.png --sprites --crop 40,20,80,60
+kit felt grammar 1062 --out fence.png --json fence.json --game-dir game
+```
 
-Packed DRS archive decoding is not implemented. Missing loose SLD files are
-reported as skipped objects; use `kit preview assets` to inspect dependencies.
-Containers without the user's installed art can still render flat previews.
-No images, game data or private artwork catalogs are bundled.
+The grammar command renders a selected connector's DAT angle slots on labelled
+grass/water contexts and emits editable grammar JSON. The embedded connector
+table contains only unit IDs, roles, axes, explicit rotation mappings and
+evidence labels, never art bytes. `preview_reviewed` does not mean
+engine-verified or passability-tested. Supply `--compendium` to use a different
+connector grammar; no private metadata location is discovered implicitly.
+General felt-sheet queries, paging and tag/state filtering are not included.
+
+Sprite previews currently read loose SLD files. Packed DRS archive decoding is
+not implemented, so a typical installation without loose SLD files can still
+produce flat previews but cannot yet render sprites.
+Player colors, SLD frame identity, and hotspot anchoring are applied by the
+renderer, but engine behavior remains the final visual reference. Sprite
+previews require diamond projection; `--scale` is the tile width in output
+pixels. `--sprite-tile-width` sets the native art's reference tile width
+(default 96, a preview convention not yet engine-calibrated). Sprites and
+hotspots are scaled together, including downscaling. Standing graphics are
+used; building annexes and running animations are not composed. Shadows are
+optional with `--shadows`. Compressed
+sprite caching is capped at 128 MiB and decoded frame caching at 64 MiB.
+
+In a web or sandbox container without a game install, previews are flat and
+contain no game art. Sprite previews and grammar sheets require running Kit on a
+local machine with readable game assets. `kit doctor --sandbox` reports
+`no install; flat previews only` without treating the missing install as an
+error.
+
+## Project Defaults And Crop Shortcuts
+
+Preview searches the working directory and its parents for `kit-preview.json`.
+The nearest file supplies defaults; command-line flags override it. Relative
+asset paths are resolved from the defaults file's directory. Unknown keys and
+malformed configuration fail rather than silently changing the render.
+
+```json
+{"dat":"assets/game.dat","game_dir":"assets/install","sprites":true,"textures":true,"shadows":true,"mood":"scenario","elevation":false,"scale":60}
+```
+
+Keep asset paths local to your project; do not publish game assets. The supported
+keys are exactly those shown above. Use `--no-sprites`, `--no-textures`,
+`--no-shadows`, or `--no-elevation` to disable a configured option. For a minimap,
+disable incompatible configured options explicitly.
+`scale` is the tile width in output pixels (1..128); omitted or zero retains
+the built-in default. `--scale` overrides the configured value.
+
+```text
+kit preview scene.aoe2scenario --around 30,40 --radius 8 --out close.png
+kit preview scene.aoe2scenario --fit-units 1062,1888 --out fences.png
+kit preview scene.aoe2scenario --elevation --out slopes.png
+```
+
+Choose only one crop mode (`--crop`, `--around`, or `--fit-units`). Around uses
+tile coordinates and a positive radius (default 8), clipped to map bounds.
+Fit-units bounds all matching objects, including footprints and a one-tile
+margin; distant clusters remain in one window. A missing selection is an error.
+These shortcuts do not change the scenario or saved snapshot.
+
+`--elevation` adds experimental directional slope shading to flat or textured
+terrain, including terrain beneath sprites. It is off by default and reported
+in `elevation_mode`. It does not displace geometry or sprites, draw cliff faces,
+or claim engine-calibrated lighting. Constant-height plateaus are unchanged by
+this slope pass; the existing flat elevation layer remains a separate diagnostic.
+
+## Local Missing-Sprite Repair
+
+```text
+kit preview assets scene.aoe2scenario --missing-only --fetch --from game-install --to mirror
+kit preview scene.aoe2scenario --game-dir mirror --dat game.dat --sprites --strict --out scene.png
+```
+
+`--fetch` requires explicit source-install and destination-mirror directories.
+The DAT defaults to the source installation's conventional DAT; `--dat` can
+override it. Only missing loose SLDs needed by the selected scenario/crop are
+copied, matched case-insensitively within the source graphics directory.
+Reports list copied, already-present, remaining and unresolved dependencies.
+Existing files are never overwritten. Path traversal and links escaping the
+source graphics folder or redirecting destination subdirectories are rejected.
+Packed DRS extraction, particle assets and terrain assets are not fetched;
+remaining dependencies produce a nonzero exit. This is local asset repair,
+not a redistribution mechanism: do not publish the mirror.
+
+`--strict` requires sprite rendering and fails before writing a PNG when an
+object in the requested view cannot be rendered. The JSON report has `ok:false`
+and lists reasons. Intentional outside-crop/disabled-layer exclusions and
+optional shadow omissions are not failures. This checks render completeness,
+not engine fidelity or passability.
+
+## Facet Coverage
+
+```text
+kit scen facets scene.aoe2scenario --dat game.dat --unit 349,1062
+```
+
+The report lists each unit's exact stored rotations and counts, DAT-declared
+standing-graphic angle slots (`available`), `placed`, `missing`, and unexpected
+stored values. Animation frames do not inflate the variant inventory. Use
+`--gaia`, `--player N`, or `--crop` to narrow the scope; `--text` emits a compact
+summary. Explicitly selected but absent unit types report zero placements.
+
+`complete` compares against the preview's direct-index interpretation for
+1.58/1.59, not verified distinct art or engine behavior for every type. The
+report does not inspect SLD availability. Missing metadata and particle-only
+graphics are marked unknown; old scenario versions retain their stored values
+but do not claim coverage until their rotation semantics are calibrated.
+Triggers and dynamically spawned units are not included.
+
+## Rotation Calibration
+
+`--rotation-model` is an explicit sprite-preview experiment, never a scenario
+conversion. The default remains `stored-index`; file versions and value ranges
+do not silently select another model. The report names the selected model and
+the source scenario version when known. Saved snapshots retain raw rotations.
+
+| Model | Mapping to a visual angle index |
+| --- | --- |
+| `stored-index` | Existing preview convention: explicit nonzero snapshot variant, otherwise rounded stored rotation; no wrapping |
+| `radians` | Raw rotation / (2 pi), times angle count, rounded to nearest index and wrapped |
+| `radians-reversed` | Same candidate with the index direction reversed |
+
+Radian candidates ignore the snapshot's cached variant and use the DAT standing
+graphic's angle count, or the installed particle definition's angle count.
+SLD animation frames remain separate: preview chooses the first frame of the
+selected angle. These candidates do not assert which angular origin or direction
+the engine uses; they make competing hypotheses testable without rebuilding.
+
+| Scenario version family | Evidence/status |
+| --- | --- |
+| 1.36, 1.37, 1.40-1.54 | Raw rotations decoded; visual mapping not engine-calibrated |
+| 1.55-1.57 | Raw rotations decoded; visual mapping not engine-calibrated |
+| 1.58 | Existing stored-index preview convention; no separate version-specific engine calibration |
+| 1.59 | The modern oak fixture confirms stored index N renders SLD visual index N on build 101.103.54800.0; not proof for every unit/particle |
+
+To calibrate an older family, compare the same original scenario/crop, unit IDs,
+raw rotations, DAT/assets, and camera view against engine screenshots. Hold all
+other preview settings fixed and vary only the model. Record engine build,
+scenario version, unit/graphic identity and matching indices; a re-saved modern
+scenario alone does not establish the original version's semantics. Screenshots
+and rendered game art stay local; only the resulting measured table belongs in
+Kit. Until those comparisons are supplied, the legacy rows remain unverified.
+
+```text
+kit preview old.aoe2scenario --sprites --rotation-model radians --game-dir game --crop 20,20,40,40 --out candidate.png
+```

@@ -26,6 +26,7 @@ func runPreview(args []string) {
 		return
 	}
 	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "Project defaults: kit-preview.json; shortcuts: --around x,y --radius r | --fit-units ID[,ID]; --elevation experimental; --strict requires sprites; --rotation-model stored-index|radians|radians-reversed")
 		fmt.Fprintln(os.Stderr, "usage: kit preview <scenario|replay|snapshot> [--out file.png] [--minimap] [--minimap-orientation normal|transpose|flipx|flipy|rotate90|rotate180|rotate270 (default rotate270)] [--snapshot-out file.json] [--projection topdown|diamond] [--scale N] [--layers LIST] [--crop x1,y1,x2,y2] [--dat FILE] [--palette FILE] [--game-dir DIR] [--sprites] [--shadows] [--shadow-overlap max|sum] [--textures] [--terrain-repeat TILES] [--texture-repeat TILES] [--no-terrain-edges] [--mood NAME|scenario|none]")
 		os.Exit(2)
 	}
@@ -34,19 +35,41 @@ func runPreview(args []string) {
 		return
 	}
 	input := args[0]
+	cwd, err := os.Getwd()
+	if err != nil {
+		die("kit preview", err)
+	}
+	defaults, err := preview.LoadProjectDefaults(cwd)
+	if err != nil {
+		die("kit preview", err)
+	}
 	var outPath, snapshotPath, datPath, palettePath, gameDir, projection, minimapOrientation string
+	datPath, gameDir = defaults.Dat, defaults.GameDir
 	scale := 4
+	if defaults.Scale != 0 {
+		scale = defaults.Scale
+	}
 	spriteTilePixels := 96
 	layers := map[string]bool{}
 	var crop *preview.Crop
-	sprites := false
-	shadows := false
+	sprites := defaults.Sprites
+	shadows := defaults.Shadows
+	elevation := defaults.Elevation
+	strict := false
+	rotationModel := ""
+	var fitIDs []int
+	var around []float64
+	radius := 8.0
+	radiusSet := false
 	shadowOverlap := ""
 	minimap := false
 	moodFlag := "scenario"
+	if defaults.Mood != "" {
+		moodFlag = defaults.Mood
+	}
 	moodModelPath := ""
 	scenarioMood := ""
-	textures, terrainEdges := false, true
+	textures, terrainEdges := defaults.Textures, true
 	terrainRepeat := 0.0 // 0 = package default (calibrated)
 	textureRepeat := 0.0
 	for i := 1; i < len(args); i++ {
@@ -108,12 +131,53 @@ func runPreview(args []string) {
 			crop = &preview.Crop{X1: vals[0], Y1: vals[1], X2: vals[2], Y2: vals[3]}
 		case "--sprites":
 			sprites = true
+		case "--strict":
+			strict = true
+		case "--rotation-model":
+			rotationModel = need()
+		case "--no-sprites":
+			sprites = false
+		case "--elevation":
+			elevation = true
+		case "--no-elevation":
+			elevation = false
+		case "--fit-units":
+			for _, part := range strings.Split(need(), ",") {
+				id, err := strconv.Atoi(part)
+				if err != nil || id < 0 {
+					die("kit preview", fmt.Errorf("fit-units needs nonnegative unit IDs"))
+				}
+				fitIDs = append(fitIDs, id)
+			}
+		case "--around":
+			parts := strings.Split(need(), ",")
+			if len(parts) != 2 {
+				die("kit preview", fmt.Errorf("around must be x,y"))
+			}
+			around = nil
+			for _, part := range parts {
+				value, err := strconv.ParseFloat(part, 64)
+				if err != nil {
+					die("kit preview", err)
+				}
+				around = append(around, value)
+			}
+		case "--radius":
+			value, err := strconv.ParseFloat(need(), 64)
+			if err != nil {
+				die("kit preview", err)
+			}
+			radius, radiusSet = value, true
 		case "--shadows":
 			shadows = true
+		case "--no-shadows":
+			shadows = false
 		case "--shadow-overlap":
 			shadowOverlap = need()
 		case "--textures":
 			textures = true
+		case "--no-textures":
+			textures = false
 		case "--no-terrain-edges":
 			terrainEdges = false
 		case "--terrain-repeat":
@@ -140,6 +204,23 @@ func runPreview(args []string) {
 	}
 	if outPath == "" {
 		die("kit preview", fmt.Errorf("--out is required"))
+	}
+	if strict && (!sprites || minimap) {
+		die("kit preview", fmt.Errorf("--strict requires --sprites, without --minimap"))
+	}
+	if rotationModel != "" {
+		if !sprites || minimap {
+			die("kit preview", fmt.Errorf("--rotation-model requires --sprites, without --minimap"))
+		}
+		if _, err := preview.ResolveRotationModel(rotationModel); err != nil {
+			die("kit preview", err)
+		}
+	}
+	if (crop != nil && (around != nil || len(fitIDs) > 0)) || (around != nil && len(fitIDs) > 0) || (radiusSet && around == nil) {
+		die("kit preview", fmt.Errorf("choose one of --crop, --fit-units, --around; --radius requires --around"))
+	}
+	if minimap && (around != nil || len(fitIDs) > 0 || elevation) {
+		die("kit preview", fmt.Errorf("minimap does not use crop shortcuts or experimental elevation"))
 	}
 	if shadows && (!sprites || minimap) {
 		die("kit preview", fmt.Errorf("--shadows requires --sprites, without --minimap"))
@@ -228,7 +309,19 @@ func runPreview(args []string) {
 			die("kit preview", err)
 		}
 	}
-	previewOpts := preview.Options{Projection: projection, Scale: scale, Layers: layers, Crop: crop, MinimapOrientation: minimapOrientation, Palette: palette, Dat: dat, SpriteTilePixels: spriteTilePixels}
+	if around != nil {
+		crop, err = preview.AroundCrop(snap, around[0], around[1], radius)
+		if err != nil {
+			die("kit preview", err)
+		}
+	}
+	if len(fitIDs) > 0 {
+		crop, err = preview.FitUnitCrop(snap, fitIDs)
+		if err != nil {
+			die("kit preview", err)
+		}
+	}
+	previewOpts := preview.Options{Projection: projection, Scale: scale, Layers: layers, Crop: crop, MinimapOrientation: minimapOrientation, Palette: palette, Dat: dat, SpriteTilePixels: spriteTilePixels, Elevation: elevation, RotationModel: rotationModel}
 	if textures {
 		if resolveErr != nil {
 			die("kit preview", fmt.Errorf("textured terrain needs a game install: %w", resolveErr))
@@ -253,7 +346,7 @@ func runPreview(args []string) {
 	}
 	var img image.Image
 	var report any
-	var err error
+	err = nil
 	if minimap {
 		var r preview.Report
 		img, r, err = preview.RenderMinimap(snap, dat, previewOpts)
@@ -275,6 +368,15 @@ func runPreview(args []string) {
 	}
 	if err != nil {
 		die("kit preview", err)
+	}
+	if strict {
+		if r, ok := report.(preview.Report); ok {
+			if err := preview.CheckSpriteCompleteness(r); err != nil {
+				r.OK = false
+				printJSON(r)
+				die("kit preview", err)
+			}
+		}
 	}
 	if rgba, ok := img.(*image.RGBA); ok && !minimap && textures && moodFlag != "none" {
 		source := moodSource

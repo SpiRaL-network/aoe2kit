@@ -149,6 +149,9 @@ func siblingTypesDocument(input string) string {
 func printXSDatDecodeText(report xsauthor.DataDecodeReport) {
 	fmt.Printf("%s: ok=%t bytes=%d mode=%s\n", report.Path, report.OK, report.Decode.SizeBytes, report.Decode.Mode)
 	fmt.Printf("verification: %s (%s)\n", report.Verification.Label, report.Verification.Note)
+	for _, warning := range report.Decode.HeuristicWarnings {
+		fmt.Printf("warning: %s\n", warning)
+	}
 	if report.Ledger != "" {
 		fmt.Printf("ledger: %s\n", report.Ledger)
 		fmt.Printf("assertions: total=%d passed=%d failed=%d unknown=%d\n", report.Summary.Total, report.Summary.Passed, report.Summary.Failed, report.Summary.Unknown)

@@ -12,6 +12,10 @@ import (
 type StudyOptions struct {
 	Crop              *Crop
 	GaiaOnly          bool
+	Player            *int
+	UnitIDs           []int
+	Diverse           bool
+	MinCount          int
 	IncludeForestFish bool
 	Cell, Top         int
 	Rank              string
@@ -46,6 +50,9 @@ type Hotspot struct {
 	Count   int           `json:"count"`
 	Variety int           `json:"distinct_unit_kinds"`
 	Units   []CensusEntry `json:"units"`
+	Bounds  Crop          `json:"bounds"`
+	CropArg string        `json:"crop_arg"`
+	Score   float64       `json:"score"`
 }
 
 type HotspotReport struct {
@@ -56,6 +63,31 @@ type HotspotReport struct {
 	MatchedCells       int       `json:"matched_cells"`
 	Hotspots           []Hotspot `json:"hotspots"`
 	Notes              []string  `json:"notes"`
+}
+
+func studySelected(section int, u scenario.UnitSummary, opts StudyOptions) bool {
+	if opts.GaiaOnly && section != 0 || opts.Player != nil && section != *opts.Player {
+		return false
+	}
+	if len(opts.UnitIDs) > 0 {
+		for _, id := range opts.UnitIDs {
+			if id == u.UnitConst {
+				return true
+			}
+		}
+		return false
+	}
+	return true
+}
+
+func decorativeMeta(m datfile.UnitSummary, known bool) bool {
+	if !known {
+		return false
+	}
+	if m.Class == 15 || m.Class == 5 || m.Class == 31 || m.Class == 33 || m.Class == 63 {
+		return false
+	}
+	return m.Type < 70 || m.Class == 3 || m.Class == 14 || m.Class == 27 || m.Class == 30
 }
 
 func studyCrop(art *scenario.Artwork, c *Crop) (Crop, error) {
@@ -141,6 +173,9 @@ func ArtworkCensus(art *scenario.Artwork, idx *datfile.Index, opts StudyOptions)
 			continue
 		}
 		for _, u := range section.Units {
+			if !studySelected(section.Player, u, opts) {
+				continue
+			}
 			if !inStudyCrop(u, c) {
 				continue
 			}
@@ -163,6 +198,9 @@ func ArtworkHotspots(art *scenario.Artwork, idx *datfile.Index, opts StudyOption
 	}
 	if opts.Cell == 0 {
 		opts.Cell = 8
+		if opts.Diverse {
+			opts.Cell = 16
+		}
 	}
 	if opts.Top == 0 {
 		opts.Top = 20
@@ -170,38 +208,95 @@ func ArtworkHotspots(art *scenario.Artwork, idx *datfile.Index, opts StudyOption
 	if opts.Rank == "" {
 		opts.Rank = "variety"
 	}
-	if opts.Cell < 1 || opts.Cell > 1024 || opts.Top < 1 || opts.Top > 10000 || (opts.Rank != "count" && opts.Rank != "variety") {
+	if opts.Diverse {
+		opts.GaiaOnly = true
+		opts.Rank = "diverse"
+		if opts.MinCount == 0 {
+			opts.MinCount = 3
+		}
+	}
+	if opts.MinCount == 0 {
+		opts.MinCount = 1
+	}
+	if opts.Cell < 1 || opts.Cell > 1024 || opts.Top < 1 || opts.Top > 10000 || opts.MinCount < 1 || (opts.Rank != "count" && opts.Rank != "variety" && !(opts.Diverse && opts.Rank == "diverse")) {
 		return HotspotReport{}, fmt.Errorf("invalid cell/top/rank (cell 1..1024, top 1..10000, rank count|variety)")
 	}
 	r := HotspotReport{Schema: "aoe2kit.artwork.hotspots.v1", Rank: opts.Rank, GaiaOnly: opts.GaiaOnly, Hotspots: []Hotspot{}, Notes: []string{"Cells are anchored at map origin and clipped to the requested crop. Ranking uses anchors, not sprite extents. No trigger-created units. Forest/fish exclusion uses DAT class IDs 15 (trees), 5, 31, 33 and 63 (fish), not name guesses; unknown units are retained."}}
 	meta := studyMetadata(idx)
+	frequency := map[int]int{}
+	totalArt := 0
+	if opts.Diverse {
+		r.Notes[0] = "Cells are anchored at map origin and clipped to the requested crop; bounds contain matching anchors, not sprite extents. Only known DAT decorative Gaia types qualify. No trigger-created units."
+		r.Notes = append(r.Notes, "Diverse: Gaia only; known DAT types below 70 or classes 3/14/27/30, excluding tree/fish classes. Score = sum over distinct cell IDs of 1 + ln(total qualifying map objects / map-wide frequency of ID). Frequency covers the whole map, including outside a requested crop. Each cell must meet min-count.")
+		for _, section := range art.Units.Sections {
+			for _, u := range section.Units {
+				m, known := meta[u.UnitConst]
+				if studySelected(section.Player, u, opts) && inStudyCrop(u, Crop{X2: art.Width, Y2: art.Height}) && decorativeMeta(m, known) {
+					frequency[u.UnitConst]++
+					totalArt++
+				}
+			}
+		}
+	}
 	cells := map[[2]int]*censusAccumulator{}
+	bounds := map[[2]int]Crop{}
 	for _, section := range art.Units.Sections {
 		if opts.GaiaOnly && section.Player != 0 {
 			continue
 		}
 		for _, u := range section.Units {
+			if !studySelected(section.Player, u, opts) {
+				continue
+			}
 			if !inStudyCrop(u, c) {
 				continue
 			}
 			m, ok := meta[u.UnitConst]
-			if !opts.IncludeForestFish && ok && (m.Class == 15 || m.Class == 5 || m.Class == 31 || m.Class == 33 || m.Class == 63) {
+			if opts.Diverse && !decorativeMeta(m, ok) {
+				continue
+			}
+			if len(opts.UnitIDs) == 0 && !opts.IncludeForestFish && ok && (m.Class == 15 || m.Class == 5 || m.Class == 31 || m.Class == 33 || m.Class == 63) {
 				r.ExcludedForestFish++
 				continue
 			}
 			key := [2]int{int(u.X) / opts.Cell, int(u.Y) / opts.Cell}
 			if cells[key] == nil {
 				cells[key] = &censusAccumulator{}
+				bounds[key] = Crop{X1: int(u.X), Y1: int(u.Y), X2: int(u.X) + 1, Y2: int(u.Y) + 1}
 			}
+			b := bounds[key]
+			b.X1 = min(b.X1, int(u.X))
+			b.Y1 = min(b.Y1, int(u.Y))
+			b.X2 = max(b.X2, int(u.X)+1)
+			b.Y2 = max(b.Y2, int(u.Y)+1)
+			bounds[key] = b
 			cells[key].add(u, section.Player, m, ok)
 		}
 	}
 	for k, a := range cells {
+		if a.total < opts.MinCount {
+			continue
+		}
 		x, y := k[0]*opts.Cell, k[1]*opts.Cell
-		r.Hotspots = append(r.Hotspots, Hotspot{Crop: Crop{max(x, c.X1), max(y, c.Y1), min(x+opts.Cell, c.X2), min(y+opts.Cell, c.Y2)}, Count: a.total, Variety: len(a.entries), Units: a.list()})
+		crop := Crop{max(x, c.X1), max(y, c.Y1), min(x+opts.Cell, c.X2), min(y+opts.Cell, c.Y2)}
+		score := float64(len(a.entries))
+		units := a.list()
+		if opts.Rank == "count" {
+			score = float64(a.total)
+		}
+		if opts.Diverse {
+			score = 0
+			for _, unit := range units {
+				score += 1 + math.Log(float64(totalArt)/float64(frequency[unit.UnitID]))
+			}
+		}
+		r.Hotspots = append(r.Hotspots, Hotspot{Crop: crop, Count: a.total, Variety: len(a.entries), Units: units, Bounds: bounds[k], CropArg: fmt.Sprintf("--crop %d,%d,%d,%d", crop.X1, crop.Y1, crop.X2, crop.Y2), Score: score})
 	}
 	sort.Slice(r.Hotspots, func(i, j int) bool {
 		a, b := r.Hotspots[i], r.Hotspots[j]
+		if opts.Diverse && a.Score != b.Score {
+			return a.Score > b.Score
+		}
 		if opts.Rank == "variety" && a.Variety != b.Variety {
 			return a.Variety > b.Variety
 		}

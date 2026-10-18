@@ -383,7 +383,11 @@ func renderTexturedTerrain(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop,
 			if o.Edges {
 				c = terrainEdgePixel(tiles, s.Width, s.Height, mats, x, y, o)
 			}
-			img.SetRGBA(px, py, lightTerrain(c))
+			c = lightTerrain(c)
+			if opts.Elevation {
+				c = slopeShade(c, tiles, s.Width, s.Height, tx, ty)
+			}
+			img.SetRGBA(px, py, c)
 		}
 	}
 	return r, nil

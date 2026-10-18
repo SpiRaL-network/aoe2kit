@@ -58,6 +58,8 @@ func main() {
 	switch os.Args[1] {
 	case "preview":
 		runPreview(os.Args[2:])
+	case "felt":
+		runFelt(os.Args[2:])
 	case "version":
 		if len(os.Args) == 3 && os.Args[2] == "--json" {
 			printJSON(kit.CurrentBuildInfo(runtime.GOOS + "/" + runtime.GOARCH))
@@ -2477,7 +2479,11 @@ func runFacts(args []string) {
 }
 
 func runScen(args []string) {
-	if len(args) > 0 && (args[0] == "hotspots" || args[0] == "census") {
+	if len(args) > 0 && args[0] == "extract" {
+		runScenarioExtract(args[1:])
+		return
+	}
+	if len(args) > 0 && (args[0] == "hotspots" || args[0] == "census" || args[0] == "facets") {
 		runArtworkStudy(args[0], args[1:])
 		return
 	}
@@ -3640,10 +3646,13 @@ func runScen(args []string) {
 	case "units":
 		named := false
 		textOut := false
+		peakRSS := false
 		for _, arg := range args[2:] {
 			switch arg {
 			case "--named":
 				named = true
+			case "--peak-rss":
+				peakRSS = true
 			case "--text":
 				textOut = true
 			case "--json":
@@ -3652,23 +3661,26 @@ func runScen(args []string) {
 				die("kit scen units", fmt.Errorf("unknown option %q", arg))
 			}
 		}
-		scen, err := scenario.Open(args[1])
+		art, err := scenario.OpenArtwork(args[1])
 		if err != nil {
-			// Fall back to a partial parse (read units, tolerate undecoded
-			// later sections like Microsoft-campaign triggers).
-			scen2, err2 := scenario.OpenWithOptions(args[1], scenario.ParseOptions{StopBeforeSection: "Triggers"})
-			if err2 != nil {
-				die("kit scen", err)
-			}
-			fmt.Fprintf(os.Stderr, "kit scen units: partial parse (triggers not decoded): %v\n", err)
-			scen = scen2
+			die("kit scen units", err)
 		}
 		if textOut {
-			printScenarioUnits(scen.Units, named)
-		} else if named {
-			printJSON(namedScenarioUnits(scen.Units))
+			fmt.Printf("scenario version=%s scope=%s rotation=stored_value\n", art.Version, art.Scope)
+			printScenarioUnits(&art.Units, named)
 		} else {
-			printJSON(scen.Units)
+			printJSON(artworkUnitsReport(art, named))
+		}
+		if peakRSS {
+			method := "unavailable"
+			peak := selfPeakRSS()
+			if peak > 0 {
+				method = "linux_post_exec_vmhwm"
+			}
+			_ = json.NewEncoder(os.Stderr).Encode(struct {
+				Peak   int64  `json:"peak_rss_kib"`
+				Method string `json:"method"`
+			}{peak, method})
 		}
 	case "map":
 		mapInfo, err := scenario.MapFile(args[1])
@@ -4098,12 +4110,16 @@ func runScen(args []string) {
 		}
 		printJSON(plan)
 	case "patch":
-		const patchUsage = "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]"
+		const patchUsage = "usage: kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--at x,y] [--rotate 90|180|270] [--grammar review.json] [--game-dir D] [--text|--json]"
 		if len(args) < 5 || args[3] != "--recipe" {
 			fmt.Fprintln(os.Stderr, patchUsage)
 			os.Exit(2)
 		}
-		gameDir, text, err := parseScenarioPatchOptions(args[5:])
+		motif, remaining, err := parseMotifPatchOptions(args[5:])
+		if err != nil {
+			die("kit scen patch", err)
+		}
+		gameDir, text, err := parseScenarioPatchOptions(remaining)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "kit scen patch: %v\n", err)
 			fmt.Fprintln(os.Stderr, patchUsage)
@@ -4112,6 +4128,10 @@ func runScen(args []string) {
 		recipe, err := scenario.LoadRecipe(args[4])
 		if err != nil {
 			die("kit scen", err)
+		}
+		recipe, err = applyMotifOptions(recipe, motif)
+		if err != nil {
+			die("kit scen patch", err)
 		}
 		if gameDir != "" {
 			recipe.GameDir = gameDir
@@ -4275,6 +4295,31 @@ type namedScenarioUnitInfo struct {
 	NumberOfPlayers      int                    `json:"number_of_players"`
 	Sections             []namedPlayerUnitsInfo `json:"sections"`
 	Total                int                    `json:"total"`
+}
+
+// Keep the existing unit report shape while disclosing the partial-read scope.
+func artworkUnitsReport(art *scenario.Artwork, named bool) any {
+	type metadata struct {
+		Version                string `json:"version"`
+		Scope                  string `json:"scope"`
+		Width                  int    `json:"width"`
+		Height                 int    `json:"height"`
+		RotationInterpretation string `json:"rotation_interpretation"`
+	}
+	m := metadata{Version: art.Version, Scope: art.Scope, Width: art.Width, Height: art.Height, RotationInterpretation: "stored_value"}
+	if !scenario.SupportsReadVersion(art.Version) {
+		m.RotationInterpretation = "stored_value_visual_semantics_not_engine_verified_for_version"
+	}
+	if named {
+		return struct {
+			*namedScenarioUnitInfo
+			metadata
+		}{namedScenarioUnits(&art.Units), m}
+	}
+	return struct {
+		*scenario.UnitInfo
+		metadata
+	}{&art.Units, m}
 }
 
 type namedPlayerUnitsInfo struct {
@@ -22126,6 +22171,8 @@ func usage() {
   kit preview calibrate-mood --samples REPORT [--fit --holdout MOOD] [--out FILE]
     Textured previews accept --mood-model REPORT to opt into a fitted grade.
     Sprite previews accept --shadows and --shadow-overlap max|sum (experimental).
+  kit felt <grammar> ...
+  kit felt grammar <unit-id> --out sheet.png --json grammar.json [--game-dir DIR] [--dat FILE] [--compendium FILE]
   kit geo trace-dem [--bbox minLat,minLon,maxLat,maxLon] [--center lat,lon] [--span-km N] [--grid N] [--landmask naturalearth|geojson] [--landcover worldcover|glc-fcs30d] [--roads osm-interstate|osm-motorway|osm-major|nhpn-interstate] [--road-width-tiles N] [--out report.json] [--recipe-out recipe.json] [--scenario-out out.aoe2scenario]
     EXPERIMENTAL geography: cartographic exaggeration; static placement checks are not engine verification.
   kit identify <file.aoe2scenario|file.aoe2record> [--registry known_scenarios.json] [--ai-registry known_ais.json] [--register NAME] [--family FAMILY] [--description TEXT]
@@ -22267,9 +22314,10 @@ func usage() {
   kit scen glossary <file.aoe2scenario> [--limit N] [--max-mb N] [--text]
   kit scen idioms <file.aoe2scenario> [--text]
   kit scen analyze <file.aoe2scenario>
-  kit scen units <file.aoe2scenario> [--named] [--text|--json]
-  kit scen census <scenario> [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--gaia]
-  kit scen hotspots <scenario> [--dat FILE] [--game-dir DIR] [--gaia=false] [--cell 8] [--top 20] [--rank variety|count] [--include-forest-fish]
+  kit scen units <file.aoe2scenario> [--named] [--text|--json] [--peak-rss]
+  kit scen census <dir|files...> [--gaia] [--player N] [--min-maps K] [--against DIR] [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--verbose] [--text|--json]
+  kit scen hotspots <scenario> [--unit ID,ID] [--diverse] [--min-count N] [--dat FILE] [--game-dir DIR] [--player N] [--gaia=false] [--cell N] [--top N] [--rank variety|count] [--include-forest-fish] [--crop x1,y1,x2,y2] [--text|--json]
+  kit scen facets <scenario> [--unit ID[,ID]] [--dat FILE] [--game-dir DIR] [--player N|--gaia] [--crop x1,y1,x2,y2] [--text|--json]
   kit scen lint <file.aoe2scenario> [--text] [--include-provisional] [--load-safety] [--semantic]
   kit scen xs <file.aoe2scenario> [--deploy-tree dir] [--text|--json]
   kit scen xs attach <in.aoe2scenario> <out.aoe2scenario> --xs file.xs [--name Entry.xs] [--also-carrier] [--title TITLE] [--trigger-name NAME] [--text|--json]
@@ -22286,7 +22334,8 @@ func usage() {
   kit scen write-check <before.aoe2scenario> <after.aoe2scenario> [--text|--json] [--include-provisional]
   kit scen dump-body --inflated <file.aoe2scenario>
   kit scen plan <in.aoe2scenario> --recipe recipe.json [--game-dir D]
-  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]
+  kit scen extract <scenario> --crop x1,y1,x2,y2 --out recipe.json [--terrain] [--relative]
+  kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--at x,y] [--rotate 90|180|270] [--grammar review.json] [--game-dir D] [--text|--json]
   kit scen shop-catalog <catalog.json> --out recipe.json [--text|--json]
   kit scen smoke-recipe [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]
   kit scen smoke <in.aoe2scenario> <out.aoe2scenario> [--x N] [--y N] [--player N] [--unit N] [--terrain N] [--elevation N] [--layer N]

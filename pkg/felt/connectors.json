@@ -1,0 +1,121 @@
+{
+  "schema": "aoe2kit.felt.connectors.v1",
+  "entries": [
+    {"unit_const":1062,"name":"Fence","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"x","role":"run","evidence":"preview_reviewed","rotates_to":{"90":1,"180":0,"270":1}},
+      {"variant":1,"axis":"y","role":"run","evidence":"preview_reviewed","rotates_to":{"90":0,"180":1,"270":0}},
+      {"variant":2,"axis":"none","role":"corner","evidence":"preview_reviewed","note":"The labelled sprite probe shows joined runs, not an isolated post. Corner rotation awaits review."},
+      {"variant":3,"axis":"diag_ne","role":"run","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"diag_nw","role":"run","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":1888,"name":"Pasture Post","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":6,"axis":"none","role":"post","evidence":"preview_reviewed"},
+      {"variant":7,"axis":"none","role":"post","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":1885,"name":"Pasture Fence A","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"x","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"x","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"x","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"x","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"x","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"x","role":"broken_run","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":1886,"name":"Pasture Fence B","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"y","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"y","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"y","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"y","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"y","role":"broken_run","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"y","role":"broken_run","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2274,"name":"Archaic Fence","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":2,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":3,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"diag_ne","role":"run","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"diag_nw","role":"run","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2285,"name":"Stake Barricade","contexts":["grass"],"grammar":[
+      {"variant":0,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":4,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":5,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":6,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":7,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":8,"axis":"diag_nw","role":"run","evidence":"preview_reviewed"},
+      {"variant":9,"axis":"diag_ne","role":"run","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2037,"name":"Bridge Piece End 1x1","contexts":["grass","water"],"grammar":[
+      {"variant":0,"axis":"x","role":"end","renders_along":["x"],"evidence":"preview_reviewed","note":"Bridge family was reviewed along x; do not infer a y-facing from the variant count."},
+      {"variant":1,"role":"end","renders_along":["x"],"evidence":"preview_reviewed"},
+      {"variant":2,"role":"end","renders_along":["x"],"evidence":"preview_reviewed"},
+      {"variant":3,"role":"end","renders_along":["x"],"evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2039,"name":"Bridge Piece End 1x2","contexts":["grass","water"],"grammar":[
+      {"variant":0,"role":"end","renders_along":["x"],"evidence":"preview_reviewed","note":"Assembly reviewed only along x; no quarter-turn mapping established."},
+      {"variant":1,"role":"end","renders_along":["x"],"evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2041,"name":"Bridge Piece End 2x1","contexts":["grass","water"],"grammar":[
+      {"variant":0,"role":"end","renders_along":["x"],"evidence":"preview_reviewed","note":"Assembly reviewed only along x; no quarter-turn mapping established."},
+      {"variant":1,"role":"end","renders_along":["x"],"evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2043,"name":"Bridge Piece Middle 1x1","contexts":["grass","water"],"grammar":[
+      {"variant":0,"axis":"x","role":"run","renders_along":["x"],"evidence":"preview_reviewed"},
+      {"variant":1,"axis":"x","role":"run","renders_along":["x"],"evidence":"preview_reviewed"},
+      {"variant":2,"axis":"x","role":"run","renders_along":["x"],"evidence":"preview_reviewed"},
+      {"variant":3,"axis":"x","role":"run","renders_along":["x"],"evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2081,"name":"Bridge Rails","contexts":["grass","water"],"grammar":[
+      {"variant":0,"axis":"y","role":"rail","evidence":"preview_reviewed"},
+      {"variant":1,"axis":"y","role":"rail","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"x","role":"rail","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"x","role":"rail","evidence":"preview_reviewed"}
+    ]},
+    {"unit_const":2651,"name":"Cliff Terrace","contexts":["grass"],"grammar":[
+      {"variant":1,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":16,"role":"sloped_end","evidence":"preview_reviewed","note":"Low/high polarity is unverified."},
+      {"variant":17,"role":"sloped_end","evidence":"preview_reviewed","note":"Low/high polarity is unverified."}
+    ]},
+    {"unit_const":264,"name":"Cliff Default","contexts":["grass"],"grammar":[
+      {"variant":3,"role":"corner","evidence":"preview_reviewed","note":"Pairs with variant 15 in a three-tile corner staircase."},
+      {"variant":4,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":12,"role":"end","evidence":"preview_reviewed"},
+      {"variant":14,"role":"end","evidence":"preview_reviewed"},
+      {"variant":15,"role":"corner","evidence":"preview_reviewed","note":"Pairs with variant 3 in a three-tile corner staircase."}
+    ]},
+    {"unit_const":2748,"name":"Wooden Road","contexts":["grass","water"],"grammar":[
+      {"variant":0,"axis":"none","role":"square","evidence":"preview_reviewed","note":"Place at tile centers."},
+      {"variant":1,"axis":"x","role":"run","evidence":"preview_reviewed"},
+      {"variant":2,"axis":"y","role":"square","evidence":"preview_reviewed"},
+      {"variant":3,"axis":"y","role":"run","evidence":"preview_reviewed"},
+      {"variant":4,"axis":"diag_ne","role":"square","evidence":"preview_reviewed"},
+      {"variant":5,"axis":"diag_ne","role":"run","evidence":"preview_reviewed"},
+      {"variant":6,"axis":"diag_nw","role":"square","evidence":"preview_reviewed"},
+      {"variant":7,"axis":"diag_nw","role":"run","evidence":"preview_reviewed"},
+      {"variant":8,"axis":"diag_ne","role":"triangle","evidence":"preview_reviewed","note":"Lower half of a (1,1) staircase band."},
+      {"variant":9,"axis":"diag_ne","role":"triangle","evidence":"preview_reviewed","note":"Upper half of a (1,1) staircase band."},
+      {"variant":10,"axis":"diag_nw","role":"triangle","evidence":"preview_reviewed"},
+      {"variant":11,"axis":"diag_nw","role":"triangle","evidence":"preview_reviewed"},
+      {"variant":12,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":13,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":14,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":15,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":16,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":17,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":18,"role":"corner","evidence":"preview_reviewed"},
+      {"variant":19,"role":"corner","evidence":"preview_reviewed"}
+    ]}
+  ]
+}

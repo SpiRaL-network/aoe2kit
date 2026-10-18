@@ -16,8 +16,8 @@ were found).
 1. Instrument: add a small XS writer (pattern below) to the scenario; call its
    phase functions from triggers (`script_call`) at the moments you care about.
 2. Run the scenario (a real game, a solo test, an unattended AI game).
-3. Harvest: the sidecar appears in the DE profile directory as
-   `<profile>\<scenario_base_name>.xsdat`.
+3. Harvest: the sidecar appears in the DE profile's nested `profile` directory as
+   `<profile>\profile\<scenario_base_name>.xsdat`.
 4. Decode: `kit xsdat decode <file.xsdat>` prints every typed row.
 5. Assert: `kit xsdat decode <file.xsdat> --ledger expected.json` checks the
    run against a declared expectation ledger and emits pass/fail per row —
@@ -72,8 +72,10 @@ detection condition fires, then read the file after the game.
 
 ## 3. File semantics you must know (engine-verified, the hard way)
 
-- **Location:** the file lands at `<DE profile dir>\<scenario>.xsdat` (the
-  scenario's base name; you do not choose the path).
+- **Location:** the file lands at `<DE profile dir>\profile\<scenario>.xsdat`
+  (the scenario's base name; you do not choose the path). The second `profile`
+  is a literal subdirectory, not another placeholder. Confirmed by the XS0308
+  probe sidecars on build 101.103.54800.0; do not look only in the profile root.
 - **Flush happens at scenario unload.** Rows are buffered; do not expect the
   file on disk mid-game. `xsCloseFile()` + game end makes it durable.
 - **`xsCreateFile(false)` truncates** any prior file of the same name;
@@ -97,9 +99,13 @@ kit xsdat decode <file.xsdat>                    # print typed rows
 kit xsdat decode <file.xsdat> --ledger exp.json  # assert against expectations
 ```
 
-The `.xsdat` container is a simple typed stream (strings, ints, floats in
-write order); the decoder reconstructs rows without any game client. The
-ledger mode turns a live run into a regression test: declare the rows a
+The `.xsdat` container is a write-order stream with no type tags. A known schema
+can reconstruct named rows; without a schema or `--types`, `auto_heuristic`
+reports printable length-prefixed strings and int/float candidates. In JSON,
+these generic values are under `decode.values`, not `rows`; text output lists
+each value's byte offset, size and contents. Heuristic guesses do not establish
+field meaning; use the writer's type order when available. The ledger mode
+turns a live run into a regression test: declare the rows a
 correct run must produce, run unattended, decode, read pass/fail.
 
 ## 5. Why this beats the alternatives

@@ -101,7 +101,7 @@ func LintSourceWithOptions(path, source string, opts SourceLintOptions) []Source
 			}
 			logical := []int{0}
 			modulo, arithmetic, chain := false, false, false
-			longChain, hasLogical, compared, arithmeticLead := false, false, false, false
+			hasLogical, compared, arithmeticLead := false, false, false
 			for j, c := range tokens[i+2 : end] {
 				if c.literal {
 					continue
@@ -130,31 +130,23 @@ func LintSourceWithOptions(path, source string, opts SourceLintOptions) []Source
 					if logical[len(logical)-1] > 1 {
 						chain = true
 					}
-					if logical[len(logical)-1] > 2 {
-						longChain = true
-					}
 				}
 			}
 			if modulo {
 				add("xs_condition_modulo", "error", t, "Modulo inside a condition triggers the observed Error 0308 class.", "Compute the remainder in an int assignment before the condition.")
 			}
 			if arithmetic {
-				severity := "warning"
-				message := "Condition arithmetic has conflicting engine evidence: standalone subtraction failed in the 101.103.48987.0 ledger scope, but standalone/RHS arithmetic runs in Front Towers on 101.103.54800."
+				severity := "note"
+				message := "Standalone subtraction and comparison RHS arithmetic compiled and ran in XS0308 probes A/B on 101.103.54800.0; other arithmetic/context forms are not individually verified."
 				if hasLogical && arithmeticLead && t.text == "if" {
 					severity = "error"
-					message = "Arithmetic before the comparison in a logical operand is reported to fail with Error 0308 on 101.103.54800 (issue #16)."
+					message = "Arithmetic before the comparison in an if logical operand matches XS0308 probe C, which failed with Error 0308 on 101.103.54800.0 (issue #16)."
 				}
 				add("xs_condition_arithmetic", severity, t, message, "Compute the arithmetic result in a named variable before the condition.")
 			}
 			if chain {
-				severity := "warning"
-				message := "Ungrouped Boolean chain: three terms run on 101.103.54800; the ledger failure was a four-term if, not every condition context."
-				if longChain && t.text == "if" {
-					severity = "error"
-					message = "Four or more ungrouped Boolean terms match the observed four-term Error 0308 form."
-				}
-				add("xs_condition_boolean_chain", severity, t, message, "Group Boolean terms pairwise with parentheses.")
+				message := "Three ungrouped OR terms and four ungrouped AND terms compiled and ran in XS0308 probes D/E on 101.103.54800.0; longer chains and other contexts are not individually verified."
+				add("xs_condition_boolean_chain", "note", t, message, "No grouping workaround is required for the tested forms on this build.")
 			}
 		}
 	}

@@ -18,6 +18,18 @@ import (
 	"aoe2kit/pkg/gfx"
 )
 
+type SpriteItem struct {
+	UnitID      int      `json:"unit_id"`
+	Name        string   `json:"name"`
+	GraphicID   int      `json:"graphic_id"`
+	GraphicFile string   `json:"graphic_file"`
+	Variant     int      `json:"variant"`
+	Frame       int      `json:"frame"`
+	States      []string `json:"states,omitempty"`
+	Status      string   `json:"status"`
+	Reason      string   `json:"reason,omitempty"`
+}
+
 // angleFrameOrdinal maps a unit's rotation to an SLD frame. SLD frames are
 // stored angle by angle, frameCount frames per angle, so angle a starts at
 // a*frameCount. Static art (one frame per angle) keeps the rotation as the
@@ -34,9 +46,31 @@ func angleFrameOrdinal(rotation, angleCount, frameCount int) int {
 	return rotation * frameCount
 }
 
+func drawSpriteFit(dst *image.RGBA, src image.Image, target image.Rectangle) {
+	b := src.Bounds()
+	if b.Empty() {
+		return
+	}
+	scale := math.Min(float64(target.Dx())/float64(b.Dx()), float64(target.Dy())/float64(b.Dy()))
+	if scale > 1 {
+		scale = 1
+	}
+	w, h := max(1, int(float64(b.Dx())*scale)), max(1, int(float64(b.Dy())*scale))
+	x, y := target.Min.X+(target.Dx()-w)/2, target.Min.Y+(target.Dy()-h)/2
+	if w == b.Dx() && h == b.Dy() {
+		draw.Draw(dst, image.Rect(x, y, x+w, y+h), src, b.Min, draw.Over)
+		return
+	}
+	xdraw.CatmullRom.Scale(dst, image.Rect(x, y, x+w, y+h), src, b, draw.Over, nil)
+}
+
 // RenderSprites overlays individual sprites onto the terrain preview in
 // painter order. It loads only graphics referenced by objects in this snapshot.
 func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string) (*image.RGBA, Report, error) {
+	model, err := ResolveRotationModel(opts.RotationModel)
+	if err != nil {
+		return nil, Report{}, err
+	}
 	if idx == nil {
 		return nil, Report{}, fmt.Errorf("sprite preview requires a DAT")
 	}
@@ -59,7 +93,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 			return nil, Report{}, err
 		}
 	}
-	base, report, err := RenderFlat(s, Options{Projection: opts.Projection, Scale: opts.Scale, Layers: map[string]bool{"terrain": layerEnabled(opts.Layers, "terrain"), "elevation": layerEnabled(opts.Layers, "elevation"), "starts": false}, Crop: opts.Crop, Dat: idx, Palette: opts.Palette, Textures: opts.Textures})
+	base, report, err := RenderFlat(s, Options{Projection: opts.Projection, Scale: opts.Scale, Layers: map[string]bool{"terrain": layerEnabled(opts.Layers, "terrain"), "elevation": layerEnabled(opts.Layers, "elevation"), "starts": false}, Crop: opts.Crop, Dat: idx, Palette: opts.Palette, Textures: opts.Textures, Elevation: opts.Elevation})
 	if err != nil {
 		return nil, Report{}, err
 	}
@@ -67,6 +101,10 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 		return nil, Report{}, fmt.Errorf("sprite preview requires a game install")
 	}
 	report.Skipped = nil
+	report.RotationModel, report.ScenarioVersion = model, s.ScenarioVersion
+	if model != "stored-index" {
+		report.Fallbacks = append(report.Fallbacks, "experimental rotation model: "+model+"; not engine-verified; raw scenario and snapshot values are unchanged")
+	}
 	report.Drawn = 0
 	report.CountsByClass = map[string]int{}
 	crop := Crop{X2: s.Width, Y2: s.Height}
@@ -95,7 +133,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 			if angle == 0 {
 				angle = int(math.Round(o.Rotation))
 			}
-			r := ParticleReport{UnitID: o.UnitID, X: o.X, Y: o.Y, GraphicID: int(u.StandingGraphic1), Name: g.ParticleEffectName.Value, Mapping: "DAT graphic.ParticleEffectName -> installed particle JSON", Status: "pending", Angle: angle, Frame: -1, Placement: "candidate: direct rotation index, first frame per angle, source-canvas pivot at unit anchor; not engine-calibrated"}
+			r := ParticleReport{UnitID: o.UnitID, X: o.X, Y: o.Y, GraphicID: int(u.StandingGraphic1), Name: g.ParticleEffectName.Value, Mapping: "DAT graphic.ParticleEffectName -> installed particle JSON", Status: "pending", Angle: angle, Frame: -1, Placement: "candidate rotation model " + model + ", first frame per angle, source-canvas pivot at unit anchor; not engine-calibrated"}
 			hybrid, checked := particleHasSLD[r.GraphicID]
 			if !checked {
 				if g.FileName.Value != "" {
@@ -119,6 +157,12 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 				} else {
 					p.definition = d
 					r.Layer, r.Angles, r.Scale = d.Layer, d.ImageAngles, d.Scale
+					mapped, e := RotationIndex(o, model, d.ImageAngles)
+					if e != nil {
+						r.Status, r.Reason = "skipped", e.Error()
+					} else {
+						r.Angle = mapped
+					}
 					if r.Layer == "" {
 						r.Layer = "Sprite"
 					}
@@ -211,9 +255,10 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 					loadedBytes += sld.Size
 				}
 			}
-			variant := o.Variant
-			if variant == 0 {
-				variant = int(math.Round(o.Rotation))
+			variant, rotationErr := RotationIndex(o, model, int(g.AngleCount))
+			if rotationErr != nil {
+				report.Skipped = append(report.Skipped, Skipped{UnitID: o.UnitID, Reason: rotationErr.Error()})
+				continue
 			}
 			variant = angleFrameOrdinal(variant, int(g.AngleCount), int(g.FrameCount))
 			pc := playerColor(o.Player)
