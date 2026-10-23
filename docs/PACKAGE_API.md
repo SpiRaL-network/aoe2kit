@@ -6456,6 +6456,7 @@ type VerifyReport struct {
 	Version       string                 `json:"version"`
 	Profile       string                 `json:"profile,omitempty"`
 	Generation    int                    `json:"generation,omitempty"`
+	FeltCatalogOK bool                   `json:"felt_catalog_ok"`
 	SourceBuildOK bool                   `json:"source_build_ok"`
 	DocsOK        bool                   `json:"docs_ok"`
 	ManifestOK    bool                   `json:"manifest_ok"`

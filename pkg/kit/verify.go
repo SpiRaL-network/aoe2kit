@@ -18,6 +18,7 @@ type VerifyReport struct {
 	Version       string                 `json:"version"`
 	Profile       string                 `json:"profile,omitempty"`
 	Generation    int                    `json:"generation,omitempty"`
+	FeltCatalogOK bool                   `json:"felt_catalog_ok"`
 	SourceBuildOK bool                   `json:"source_build_ok"`
 	DocsOK        bool                   `json:"docs_ok"`
 	ManifestOK    bool                   `json:"manifest_ok"`
@@ -30,7 +31,7 @@ type VerifyReport struct {
 }
 
 func Verify(root string, runGoChecks bool) VerifyReport {
-	report := VerifyReport{Root: root, Version: Version}
+	report := VerifyReport{Root: root, Version: Version, FeltCatalogOK: true}
 
 	// Hold the tree to the contract it declares, not to the fullest one. A
 	// handoff archive that carries no docs/ is complete for what it claims to be.
@@ -51,6 +52,10 @@ func Verify(root string, runGoChecks bool) VerifyReport {
 		}
 	}
 	report.DocsOK = len(report.Errors) == 0
+	if err := validateFeltCatalogs(root); err != nil {
+		report.FeltCatalogOK = false
+		report.Errors = append(report.Errors, err.Error())
+	}
 
 	generated, err := ManifestJSON()
 	if err != nil {

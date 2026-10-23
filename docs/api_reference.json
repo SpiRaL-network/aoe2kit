@@ -7451,11 +7451,10 @@
         "verify",
         "."
       ],
-      "probe_exit_code": 1,
       "output_top_level_keys": [
         "artifacts_ok",
         "docs_ok",
-        "errors",
+        "felt_catalog_ok",
         "generation",
         "go_available",
         "inventory_ok",
@@ -7467,7 +7466,7 @@
         "version"
       ],
       "response_type": "kit.VerifyReport",
-      "verification": "structure_failed"
+      "verification": "structure_verified_not_engine_verified"
     },
     {
       "path": [

@@ -23796,6 +23796,11 @@
           "optional": true
         },
         {
+          "name": "FeltCatalogOK",
+          "json": "felt_catalog_ok",
+          "go_type": "bool"
+        },
+        {
           "name": "SourceBuildOK",
           "json": "source_build_ok",
           "go_type": "bool"

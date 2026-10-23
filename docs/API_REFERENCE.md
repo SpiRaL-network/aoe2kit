@@ -385,8 +385,8 @@ kit verify [folder] [--go-checks]
 | `--go-checks` | _(boolean)_ |
 
 - probe: `ok`
-- verification: `structure_failed`
-- JSON top-level keys: `artifacts_ok`, `docs_ok`, `errors`, `generation`, `go_available`, `inventory_ok`, `manifest_ok`, `profile`, `root`, `source_build_ok`, `verification`, `version`
+- verification: `structure_verified_not_engine_verified`
+- JSON top-level keys: `artifacts_ok`, `docs_ok`, `felt_catalog_ok`, `generation`, `go_available`, `inventory_ok`, `manifest_ok`, `profile`, `root`, `source_build_ok`, `verification`, `version`
 - response type: `kit.VerifyReport` (full nested shape in `api_schemas.json`)
 
 ### `verify-run`

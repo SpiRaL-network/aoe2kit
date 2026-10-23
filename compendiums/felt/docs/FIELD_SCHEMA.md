@@ -72,6 +72,20 @@ Important fields:
 Terrain swatches are raw material evidence. They do not fully capture in-engine blending, edge masks,
 or large-scale composition.
 
+## Update provenance
+
+Art and terrain entries may include an optional `update_provenance` array for source records that
+inform catalog guidance. Each item has `kind`, `id`, and `date` (`YYYY-MM-DD`). `kind` is
+`feltboard_comment` or `tol_claim`; a ToL id uses the `claim.felt.*` namespace. Kit accepts entries
+without this field and validates its shape when it is present.
+
+For a feedback-driven catalog change, a reviewed Felt Board comment records the design observation;
+the AoE2 Dex updates or creates the corresponding ToL claim while preserving its confidence; the
+catalog edit cites both the board comment and claim in `update_provenance`; then scrub and validate
+the edit. An independently supported ToL claim can be cited on its own. For example,
+`claim.felt.ground.pro_plant_cover` informs the guidance for Gaia plants 818 and 1362. Record the date
+of each cited source and do not raise confidence merely because provenance was added.
+
 ## Confidence Rules
 
 Do not erase uncertainty.

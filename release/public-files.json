@@ -273,6 +273,8 @@
     "pkg/jsonout/jsonout_test.go",
     "pkg/kit/credits.go",
     "pkg/kit/credits_test.go",
+    "pkg/kit/felt_catalog.go",
+    "pkg/kit/felt_catalog_test.go",
     "pkg/kit/inventory.go",
     "pkg/kit/inventory_test.go",
     "pkg/kit/lineage.go",

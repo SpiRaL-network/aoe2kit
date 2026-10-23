@@ -2388,7 +2388,7 @@
         "low"
       ],
       "felt": "A small delicate leafy shrub - fern-like sprigs, airier and finer than the bushes. 8 facings. Felt: fine detail on the forest floor, a fern in the shade, a tended garden's low greenery.",
-      "use_when": "Fine-grained ground detail, shaded understory, garden beds. Use where a full bush would be too heavy.",
+      "use_when": "Fine-grained ground detail in shaded understory, garden beds, and grass edges. Roughly one low plant per four tiles is a useful official-map reference within vegetated patches, while worn camp ground stays sparse. Use where a full bush would be too heavy.",
       "sld_size_kb": 16.1,
       "standing": "ai_felt_from_render",
       "source": "AoE2Kit sprite render.",
@@ -2405,7 +2405,14 @@
         "radius_z": 0,
         "tiles": "none (walkable)",
         "blocks": false
-      }
+      },
+      "update_provenance": [
+        {
+          "kind": "tol_claim",
+          "id": "claim.felt.ground.pro_plant_cover",
+          "date": "2026-10-17"
+        }
+      ]
     },
     {
       "unit_const": 818,
@@ -2432,7 +2439,7 @@
         "accent"
       ],
       "felt": "Tiny green sprigs/leaf tufts, barely more than a few blades. 5 facings. Felt: the smallest greenery accent - a weed poking through, a bit of life on bare ground.",
-      "use_when": "The finest scatter detail - between paving, along a wall base, dusting bare dirt so it reads lived-in. Nearly subliminal; use lots.",
+      "use_when": "The finest scatter detail between paving, along grass edges, and across vegetated ground. Official-map examples suggest roughly one low plant per four tiles in vegetated patches; leave worn camp ground sparse. Nearly subliminal; use lightly across broad areas.",
       "sld_size_kb": 3.5,
       "standing": "ai_felt_from_render",
       "source": "AoE2Kit sprite render.",
@@ -2449,7 +2456,14 @@
         "radius_z": 0,
         "tiles": "none (walkable)",
         "blocks": false
-      }
+      },
+      "update_provenance": [
+        {
+          "kind": "tol_claim",
+          "id": "claim.felt.ground.pro_plant_cover",
+          "date": "2026-10-17"
+        }
+      ]
     },
     {
       "unit_const": 1365,
