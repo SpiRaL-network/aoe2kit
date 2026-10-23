@@ -473,6 +473,8 @@
     "pkg/scenario/layout.go",
     "pkg/scenario/layout_document.go",
     "pkg/scenario/layout_test.go",
+    "pkg/scenario/map_patch_diff.go",
+    "pkg/scenario/map_patch_diff_test.go",
     "pkg/scenario/motif.go",
     "pkg/scenario/motif_test.go",
     "pkg/scenario/palette_usage.go",

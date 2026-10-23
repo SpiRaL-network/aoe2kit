@@ -91,6 +91,7 @@ test and for the values the DE editor normalizes on save.
 ./kit scen verify in.aoe2scenario
 ./kit scen plan in.aoe2scenario --recipe docs/SCEN_RECIPE_EXAMPLE.json
 ./kit scen patch in.aoe2scenario out.aoe2scenario --recipe docs/SCEN_RECIPE_EXAMPLE.json
+./kit scen diff before.aoe2scenario after.aoe2scenario --map-patch-recipe map-art-patch.json
 ./kit scen smoke-recipe --x 145 --y 175
 ./kit scen smoke in.aoe2scenario AoE2Kit_WriteSmoke.aoe2scenario --x 145 --y 175
 ```
@@ -98,6 +99,17 @@ test and for the values the DE editor normalizes on save.
 `plan` is read-only, but it is not just a counter: it validates current
 selectors and guarded delete dependencies for `remove_trigger`, `edit_trigger`,
 `remove_unit`, and `edit_unit` before reporting the operation list.
+
+`scen diff --map-patch-recipe` writes a deterministic recipe for map-art-only
+changes: terrain/elevation/layer cells become disjoint `set_terrain_rect`
+operations, and placed objects become reference-id-based add/edit/remove
+operations. The diff rejects map resizing, settings, triggers, opaque changes,
+ambiguous reference ids, and object-caption edits as non-patchable; it never
+silently drops those changes. The normal diff report is still returned, with a
+`map_patch` summary added when the recipe option is used. If changes are not
+patchable, the command exits non-zero and prints the supported-field summary,
+but does not write the recipe file. This is a structural patch description,
+not an engine-verification claim.
 
 ## Write Primitives
 

@@ -6157,10 +6157,14 @@
       ],
       "name": "scen diff",
       "group": "scen",
-      "usage": "kit scen diff \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--all-fields] [--text|--json]",
+      "usage": "kit scen diff \u003cbefore.aoe2scenario\u003e \u003cafter.aoe2scenario\u003e [--all-fields] [--map-patch-recipe OUT.json] [--text|--json]",
       "flags": [
         {
           "name": "--all-fields"
+        },
+        {
+          "name": "--map-patch-recipe",
+          "value_hint": "OUT.json"
         }
       ],
       "positional": [

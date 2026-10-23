@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 1121,
+  "type_count": 1122,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -48957,6 +48957,72 @@
         {
           "name": "Raw",
           "go_type": "[]byte"
+        }
+      ]
+    },
+    "scenario.MapPatchDiffReport": {
+      "package": "scenario",
+      "name": "MapPatchDiffReport",
+      "doc": "MapPatchDiffReport describes a deterministic map-art-only recipe that turns Before into After.",
+      "fields": [
+        {
+          "name": "Before",
+          "json": "before",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "After",
+          "json": "after",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Patchable",
+          "json": "patchable",
+          "go_type": "bool"
+        },
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        },
+        {
+          "name": "ChangedCells",
+          "json": "changed_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "AddedUnits",
+          "json": "added_units",
+          "go_type": "int"
+        },
+        {
+          "name": "RemovedUnits",
+          "json": "removed_units",
+          "go_type": "int"
+        },
+        {
+          "name": "EditedUnits",
+          "json": "edited_units",
+          "go_type": "int"
+        },
+        {
+          "name": "UnsupportedChanges",
+          "json": "unsupported_changes",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Recipe",
+          "json": "recipe",
+          "go_type": "Recipe",
+          "ref": "scenario.Recipe"
         }
       ]
     },

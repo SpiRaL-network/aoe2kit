@@ -12216,6 +12216,27 @@ func MapFile(path string) (*MapInfo, error)
     MapFile reads map metadata without requiring later sections such as Units or
     Triggers to be understood.
 
+// MapPatchDiffReport describes a deterministic map-art-only recipe that turns
+// before into after. It refuses changes outside terrain, elevation, and placed units.
+type MapPatchDiffReport struct {
+    Before, After string
+    Patchable bool
+    Width, Height, ChangedCells int
+    AddedUnits, RemovedUnits, EditedUnits int
+    UnsupportedChanges []string
+    Recipe Recipe
+}
+
+// MapPatchDiff computes exact terrain/elevation-cell and reference-id-based
+// unit operations. Non-map semantic edits make Patchable false.
+func MapPatchDiff(before, after *File) (MapPatchDiffReport, error)
+
+// MapPatchDiffFiles opens scenarios and computes a map-art-only patch recipe.
+func MapPatchDiffFiles(beforePath, afterPath string) (MapPatchDiffReport, error)
+
+// WriteMapPatchRecipe writes a patchable recipe via a temporary file and rename.
+func WriteMapPatchRecipe(path string, report MapPatchDiffReport) error
+
 type MapLayout struct {
 	StringStarter1     [2]byte
 	WaterDefinition    string

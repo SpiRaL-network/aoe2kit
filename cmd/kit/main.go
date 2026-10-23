@@ -3912,12 +3912,13 @@ func runScen(args []string) {
 		}
 	case "diff":
 		if len(args) < 3 {
-			fmt.Fprintln(os.Stderr, "usage: kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--text|--json]")
+			fmt.Fprintln(os.Stderr, "usage: kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--map-patch-recipe OUT.json] [--text|--json]")
 			os.Exit(2)
 		}
 		textOut := false
 		allFields := false
 		gameDir := ""
+		mapPatchRecipe := ""
 		for i := 3; i < len(args); i++ {
 			arg := args[i]
 			switch arg {
@@ -3927,6 +3928,12 @@ func runScen(args []string) {
 				textOut = true
 			case "--json":
 				textOut = false
+			case "--map-patch-recipe":
+				i++
+				if i >= len(args) || strings.TrimSpace(args[i]) == "" {
+					die("kit scen diff", fmt.Errorf("--map-patch-recipe needs an output path"))
+				}
+				mapPatchRecipe = args[i]
 			case "--game-dir":
 				i++
 				if i >= len(args) {
@@ -3941,10 +3948,39 @@ func runScen(args []string) {
 		if err != nil {
 			die("kit scen diff", err)
 		}
+		var mapPatch *scenario.MapPatchDiffReport
+		if mapPatchRecipe != "" {
+			patchReport, err := scenario.MapPatchDiffFiles(args[1], args[2])
+			if err != nil {
+				die("kit scen diff map patch", err)
+			}
+			if patchReport.Patchable {
+				if err := scenario.WriteMapPatchRecipe(mapPatchRecipe, patchReport); err != nil {
+					die("kit scen diff map patch", err)
+				}
+			} else {
+				mapPatchRecipe = ""
+			}
+			mapPatch = &patchReport
+		}
 		if textOut {
 			printScenarioDiff(report)
+			if mapPatch != nil {
+				fmt.Printf("map_patch_recipe: %s patchable=%t cells=%d units=+%d/-%d/~%d\n", mapPatchRecipe, mapPatch.Patchable, mapPatch.ChangedCells, mapPatch.AddedUnits, mapPatch.RemovedUnits, mapPatch.EditedUnits)
+			}
 		} else {
-			printJSON(report)
+			if mapPatch == nil {
+				printJSON(report)
+			} else {
+				printJSON(struct {
+					Diff          scenario.DiffReport          `json:"diff"`
+					MapPatch      *scenario.MapPatchDiffReport `json:"map_patch"`
+					RecipeWritten string                       `json:"recipe_written"`
+				}{report, mapPatch, mapPatchRecipe})
+			}
+		}
+		if mapPatch != nil && !mapPatch.Patchable {
+			os.Exit(1)
 		}
 	case "diff-triggers":
 		if len(args) < 3 {
@@ -22326,7 +22362,7 @@ func usage() {
   kit scen xs extract <file.aoe2scenario> --out file.xs [--carrier N|--trigger N] [--force] [--text|--json]
   kit scen xs compare <file.aoe2scenario> <file.xs> [--carrier N|--trigger N] [--text|--json]
   kit scen deploycheck <file.aoe2scenario> <deploy-tree> [--text] [--include-provisional]
-  kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--text|--json]
+  kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--map-patch-recipe OUT.json] [--text|--json]
   kit scen diff-series <files...|directory> [--all-fields] [--game-dir D] [--text|--json]
   kit scen watch <file.aoe2scenario> [--snapshot-dir D] [--interval 1s] [--once] [--game-dir D]
   kit scen diff-triggers <before.aoe2scenario> <after.aoe2scenario> [--limit N] [--text|--json]

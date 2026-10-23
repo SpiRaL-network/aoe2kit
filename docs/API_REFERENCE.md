@@ -2994,12 +2994,13 @@ kit scen describe <file.aoe2scenario> [--section triggers|units|map|players|vict
 ### `scen diff`
 
 ```
-kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--text|--json]
+kit scen diff <before.aoe2scenario> <after.aoe2scenario> [--all-fields] [--map-patch-recipe OUT.json] [--text|--json]
 ```
 
 | flag | value |
 | --- | --- |
 | `--all-fields` | _(boolean)_ |
+| `--map-patch-recipe` | `OUT.json` |
 
 - probe: `skipped_no_fixture`
 
