@@ -508,6 +508,35 @@ Depth sorting still uses flat positions, shadows are not warped across slopes,
 and terrain does not occlude objects. Topdown output retains slope shading only.
 The categorical elevation layer is a separate diagnostic.
 
+### Registering elevation captures
+
+The Go API `preview.FitDiamondRegistration` fits a screenshot camera from
+explicit `RegistrationAnchor` world coordinates, stored heights, and observed
+pixel coordinates. It returns tile scale, origin, fitting RMS and per-anchor
+residuals. Set `Holdout` on independent test anchors; they do not influence the
+camera. The projection is `px=OX+(x+y)*scale/2`,
+`py=OY+(y-x-height)*scale/4`. Heights are inputs, not inferred terrain semantics.
+Use at least three distinct fitting anchors and inspect residuals rather than
+assuming a good fit validates the corner rule.
+
+Render at the fitted scale and obtain the padded origin from `--print-extent`.
+For an integer-scale fit, the registered pixel-window offset is the reported
+map origin minus the fitted screenshot origin, rounded to pixels. Keep that
+rounding error in the comparison; do not assume the origin is simply half the
+map height. The API accepts fractional scales, but the preview CLI currently
+requires integer scales.
+
+An additional high-ground grass capture at 96 pixels per tile supports the
+max-corner geometry through editor UI level 16 (stored 15). Six marker controls
+fit at the recorded centroid precision; two held-out markers on UI-level-15
+tiles sit one level higher, matching their adjacent UI-level-16 corners.
+Four ridge regions favor max corners over mean/min corners by grid contrast,
+with median local grid-match offsets of zero pixels. This is capture-specific
+evidence, not universal engine validation. Odd-corner diagonal contrast remains
+inconclusive. Relative face luminance still differs by region, particularly
+on rising `-y` faces; texture, mood and grid effects have not been isolated.
+The renderer's fold and lighting rules are unchanged by this calibration.
+
 ## Local Missing-Sprite Repair
 
 ```text
