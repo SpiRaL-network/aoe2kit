@@ -496,9 +496,14 @@ These shortcuts do not change the scenario or saved snapshot.
 level lifts the surface by one quarter of the tile width (`scale/4` pixels),
 measured from single-tile and pyramid editor captures through stored level 15.
 Shared corners use the maximum of the adjacent tiles, consistent with registered
-grid vertices in the available grass plateau, pit and terrace captures. A quad
-with one odd-height corner folds through it; ambiguous cases prefer the more
-level diagonal, with A-C on ties. Coverage beyond these fixtures remains limited.
+grid vertices in the available grass plateau, pit and terrace captures.
+An isolated one-level raised NW, NE or SE neighbor in otherwise level terrain
+uses the opposite, level diagonal. The raised tile must also have no adjacent
+raised tiles: this context check preserves connected pyramid ridges, which can
+have the same four corner heights. Registered grass texture comparisons support
+this distinction. SW isolated corners and other unresolved profiles retain the
+prior odd-corner selection; ambiguous fallbacks prefer the more level diagonal,
+with A-C on ties. Interior geometry remains provisional beyond these cases.
 Lighting coefficients retain a single Lambert-style fit to flat ground
 and all four axial grass faces in one capture, not recovered engine maths.
 Opposing-pair averages differ in that capture; the least-squares fit leaves

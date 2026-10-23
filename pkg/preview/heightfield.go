@@ -123,6 +123,65 @@ func heightFoldBD(a, b, c, d float64) bool {
 	return oddBD || (!oddAC && math.Abs(a-c) > math.Abs(b-d))
 }
 
+// Isolated raised neighbors are distinct from connected ridges, even when
+// their four shared-corner heights agree. Registered grass captures support
+// clipping the NW/NE/SE isolated corners; SW retains the existing fold.
+func heightTileFoldBD(tiles []Tile, width, height, x, y int) bool {
+	a, b, c, d := cornerHeight(tiles, width, height, x, y), cornerHeight(tiles, width, height, x+1, y), cornerHeight(tiles, width, height, x+1, y+1), cornerHeight(tiles, width, height, x, y+1)
+	fallback := heightFoldBD(a, b, c, d)
+	if x < 1 || y < 1 || x+1 >= width || y+1 >= height {
+		return fallback
+	}
+	base := math.Min(math.Min(a, b), math.Min(c, d))
+	which := -1
+	rx, ry := 0, 0
+	for dy := -1; dy <= 1; dy++ {
+		for dx := -1; dx <= 1; dx++ {
+			h := tiles[(y+dy)*width+x+dx].Elevation
+			if h == base {
+				continue
+			}
+			if h != base+1 || dx == 0 || dy == 0 || which >= 0 {
+				return fallback
+			}
+			switch {
+			case dx == -1 && dy == -1:
+				which = 0
+			case dx == 1 && dy == -1:
+				which = 1
+			case dx == 1 && dy == 1:
+				which = 2
+			default:
+				which = 3
+			}
+			rx, ry = x+dx, y+dy
+		}
+	}
+	if which >= 0 {
+		if rx < 1 || ry < 1 || rx+1 >= width || ry+1 >= height {
+			return fallback
+		}
+		for dy := -1; dy <= 1; dy++ {
+			for dx := -1; dx <= 1; dx++ {
+				if dx == 0 && dy == 0 {
+					continue
+				}
+				if tiles[(ry+dy)*width+rx+dx].Elevation > base {
+					return fallback
+				}
+			}
+		}
+	}
+	switch which {
+	case 0, 2:
+		return true
+	case 1:
+		return false
+	default:
+		return fallback
+	}
+}
+
 // Rasterize in back-to-front tile order. Texture/blend coordinates are the
 // barycentrically interpolated original world positions, never screen pixels.
 func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, scale, pad int, sample func(float64, float64) color.RGBA) {
@@ -163,10 +222,9 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 				continue
 			}
 			a, b, c, d := vertex(x, y), vertex(x+1, y), vertex(x+1, y+1), vertex(x, y+1)
-			// Fold through a lone raised/lowered corner, so diagonal ridges
-			// stay continuous rather than alternating flat and sloped teeth.
-			// Ties retain A-C; other ambiguous cases prefer the level diagonal.
-			if heightFoldBD(a.h, b.h, c.h, d.h) {
+			// Isolated corners use the registered local-context rule; connected
+			// ridges and unresolved profiles retain the previous selection.
+			if heightTileFoldBD(tiles, s.Width, s.Height, x, y) {
 				triangle(a, b, d)
 				triangle(b, c, d)
 			} else {

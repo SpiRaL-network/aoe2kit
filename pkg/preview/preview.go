@@ -629,7 +629,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.ElevationMode = "flat textured surface; geometric elevation and lighting not modeled"
 	}
 	if opts.Elevation {
-		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners; shared-vertex lighting from central terrain gradients; inspect object_height_mode for stored Z or provisional inferred attachment; flat-position depth order; no terrain occlusion"
+		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners; isolated NW/NE/SE raised neighbors use level-diagonal folds with connected-ridge guard; shared-vertex lighting from central terrain gradients; inspect object_height_mode for stored Z or provisional inferred attachment; flat-position depth order; no terrain occlusion"
 		if projection != "diamond" {
 			report.ElevationMode = "topdown slope shading only; no geometric displacement"
 		}
