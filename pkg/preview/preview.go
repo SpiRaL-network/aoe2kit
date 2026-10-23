@@ -85,7 +85,7 @@ type Options struct {
 	Dat                *datfile.Index
 	Textures           *TerrainTextureOptions
 	Shadows            *ShadowOptions
-	Elevation          bool // Experimental slope shading only, not displaced geometry.
+	Elevation          bool // Opt-in height field; shared-corner rule and lighting are provisional.
 	RotationModel      string
 }
 
@@ -109,6 +109,7 @@ type Report struct {
 	ObjectMarkerSizing string                `json:"object_marker_sizing,omitempty"`
 	Palette            string                `json:"palette,omitempty"`
 	ElevationMode      string                `json:"elevation_mode,omitempty"`
+	ElevationPadding   int                   `json:"elevation_padding,omitempty"`
 	Fallbacks          []string              `json:"fallbacks,omitempty"`
 	Textures           *TerrainTextureReport `json:"textures,omitempty"`
 	Mood               *MoodReport           `json:"mood,omitempty"`
@@ -587,11 +588,22 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 			if layerEnabled(opts.Layers, "elevation") {
 				c = shadeElevation(c, tile.Elevation)
 			}
-			if opts.Elevation {
+			if opts.Elevation && projection != "diamond" {
 				c = slopeShade(c, terrain, s.Width, s.Height, x, y)
 			}
-			drawTile(img, x-crop.X1, y-crop.Y1, crop, scale, projection, c)
+			if !opts.Elevation || projection != "diamond" {
+				drawTile(img, x-crop.X1, y-crop.Y1, crop, scale, projection, c)
+			}
 		}
+	}
+	if opts.Elevation && projection == "diamond" && opts.Textures == nil && layerEnabled(opts.Layers, "terrain") {
+		renderHeightfield(img, terrain, s, crop, scale, pad, func(x, y float64) color.RGBA {
+			tile := terrain[int(y)*s.Width+int(x)]
+			if opts.Dat != nil {
+				return minimapTerrainColor(tile.TerrainID, opts.Dat, opts.Palette)
+			}
+			return terrainColor(tile.TerrainID)
+		})
 	}
 	report := Report{Schema: "aoe2kit.preview.report.v1", OK: true, Stage: s.Stage, Projection: projection, ImageWidth: w, ImageHeight: h, CountsByClass: map[string]int{}, TerrainColors: "builtin deterministic terrain-id palette"}
 	report.Fallbacks = append(report.Fallbacks, s.SourceWarnings...)
@@ -613,7 +625,10 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.ElevationMode = "flat textured surface; geometric elevation and lighting not modeled"
 	}
 	if opts.Elevation {
-		report.ElevationMode = "experimental slope shading; flat geometry, not engine-calibrated"
+		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners provisional; lighting fitted to one capture; objects remain at flat ground positions"
+		if projection != "diamond" {
+			report.ElevationMode = "topdown slope shading only; no geometric displacement"
+		}
 	}
 	for _, o := range depthSortedObjects(s.Objects, crop, scale, projection) {
 		if o.X < float64(crop.X1) || o.Y < float64(crop.Y1) || o.X >= float64(crop.X2) || o.Y >= float64(crop.Y2) {
@@ -624,7 +639,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 			report.Skipped = append(report.Skipped, Skipped{UnitID: o.UnitID, Reason: "objects layer disabled"})
 			continue
 		}
-		paintObject(img, o, crop, scale, projection)
+		paintObject(groundCanvas(img, pad), o, crop, scale, projection)
 		report.Drawn++
 		class := o.Class
 		if class == "" {
@@ -633,7 +648,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.CountsByClass[class]++
 	}
 	if layerEnabled(opts.Layers, "starts") {
-		paintStarts(img, s.Objects, crop, scale, projection)
+		paintStarts(groundCanvas(img, pad), s.Objects, crop, scale, projection)
 	}
 	hash := sha256.Sum256(img.Pix)
 	report.PixelSHA256 = hex.EncodeToString(hash[:])

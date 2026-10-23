@@ -5,8 +5,8 @@ user's own game installation. Preview images are outputs only: they are not
 checked into the repository or included in Kit packs or releases.
 
 Known visual limits: water edges differ from the engine, the mood grade is
-approximate, beach and road brightness is off, and geometric elevation is not
-rendered. The reports distinguish missing assets and approximations from draws.
+approximate, and beach and road brightness is off. Geometric terrain elevation
+is opt-in and provisional. The reports distinguish approximations from draws.
 
 ## Read-Only Campaign Artwork
 
@@ -484,11 +484,21 @@ Fit-units bounds all matching objects, including footprints and a one-tile
 margin; distant clusters remain in one window. A missing selection is an error.
 These shortcuts do not change the scenario or saved snapshot.
 
-`--elevation` adds experimental directional slope shading to flat or textured
-terrain, including terrain beneath sprites. It is off by default and reported
-in `elevation_mode`. It does not displace geometry or sprites, draw cliff faces,
-or claim engine-calibrated lighting. Constant-height plateaus are unchanged by
-this slope pass; the existing flat elevation layer remains a separate diagnostic.
+`--elevation` draws diamond terrain as a triangular height field. Each stored
+level lifts the surface by one quarter of the tile width (`scale/4` pixels),
+measured from single-tile and pyramid editor captures through stored level 15.
+Shared corners provisionally use the maximum of the adjacent tiles; the more
+level diagonal splits each quad. Pair and pit captures are still needed to
+validate this rule. Vertex-interpolated slope lighting is fitted to three grass
+faces in one capture, not recovered engine maths. Textures, layer masks and border blends retain
+their undeformed world coordinates. This option is off by default.
+
+The canvas grows upward by `ceil(max_level * scale/4)` pixels. `--print-extent`,
+pixel windows and tile pyramids use that same padded frame; `map_origin_y` and
+`elevation_padding` report the ground offset. Objects, particles and their
+shadows remain at their flat-ground positions plus this padding: they do not
+yet ride the surface or receive terrain occlusion. Topdown output retains
+slope shading only. The categorical elevation layer is a separate diagnostic.
 
 ## Local Missing-Sprite Repair
 

@@ -291,6 +291,8 @@
     "pkg/preview/defaults.go",
     "pkg/preview/defaults_test.go",
     "pkg/preview/elevation.go",
+    "pkg/preview/heightfield.go",
+    "pkg/preview/heightfield_test.go",
     "pkg/preview/facets.go",
     "pkg/preview/facets_test.go",
     "pkg/preview/grammar.go",

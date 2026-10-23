@@ -281,6 +281,7 @@ func drawParticle(base *image.RGBA, loader *particleLoader, o Object, p particle
 	r.Filename = f.meta.Filename
 	factor := p.definition.Scale * float64(scale) / float64(nativeTile)
 	x, y := mapPoint(o.X-float64(crop.X1), o.Y-float64(crop.Y1), crop, scale, "diamond")
+	y += report.ElevationPadding
 	left, top := x-int(math.Round(f.hotspotX*factor)), y-int(math.Round(f.hotspotY*factor))
 	rect := image.Rect(left, top, left+max(1, int(math.Round(float64(f.image.Bounds().Dx())*factor))), top+max(1, int(math.Round(float64(f.image.Bounds().Dy())*factor))))
 	xdraw.CatmullRom.Scale(base, rect, f.image, f.image.Bounds(), draw.Over, nil)
