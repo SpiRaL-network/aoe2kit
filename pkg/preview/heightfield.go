@@ -17,8 +17,8 @@ func validateHeightfield(s Snapshot) error {
 }
 
 // Stored levels lift screen y by one quarter of a tile width. The shared-corner
-// rule is provisional: it matches the single-tile and pyramid captures, but
-// still needs independent pair/pit calibration.
+// rule matches registered grid vertices in single-tile, pyramid, plateau,
+// terrace and pit captures. Coverage is still limited to these grass fixtures.
 func cornerHeight(tiles []Tile, width, height, x, y int) float64 {
 	h := 0.0
 	for yy := max(0, y-1); yy <= min(height-1, y); yy++ {
@@ -72,16 +72,23 @@ func heightVertexAt(tiles []Tile, s Snapshot, crop Crop, scale, pad, x, y int) h
 }
 
 // Lighting fitted to three grass faces in one editor capture, not engine maths.
-// Front-left (+x): .72; front-right (-y): 1.25; back-right (-x):
-// 1.13. Those axis labels follow the shared engine diamond transform.
+// Least-squares fit to flat=1 and axial slopes +x=.68, -x=1.08,
+// +y=.79, -y=1.21. Opposing-pair means differ in the capture (.88/1),
+// so one Lambert-style term cannot match both exactly: axial residuals .06.
 func heightLight(dx, dy float64) float64 {
 	n := math.Sqrt(1 + dx*dx + dy*dy)
-	return math.Max(.4, math.Min(1.5, .743934+(0.256066-.289914*dx-.459619*dy)/n))
+	return math.Max(.4, math.Min(1.5, .795147+(0.204853-.282843*dx-.296985*dy)/n))
 }
 
 func heightShade(c color.RGBA, factor float64) color.RGBA {
 	channel := func(v uint8) uint8 { return uint8(math.Min(255, math.Round(float64(v)*factor))) }
 	return color.RGBA{channel(c.R), channel(c.G), channel(c.B), c.A}
+}
+
+func heightFoldBD(a, b, c, d float64) bool {
+	oddAC := (b == c && c == d && a != b) || (a == b && b == d && c != a)
+	oddBD := (a == c && c == d && b != a) || (a == b && b == c && d != a)
+	return oddBD || (!oddAC && math.Abs(a-c) > math.Abs(b-d))
 }
 
 // Rasterize in back-to-front tile order. Texture/blend coordinates are the
@@ -124,9 +131,10 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 				continue
 			}
 			a, b, c, d := vertex(x, y), vertex(x+1, y), vertex(x+1, y+1), vertex(x, y+1)
-			// Prefer the level diagonal when a lone corner rises or falls.
-			// This triangulation remains part of the provisional corner model.
-			if math.Abs(a.h-c.h) > math.Abs(b.h-d.h) {
+			// Fold through a lone raised/lowered corner, so diagonal ridges
+			// stay continuous rather than alternating flat and sloped teeth.
+			// Ties retain A-C; other ambiguous cases prefer the level diagonal.
+			if heightFoldBD(a.h, b.h, c.h, d.h) {
 				triangle(a, b, d)
 				triangle(b, c, d)
 			} else {

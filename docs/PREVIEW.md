@@ -487,10 +487,14 @@ These shortcuts do not change the scenario or saved snapshot.
 `--elevation` draws diamond terrain as a triangular height field. Each stored
 level lifts the surface by one quarter of the tile width (`scale/4` pixels),
 measured from single-tile and pyramid editor captures through stored level 15.
-Shared corners provisionally use the maximum of the adjacent tiles; the more
-level diagonal splits each quad. Pair and pit captures are still needed to
-validate this rule. Per-triangle face-normal lighting is fitted to three grass
-faces in one capture, not recovered engine maths. Ridge lighting is not smoothed.
+Shared corners use the maximum of the adjacent tiles, consistent with registered
+grid vertices in the available grass plateau, pit and terrace captures. A quad
+with one odd-height corner folds through it; ambiguous cases prefer the more
+level diagonal, with A-C on ties. Coverage beyond these fixtures remains limited.
+Per-triangle face-normal lighting is a single Lambert-style fit to flat ground
+and all four axial grass faces in one capture, not recovered engine maths.
+Opposing-pair averages differ in that capture; the least-squares fit leaves
+about six percentage points of error per axial face. Ridge lighting is not smoothed.
 Textures, layer masks and border blends retain
 their undeformed world coordinates. This option is off by default.
 

@@ -54,7 +54,7 @@ func TestHeightCornersLiftAndExtent(t *testing.T) {
 	if y1-72.0/4 != y0 {
 		t.Fatal("back-face edge is not horizontal", y0, y1)
 	}
-	for _, c := range []struct{ dx, dy, want float64 }{{0, 0, 1}, {1, 0, .72}, {-1, 0, 1.13}, {0, -1, 1.25}} {
+	for _, c := range []struct{ dx, dy, want float64 }{{0, 0, 1}, {1, 0, .74}, {-1, 0, 1.14}, {0, 1, .73}, {0, -1, 1.15}} {
 		if math.Abs(heightLight(c.dx, c.dy)-c.want) > .002 {
 			t.Fatal("lighting fit", c, heightLight(c.dx, c.dy))
 		}
@@ -88,6 +88,32 @@ func TestHeightfieldRejectsInvalidLevels(t *testing.T) {
 		if _, _, err := RenderFlat(s, Options{Elevation: true}); err == nil {
 			t.Fatal("renderer accepted invalid elevation", h)
 		}
+	}
+}
+
+func TestHeightfieldFoldsThroughOddCorner(t *testing.T) {
+	for _, odd := range []float64{0, 2} {
+		for i := 0; i < 4; i++ {
+			h := [4]float64{1, 1, 1, 1}
+			h[i] = odd
+			if got, want := heightFoldBD(h[0], h[1], h[2], h[3]), i%2 == 1; got != want {
+				t.Fatal("fold cut off the odd corner", h, got, want)
+			}
+		}
+	}
+	if heightFoldBD(0, 0, 1, 1) || !heightFoldBD(0, 1, 2, 1) {
+		t.Fatal("ambiguous cases should prefer level diagonal, then A-C")
+	}
+	// A diagonal pyramid ridge: the old B-D fold created one flat triangle
+	// and one two-axis slope. A-C creates two axial slopes sharing the ridge.
+	s := heightSnapshot(9)
+	crop := Crop{X2: 9, Y2: 9}
+	a := heightVertexAt(s.Terrain, s, crop, 72, 54, 2, 2)
+	b := heightVertexAt(s.Terrain, s, crop, 72, 54, 3, 2)
+	c := heightVertexAt(s.Terrain, s, crop, 72, 54, 3, 3)
+	d := heightVertexAt(s.Terrain, s, crop, 72, 54, 2, 3)
+	if a.h != b.h || a.h != d.h || c.h != a.h+1 || heightFoldBD(a.h, b.h, c.h, d.h) {
+		t.Fatal("pyramid ridge was not folded through its peak", a, b, c, d)
 	}
 }
 
@@ -156,7 +182,7 @@ func TestHeightfieldFaceLightingDoesNotBlendAcrossRidge(t *testing.T) {
 	for _, tc := range []struct {
 		x, y   int
 		factor float64
-	}{{2, 4, .72}, {4, 6, 1.25}} {
+	}{{2, 4, .74}, {4, 6, 1.15}} {
 		a := heightVertexAt(s.Terrain, s, crop, 64, 48, tc.x, tc.y)
 		b := heightVertexAt(s.Terrain, s, crop, 64, 48, tc.x+1, tc.y)
 		c := heightVertexAt(s.Terrain, s, crop, 64, 48, tc.x+1, tc.y+1)
