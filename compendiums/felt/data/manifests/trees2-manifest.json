@@ -1,0 +1,212 @@
+[
+  {
+    "unit_const": 1063,
+    "unit_name": "FACA",
+    "file_name": "n_tree_acacia_x1",
+    "classification": "multi_variant",
+    "angle_count": 30,
+    "sld_size_kb": 387.8,
+    "contact_sheet": "contact-sheets/n_tree_acacia_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2028,
+    "unit_name": "FASIANMAPLEA",
+    "file_name": "n_tree_asian_maple_autumn_x1",
+    "classification": "multi_variant",
+    "angle_count": 18,
+    "sld_size_kb": 310.6,
+    "contact_sheet": "contact-sheets/n_tree_asian_maple_autumn_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2027,
+    "unit_name": "FASIANMAPLEG",
+    "file_name": "n_tree_asian_maple_green_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 160.9,
+    "contact_sheet": "contact-sheets/n_tree_asian_maple_green_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1248,
+    "unit_name": "FAUTUM",
+    "file_name": "n_tree_autumn_oak_x1",
+    "classification": "multi_variant",
+    "angle_count": 42,
+    "sld_size_kb": 560.1,
+    "contact_sheet": "contact-sheets/n_tree_autumn_oak_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1052,
+    "unit_name": "FBAO",
+    "file_name": "n_tree_baobab_x1",
+    "classification": "multi_variant",
+    "angle_count": 45,
+    "sld_size_kb": 549.1,
+    "contact_sheet": "contact-sheets/n_tree_baobab_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2580,
+    "unit_name": "BRAZILWOOD",
+    "file_name": "n_tree_brazilwood_x1",
+    "classification": "multi_variant",
+    "angle_count": 14,
+    "sld_size_kb": 270.5,
+    "contact_sheet": "contact-sheets/n_tree_brazilwood_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1347,
+    "unit_name": "CYPRESS",
+    "file_name": "n_tree_cypress_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 63.1,
+    "contact_sheet": "contact-sheets/n_tree_cypress_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1250,
+    "unit_name": "FDEAD",
+    "file_name": "n_tree_dead_x1",
+    "classification": "multi_variant",
+    "angle_count": 21,
+    "sld_size_kb": 198.3,
+    "contact_sheet": "contact-sheets/n_tree_dead_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1051,
+    "unit_name": "FDRA",
+    "file_name": "n_tree_dragon_x1",
+    "classification": "multi_variant",
+    "angle_count": 36,
+    "sld_size_kb": 269.7,
+    "contact_sheet": "contact-sheets/n_tree_dragon_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1540,
+    "unit_name": "FBAMFELL",
+    "file_name": "n_tree_felled_bamboo_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 19.7,
+    "contact_sheet": "contact-sheets/n_tree_felled_bamboo_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 414,
+    "unit_name": "FJUN",
+    "file_name": "n_tree_jungle_x1",
+    "classification": "multi_variant",
+    "angle_count": 39,
+    "sld_size_kb": 294.5,
+    "contact_sheet": "contact-sheets/n_tree_jungle_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1984,
+    "unit_name": "FLBAM",
+    "file_name": "n_tree_lush_bamboo_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 171.5,
+    "contact_sheet": "contact-sheets/n_tree_lush_bamboo_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1144,
+    "unit_name": "FMANGRO",
+    "file_name": "n_tree_mangrove_x1",
+    "classification": "multi_variant",
+    "angle_count": 36,
+    "sld_size_kb": 420.3,
+    "contact_sheet": "contact-sheets/n_tree_mangrove_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2570,
+    "unit_name": "MONKEYPUZZLE",
+    "file_name": "n_tree_monkey_puzzle_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 93,
+    "contact_sheet": "contact-sheets/n_tree_monkey_puzzle_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 351,
+    "unit_name": "FPAL",
+    "file_name": "n_tree_palm_x1",
+    "classification": "multi_variant",
+    "angle_count": 39,
+    "sld_size_kb": 348.4,
+    "contact_sheet": "contact-sheets/n_tree_palm_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2017,
+    "unit_name": "FPEACHBLOSSOM",
+    "file_name": "n_tree_peach_blossom_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 71.9,
+    "contact_sheet": "contact-sheets/n_tree_peach_blossom_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 350,
+    "unit_name": "FPIN",
+    "file_name": "n_tree_pine_x1",
+    "classification": "multi_variant",
+    "angle_count": 27,
+    "sld_size_kb": 185.5,
+    "contact_sheet": "contact-sheets/n_tree_pine_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1146,
+    "unit_name": "FRAIN",
+    "file_name": "n_tree_rainforest_x1",
+    "classification": "multi_variant",
+    "angle_count": 69,
+    "sld_size_kb": 686.6,
+    "contact_sheet": "contact-sheets/n_tree_rainforest_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1350,
+    "unit_name": "FBAM",
+    "file_name": "n_tree_reeds_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 34.6,
+    "contact_sheet": "contact-sheets/n_tree_reeds_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1249,
+    "unit_name": "FAUTUMS",
+    "file_name": "n_tree_snow_autumn_oak_x1",
+    "classification": "multi_variant",
+    "angle_count": 42,
+    "sld_size_kb": 538.4,
+    "contact_sheet": "contact-sheets/n_tree_snow_autumn_oak_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 413,
+    "unit_name": "FSNO",
+    "file_name": "n_tree_snow_pine_x1",
+    "classification": "multi_variant",
+    "angle_count": 27,
+    "sld_size_kb": 218.4,
+    "contact_sheet": "contact-sheets/n_tree_snow_pine_x1.png",
+    "felt_done": true
+  }
+]

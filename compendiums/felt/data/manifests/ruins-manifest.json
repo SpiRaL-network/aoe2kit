@@ -1,0 +1,242 @@
+[
+  {
+    "unit_const": 2611,
+    "unit_name": "ANDEANRUINS",
+    "file_name": "s_andean_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 50.9,
+    "contact_sheet": "contact-sheets/s_andean_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2504,
+    "unit_name": "Burned Building Achaemenid",
+    "file_name": "s_burned_building_achaemenid_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 226.1,
+    "contact_sheet": "contact-sheets/s_burned_building_achaemenid_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2505,
+    "unit_name": "Burned Building Greek",
+    "file_name": "s_burned_building_greek_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 240.0,
+    "contact_sheet": "contact-sheets/s_burned_building_greek_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1837,
+    "unit_name": "CastleRuins",
+    "file_name": "s_castle_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 243.2,
+    "contact_sheet": "contact-sheets/s_castle_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1836,
+    "unit_name": "Chapel",
+    "file_name": "s_chapel_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 30.8,
+    "contact_sheet": "contact-sheets/s_chapel_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1987,
+    "unit_name": "CHINESERUINS",
+    "file_name": "s_chinese_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 64.3,
+    "contact_sheet": "contact-sheets/s_chinese_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1838,
+    "unit_name": "ChurchRuins",
+    "file_name": "s_church_ruins_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 70.2,
+    "contact_sheet": "contact-sheets/s_church_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1563,
+    "unit_name": "PAGODA1",
+    "file_name": "s_cushite_pyramid_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 157.9,
+    "contact_sheet": "contact-sheets/s_cushite_pyramid_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2058,
+    "unit_name": "HUABIAOTOTEM",
+    "file_name": "s_huabiao_totem_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 10.8,
+    "contact_sheet": "contact-sheets/s_huabiao_totem_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1784,
+    "unit_name": "INDIANRUINS",
+    "file_name": "s_indian_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 52.7,
+    "contact_sheet": "contact-sheets/s_indian_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2234,
+    "unit_name": "Mediterranean Ruins",
+    "file_name": "s_medi_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 20,
+    "sld_size_kb": 88.2,
+    "contact_sheet": "contact-sheets/s_medi_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2350,
+    "unit_name": "Mesopotamian Ruins",
+    "file_name": "s_mesopotamian_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 18,
+    "sld_size_kb": 79.2,
+    "contact_sheet": "contact-sheets/s_mesopotamian_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 855,
+    "unit_name": "SHEAD",
+    "file_name": "s_old_stone_head_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 16.2,
+    "contact_sheet": "contact-sheets/s_old_stone_head_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1201,
+    "unit_name": "PAGODA1",
+    "file_name": "s_pagoda_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 50.9,
+    "contact_sheet": "contact-sheets/s_pagoda_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1202,
+    "unit_name": "PAGODA2",
+    "file_name": "s_pagoda_b_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 43.8,
+    "contact_sheet": "contact-sheets/s_pagoda_b_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1203,
+    "unit_name": "PAGODA3",
+    "file_name": "s_pagoda_c_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 17.6,
+    "contact_sheet": "contact-sheets/s_pagoda_c_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2005,
+    "unit_name": "PAGODA4",
+    "file_name": "s_pagoda_d_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 112.3,
+    "contact_sheet": "contact-sheets/s_pagoda_d_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2006,
+    "unit_name": "PAGODA5",
+    "file_name": "s_pagoda_e_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 125.5,
+    "contact_sheet": "contact-sheets/s_pagoda_e_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1990,
+    "unit_name": "PAIFANGL",
+    "file_name": "s_paifang_gate_large_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 54.6,
+    "contact_sheet": "contact-sheets/s_paifang_gate_large_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1989,
+    "unit_name": "PAIFANGS",
+    "file_name": "s_paifang_gate_small_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 23.5,
+    "contact_sheet": "contact-sheets/s_paifang_gate_small_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2514,
+    "unit_name": "Puru Ruins",
+    "file_name": "s_puru_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 76.3,
+    "contact_sheet": "contact-sheets/s_puru_ruins_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2059,
+    "unit_name": "QUETOWER",
+    "file_name": "s_que_tower_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 30.9,
+    "contact_sheet": "contact-sheets/s_que_tower_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1778,
+    "unit_name": "REKHADEUL",
+    "file_name": "s_rekhadeul_temple_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 42.0,
+    "contact_sheet": "contact-sheets/s_rekhadeul_temple_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 856,
+    "unit_name": "RUINS",
+    "file_name": "s_roman_ruins_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 37.7,
+    "contact_sheet": "contact-sheets/s_roman_ruins_x1.png",
+    "felt_done": true
+  }
+]

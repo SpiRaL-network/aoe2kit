@@ -1,0 +1,122 @@
+[
+  {
+    "unit_const": 66,
+    "unit_name": "GOLDM",
+    "file_name": "n_mine_gold_x1",
+    "classification": "multi_variant",
+    "angle_count": 7,
+    "sld_size_kb": 17.3,
+    "contact_sheet": "contact-sheets/n_mine_gold_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 102,
+    "unit_name": "STONM",
+    "file_name": "n_mine_stone_x1",
+    "classification": "multi_variant",
+    "angle_count": 7,
+    "sld_size_kb": 17.5,
+    "contact_sheet": "contact-sheets/n_mine_stone_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1041,
+    "unit_name": "MNTN5",
+    "file_name": "n_mountain_05_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 62.9,
+    "contact_sheet": "contact-sheets/n_mountain_05_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1043,
+    "unit_name": "MNTN7",
+    "file_name": "n_mountain_07_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 94.1,
+    "contact_sheet": "contact-sheets/n_mountain_07_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1046,
+    "unit_name": "MNTN10",
+    "file_name": "n_mountain_10_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 70.4,
+    "contact_sheet": "contact-sheets/n_mountain_10_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1148,
+    "unit_name": "ROCKB1",
+    "file_name": "n_rock_beach_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 162.1,
+    "contact_sheet": "contact-sheets/n_rock_beach_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1048,
+    "unit_name": "ROCKF1",
+    "file_name": "n_rock_formation1_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 18.2,
+    "contact_sheet": "contact-sheets/n_rock_formation1_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2009,
+    "unit_name": "ROCKLIMESTONE",
+    "file_name": "n_rock_limestone_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 16.4,
+    "contact_sheet": "contact-sheets/n_rock_limestone_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2008,
+    "unit_name": "ROCKPILLAR",
+    "file_name": "n_rock_pillar_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 137,
+    "contact_sheet": "contact-sheets/n_rock_pillar_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 623,
+    "unit_name": "ROCKX",
+    "file_name": "n_rock_rock1_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 39.7,
+    "contact_sheet": "contact-sheets/n_rock_rock1_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 389,
+    "unit_name": "TERRA",
+    "file_name": "n_rock_sea1_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 2.7,
+    "contact_sheet": "contact-sheets/n_rock_sea1_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 396,
+    "unit_name": "TERRJ",
+    "file_name": "n_rock_sea2_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 22.9,
+    "contact_sheet": "contact-sheets/n_rock_sea2_x1.png",
+    "felt_done": true
+  }
+]

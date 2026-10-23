@@ -1,0 +1,182 @@
+[
+  {
+    "unit_const": 2279,
+    "unit_name": "Statue Ares Marble",
+    "file_name": "s_statue_ares_marble_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 50.6,
+    "contact_sheet": "contact-sheets/s_statue_ares_marble_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2458,
+    "unit_name": "Statue Hermes",
+    "file_name": "s_statue_hermes_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 41.7,
+    "contact_sheet": "contact-sheets/s_statue_hermes_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2488,
+    "unit_name": "Statue Artemis",
+    "file_name": "s_statue_artemis_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 53.9,
+    "contact_sheet": "contact-sheets/s_statue_artemis_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2506,
+    "unit_name": "Statue Bendis",
+    "file_name": "s_statue_bendis_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 53.1,
+    "contact_sheet": "contact-sheets/s_statue_bendis_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2507,
+    "unit_name": "Statue Sphinx",
+    "file_name": "s_statue_sphinx_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 46.8,
+    "contact_sheet": "contact-sheets/s_statue_sphinx_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2531,
+    "unit_name": "Statue Alexander",
+    "file_name": "s_statue_alexander_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 82.5,
+    "contact_sheet": "contact-sheets/s_statue_alexander_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2532,
+    "unit_name": "Statue Hephaistion",
+    "file_name": "s_statue_hephaistion_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 48.9,
+    "contact_sheet": "contact-sheets/s_statue_hephaistion_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2533,
+    "unit_name": "Statue Greek Hero",
+    "file_name": "s_statue_greek_hero_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 59.3,
+    "contact_sheet": "contact-sheets/s_statue_greek_hero_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_west_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 36.2,
+    "contact_sheet": "contact-sheets/s_statue_west_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 817,
+    "unit_name": "Statue A",
+    "file_name": "s_statue_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 6.3,
+    "contact_sheet": "contact-sheets/s_statue_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1171,
+    "unit_name": "BSTATUE1",
+    "file_name": "s_statue_buddha_a_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 67.5,
+    "contact_sheet": "contact-sheets/s_statue_buddha_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1172,
+    "unit_name": "BSTATUE2",
+    "file_name": "s_statue_buddha_b_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 124.8,
+    "contact_sheet": "contact-sheets/s_statue_buddha_b_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1173,
+    "unit_name": "BSTATUE3",
+    "file_name": "s_statue_buddha_c_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 20.2,
+    "contact_sheet": "contact-sheets/s_statue_buddha_c_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1174,
+    "unit_name": "BSTATUE4",
+    "file_name": "s_statue_buddha_d_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 22.5,
+    "contact_sheet": "contact-sheets/s_statue_buddha_d_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1343,
+    "unit_name": "Statue Left",
+    "file_name": "s_statue_left_x1",
+    "classification": "multi_variant",
+    "angle_count": 39,
+    "sld_size_kb": 154.5,
+    "contact_sheet": "contact-sheets/s_statue_left_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1345,
+    "unit_name": "Statue Right",
+    "file_name": "s_statue_right_x1",
+    "classification": "multi_variant",
+    "angle_count": 39,
+    "sld_size_kb": 151.9,
+    "contact_sheet": "contact-sheets/s_statue_right_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1322,
+    "unit_name": "Statue Left",
+    "file_name": "s_statue_column_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 57.9,
+    "contact_sheet": "contact-sheets/s_statue_column_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1777,
+    "unit_name": "INDIANSTATUES",
+    "file_name": "s_indian_statues_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 84.4,
+    "contact_sheet": "contact-sheets/s_indian_statues_x1.png",
+    "felt_done": true
+  }
+]

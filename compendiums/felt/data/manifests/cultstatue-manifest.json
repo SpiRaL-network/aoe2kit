@@ -1,0 +1,102 @@
+[
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_afri_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 14.6,
+    "contact_sheet": "contact-sheets/s_statue_afri_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_asia_x1",
+    "classification": "multi_variant",
+    "angle_count": 13,
+    "sld_size_kb": 41.8,
+    "contact_sheet": "contact-sheets/s_statue_asia_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_ceas_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 27.6,
+    "contact_sheet": "contact-sheets/s_statue_ceas_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_east_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 39.5,
+    "contact_sheet": "contact-sheets/s_statue_east_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_indi_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 27.6,
+    "contact_sheet": "contact-sheets/s_statue_indi_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_medi_x1",
+    "classification": "multi_variant",
+    "angle_count": 10,
+    "sld_size_kb": 53.9,
+    "contact_sheet": "contact-sheets/s_statue_medi_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_meso_x1",
+    "classification": "multi_variant",
+    "angle_count": 11,
+    "sld_size_kb": 22.5,
+    "contact_sheet": "contact-sheets/s_statue_meso_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_orie_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 10.4,
+    "contact_sheet": "contact-sheets/s_statue_orie_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_seas_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 30,
+    "contact_sheet": "contact-sheets/s_statue_seas_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1279,
+    "unit_name": "STATUE",
+    "file_name": "s_statue_slav_x1",
+    "classification": "multi_variant",
+    "angle_count": 7,
+    "sld_size_kb": 37.9,
+    "contact_sheet": "contact-sheets/s_statue_slav_x1.png",
+    "felt_done": true
+  }
+]

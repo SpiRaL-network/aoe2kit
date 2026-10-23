@@ -1,0 +1,1333 @@
+{
+  "schema": "aoe2-terrain-felt-compendium.v1",
+  "purpose": "A queryable felt-index of AoE2DE TERRAIN, the substrate twin of art-felt-compendium.json. Terrain is the ground-mood a scene plays in - the emotional key. An authoring AI picks a base terrain by biome/mood, then dresses it with matching art. Pairs with the (later-phase) terrain<->object interaction model: compatibility (which art needs which terrain) + passability (which terrain blocks movement).",
+  "standing_order": [
+    "human_felt",
+    "ai_felt_from_render",
+    "ai_felt_from_metadata"
+  ],
+  "standing_legend": {
+    "human_felt": "AUTHORITATIVE - A human reviewer's in-game reaction (terrain blended at scale, under art). Prefer it.",
+    "ai_felt_from_render": "An AI viewed the terrain swatch and reacted. NOTE: these v1 swatches are BASE-TEXTURE patches only - blend masks/edge transitions are NOT composited, so felt is of the raw material, not how it reads blended in-game.",
+    "ai_felt_from_metadata": "Inferred from name only. Provisional."
+  },
+  "field_notes": {
+    "swatch_caveat": "The included terrain descriptions are based on base-texture swatches, not blended edge transitions. They describe intrinsic material appearance; in-game blending and composition can change how a terrain reads.",
+    "interaction_model_pending": "This catalog records terrain appearance and basic passability. It does not model which objects require particular terrain or the complete terrain-restriction rules.",
+    "families": "Grass (temperate default), Dry/Savannah (arid), Jungle Grass (tropical), Dirt/Desert (bare/parched), Water (shallow->deep->ocean; azure/green/brown = mood-tinted), Shore/Beach (transition), Snow/Ice (cold), Road (civilization/travel). Many DAT slots are obsolete/moddable duplicates.",
+    "forest_floors_share_texture": "Many forest-floor terrain ids share the same ground texture. The forest identity often comes from the trees placed over that floor, while the terrain supplies the ground material. Distinct exceptions include tropical, snowy, mangrove, baobab, dragon-arid, and dense-leaf textures. Several other terrain ids are visual duplicates or farm variants.",
+    "remaining_are_duplicates": "The catalog covers distinct ground materials. Other terrain slots are duplicates, farm variants, or utility slots such as obsolete, moddable, foundation, and construction terrain."
+  },
+  "entries": [
+    {
+      "terrain_id": 0,
+      "name": "Grass",
+      "name_2": "g_grs",
+      "category": "grass",
+      "material": "grass",
+      "biome": [
+        "temperate"
+      ],
+      "mood": "neutral, default, lived-in",
+      "vibe_tags": [
+        "grass",
+        "green",
+        "default",
+        "meadow",
+        "patchy",
+        "temperate",
+        "worn"
+      ],
+      "felt": "The default ground - healthy green grass mottled with tan worn patches. Felt: ordinary, unremarkable-in-a-good-way; a field someone walks across. Not pristine, not dead - just land. The neutral key every temperate scene starts from.",
+      "use_when": "The base terrain for most temperate scenes - villages, forests, plains. The canvas you dress with everything else. Its worn patches keep it from looking artificial.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 12,
+      "name": "Grass 2",
+      "name_2": "g_gr2",
+      "category": "grass",
+      "material": "grass",
+      "biome": [
+        "temperate"
+      ],
+      "mood": "lush, healthy, vibrant",
+      "vibe_tags": [
+        "grass",
+        "bright-green",
+        "lush",
+        "uniform",
+        "spring",
+        "healthy",
+        "well-watered"
+      ],
+      "felt": "A lusher, brighter, more uniform green than default grass - fewer worn patches, yellow-green highlights. Felt: spring, health, a well-watered meadow; more vivid and alive than Grass. A pasture in its prime.",
+      "use_when": "Lush temperate/spring scenes, a tended lawn or fertile valley, gardens. Use over Grass(0) when you want the land to read healthy and vibrant rather than ordinary.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 41,
+      "name": "Savannah",
+      "name_2": "g_gr5",
+      "category": "grass",
+      "material": "dry-grass",
+      "biome": [
+        "savanna",
+        "arid"
+      ],
+      "mood": "sun-baked, wide, dry",
+      "vibe_tags": [
+        "savanna",
+        "tan",
+        "ochre",
+        "dry",
+        "sparse-grass",
+        "african",
+        "sun-baked",
+        "plains"
+      ],
+      "felt": "Warm tan-ochre ground flecked with sparse green - the African savanna itself, sun-baked earth showing through thin dry grass. Felt: heat, wide horizons, drought's edge; the plain of the baobab and acacia. Golden and open.",
+      "use_when": "African/savanna scenes, dry grassland, an arid plain. The natural ground under acacia, baobab, and granary huts; pairs with Dry Grass and dirt for a parched region.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 100,
+      "name": "Dry Grass",
+      "name_2": "g_gr7",
+      "category": "grass",
+      "material": "dry-grass",
+      "biome": [
+        "temperate-dry",
+        "steppe"
+      ],
+      "mood": "late-season, muted, turning",
+      "vibe_tags": [
+        "dry-grass",
+        "olive",
+        "reddish",
+        "muted",
+        "late-summer",
+        "steppe",
+        "turning",
+        "faded"
+      ],
+      "felt": "Olive-green shot through with reddish-pink dry patches - grass past its prime, turning and faded. Felt: late summer into autumn, a steppe, land going dormant; muted and a little melancholy. Neither lush nor dead - drying.",
+      "use_when": "Late-season/autumn plains, steppe, a temperate land turning dry. Blend with Savannah for aridity or Grass for a moisture gradient; good under autumn trees.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 60,
+      "name": "Jungle Grass",
+      "name_2": "g_gr6",
+      "category": "grass",
+      "material": "grass",
+      "biome": [
+        "tropical"
+      ],
+      "mood": "lush, humid, saturated",
+      "vibe_tags": [
+        "jungle",
+        "deep-green",
+        "saturated",
+        "tropical",
+        "humid",
+        "rich",
+        "dense"
+      ],
+      "felt": "Uniform deeply-saturated green - the richest grass in the set, no worn patches, humid and thick. Felt: tropical jungle floor, wet heat, teeming growth; green so full it reads as damp. The ground of the rainforest.",
+      "use_when": "Jungle and rainforest scenes, tropical river valleys. The base under jungle trees, rainforest, mangroves; pairs with green/brown water and the Sunken Temple register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 6,
+      "name": "Dirt",
+      "name_2": "g_des",
+      "category": "dirt",
+      "material": "soil",
+      "biome": [
+        "generic"
+      ],
+      "mood": "bare, humble, worn",
+      "vibe_tags": [
+        "dirt",
+        "brown",
+        "soil",
+        "bare-earth",
+        "path",
+        "worn",
+        "humble"
+      ],
+      "felt": "Warm brown bare earth, soft and mottled. Felt: a worn path, a farmyard, trodden ground; humble and human-touched - where grass has been walked or worked away. Honest, plain soil.",
+      "use_when": "Paths, farmyards, a village's trodden center, the ground around buildings, cleared land. Use as wear/transition between grass and structures; reads as human presence.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 14,
+      "name": "Desert",
+      "name_2": "g_pal",
+      "category": "desert",
+      "material": "sand",
+      "biome": [
+        "desert",
+        "arid"
+      ],
+      "mood": "warm, arid, expansive",
+      "vibe_tags": [
+        "desert",
+        "sand",
+        "tan",
+        "dune-ripple",
+        "arid",
+        "warm",
+        "dry"
+      ],
+      "felt": "Pale warm tan sand with a soft dune-ripple. Felt: desert heat, dryness, an endless arid expanse; smooth and lifeless-warm. The sea of sand.",
+      "use_when": "Deserts, dunes, an oasis's surroundings, a Near-East/African arid setting. The base under cactus, mesa rocks, palms; pairs with cracked-desert and beach sand.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 45,
+      "name": "Desert, Cracked",
+      "name_2": "g_pal1",
+      "category": "desert",
+      "material": "cracked-earth",
+      "biome": [
+        "desert",
+        "arid"
+      ],
+      "mood": "parched, harsh, dead",
+      "vibe_tags": [
+        "cracked",
+        "hardpan",
+        "dried-mud",
+        "drought",
+        "parched",
+        "harsh",
+        "dead-earth"
+      ],
+      "felt": "Tan hardpan fractured into a web of cracks - a dried lakebed. Felt: drought, a land that died of thirst, harsh desolation; the texture of no-water-for-years. Unforgiving.",
+      "use_when": "Deep desert, a dried oasis or lakebed, a wasteland, a cursed/dead land. Stronger 'this kills' than plain desert; pairs with animal skeletons and dead plants.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 46,
+      "name": "Desert, Quicksand",
+      "name_2": "g_qs",
+      "category": "desert",
+      "material": "soft-sand",
+      "biome": [
+        "desert"
+      ],
+      "mood": "deceptive, smooth, dangerous",
+      "vibe_tags": [
+        "quicksand",
+        "soft-sand",
+        "swirl",
+        "smooth",
+        "deceptive",
+        "hazard",
+        "pale"
+      ],
+      "felt": "Pale sand with a faint smooth swirl - softer and more featureless than desert. Felt: a deceptive surface, quicksand, something that looks solid and isn't; quiet danger. Reads as a trap.",
+      "use_when": "A hazard patch in a desert, a treacherous crossing, a bog-in-sand. Use sparingly to mark danger; the smoothness signals 'don't step here.'",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 40,
+      "name": "Rock 1",
+      "name_2": "g_rck",
+      "category": "rock_gravel",
+      "material": "rock",
+      "biome": [
+        "mountain",
+        "generic"
+      ],
+      "mood": "rugged, cool, hard",
+      "vibe_tags": [
+        "rock",
+        "mossy-stone",
+        "grey-green",
+        "cobbled",
+        "rugged",
+        "mountain",
+        "hard-ground"
+      ],
+      "felt": "Grey stone cobbled ground with green moss in the cracks. Felt: a mountainside, a rocky highland, hard footing; cool and rugged, life clinging to stone. Where the earth is bone.",
+      "use_when": "Mountains, highlands, a quarry, a rocky pass, the ground around cliffs and karst. The base under mesa/karst rocks and mountain scenes; pairs with dirt and snow.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 101,
+      "name": "Bogland",
+      "name_2": "g_qs2",
+      "category": "rock_gravel",
+      "material": "bog",
+      "biome": [
+        "swamp",
+        "wetland"
+      ],
+      "mood": "sickly, wet-rot, foreboding",
+      "vibe_tags": [
+        "bog",
+        "teal-green",
+        "sickly",
+        "marsh",
+        "wet-rot",
+        "murky",
+        "unhealthy"
+      ],
+      "felt": "Mottled sickly teal-green over ochre - a wet, rotting ground. Felt: a bog, a fen, stagnant marsh; the color of rot and standing water, unhealthy and foreboding. Something died and sank here.",
+      "use_when": "Swamps, fens, a cursed marsh, a witch-wood's floor, a fetid lowland. Pairs with mangroves, reeds, brown water, dead trees and the Witch-Wood register; strong ominous key.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 1,
+      "name": "Water, Shallow",
+      "name_2": "g_wtr",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "coastal",
+        "freshwater"
+      ],
+      "mood": "bright, inviting, wadeable",
+      "vibe_tags": [
+        "water",
+        "shallow",
+        "bright-blue",
+        "clear",
+        "wadeable",
+        "coastal",
+        "light"
+      ],
+      "felt": "Bright mid-blue, light and lightly rippled - clear shallow water. Felt: a wadeable edge, a ford, the sunlit rim of a lake; approachable, safe, bright. Where land meets water gently.",
+      "use_when": "Shorelines, fords, pond edges, shallows around a coast or river. The transition water between beach and deep; pairs with beach, reeds, fish traps, water lilies.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 23,
+      "name": "Water, Medium",
+      "name_2": "g_wt3",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "freshwater",
+        "coastal"
+      ],
+      "mood": "deeper, calm, blue",
+      "vibe_tags": [
+        "water",
+        "medium",
+        "blue",
+        "calm",
+        "mid-depth"
+      ],
+      "felt": "A richer, deeper blue than shallow - calm mid-depth water. Felt: the body of a lake or river, past wading; settled and blue. The middle register between shallow and deep.",
+      "use_when": "The main body of lakes, rivers, and bays - between the shallow rim and the deep center. Standard 'this is water' fill.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 22,
+      "name": "Water, Deep",
+      "name_2": "g_wt2",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "freshwater",
+        "sea"
+      ],
+      "mood": "deep, cold, serious",
+      "vibe_tags": [
+        "water",
+        "deep",
+        "dark-navy",
+        "cold",
+        "serious"
+      ],
+      "felt": "Dark navy blue - deep water. Felt: depth, cold, the part of the lake you don't swim; serious and a little unknowable. Below this the light doesn't reach.",
+      "use_when": "Lake and sea centers, deep channels, a moat's heart. The barrier water (blocks land units) - use where you want water to divide the map, not just decorate.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 57,
+      "name": "Water, Deep Ocean",
+      "name_2": "g_wt4",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "sea",
+        "ocean"
+      ],
+      "mood": "abyssal, foreboding, vast",
+      "vibe_tags": [
+        "ocean",
+        "deepest",
+        "very-dark-navy",
+        "abyssal",
+        "vast",
+        "foreboding"
+      ],
+      "felt": "The darkest navy - deepest open ocean. Felt: the abyss, the open sea far from land, cold vastness; the water that swallows. The most serious, least inviting blue.",
+      "use_when": "Open ocean, the deep sea beyond a coast, an abyssal expanse. Use for scale and dread on maritime maps; the far water past medium/deep.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 58,
+      "name": "Water, Azure",
+      "name_2": "g_wt5",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "tropical",
+        "coastal"
+      ],
+      "mood": "bright, exotic, paradise",
+      "vibe_tags": [
+        "azure",
+        "turquoise",
+        "tropical",
+        "lagoon",
+        "bright",
+        "exotic",
+        "caribbean"
+      ],
+      "felt": "Bright teal-turquoise - a tropical lagoon. Felt: paradise, warm clear shallows over white sand, the Caribbean/Pacific; exotic and beautiful, the most joyful water. You want to swim in it.",
+      "use_when": "Tropical coasts, lagoons, an island paradise, coral shallows. Pairs with white beach, palms, karst stacks; the water of the Coastal Village and tropical scenes.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 95,
+      "name": "Water, Green",
+      "name_2": "g_wt_green",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "tropical",
+        "swamp"
+      ],
+      "mood": "murky, lush, algal",
+      "vibe_tags": [
+        "green-water",
+        "teal-green",
+        "murky",
+        "algae",
+        "tropical-river",
+        "lush"
+      ],
+      "felt": "Green-teal murky water. Felt: an algae-rich tropical river, a lush jungle pool, water thick with life; not clean but alive. The green of a warm, still, growing water.",
+      "use_when": "Jungle rivers and pools, a lush wetland, a warm stagnant lagoon. Pairs with jungle grass, mangroves, and the tropical scenes; murkier than azure.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 96,
+      "name": "Water, Brown",
+      "name_2": "g_wt_brown",
+      "category": "water",
+      "material": "water",
+      "biome": [
+        "swamp",
+        "river"
+      ],
+      "mood": "silty, muddy, wet-earth",
+      "vibe_tags": [
+        "brown-water",
+        "muddy",
+        "silty",
+        "swamp",
+        "river",
+        "murky"
+      ],
+      "felt": "Muddy brown-green water. Felt: a silty river, a swamp channel, floodwater carrying earth; murky and heavy, the opposite of clear. Water you can't see into.",
+      "use_when": "Swamps, muddy rivers, deltas, a bog's open water, floodplains. Pairs with bogland, mangroves, reeds; the water of the Witch-Wood/marsh register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 2,
+      "name": "Beach",
+      "name_2": "g_bch",
+      "category": "shore_sand",
+      "material": "sand",
+      "biome": [
+        "coastal"
+      ],
+      "mood": "warm, soft, coastal",
+      "vibe_tags": [
+        "beach",
+        "sand",
+        "tan-gold",
+        "soft",
+        "shore",
+        "warm",
+        "coastal"
+      ],
+      "felt": "Soft pale tan-gold sand. Felt: a beach, the warm dry edge of the sea, sun and rest; gentle and inviting. Where the water gives way to land.",
+      "use_when": "Shorelines between water and grass, beaches, dune edges, a coastal village's strand. The standard shore transition; pairs with shallow/azure water and palms.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 53,
+      "name": "Beach, White",
+      "name_2": "g_bc3",
+      "category": "shore_sand",
+      "material": "white-sand",
+      "biome": [
+        "tropical",
+        "coastal"
+      ],
+      "mood": "bright, clean, paradise",
+      "vibe_tags": [
+        "white-sand",
+        "cream",
+        "fine",
+        "tropical",
+        "paradise",
+        "bright",
+        "clean"
+      ],
+      "felt": "Fine pale cream-white sand. Felt: a tropical paradise beach, bleached bright, pristine; the postcard shore. Cleaner and brighter than tan beach.",
+      "use_when": "Tropical/island beaches, a paradise coast, a lagoon's edge. Pairs with azure water and palms for the idyllic-island look; brighter than standard beach.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 52,
+      "name": "Beach, Vegetation",
+      "name_2": "g_bc2",
+      "category": "shore_sand",
+      "material": "sand-grass",
+      "biome": [
+        "coastal"
+      ],
+      "mood": "transitional, scrubby, alive",
+      "vibe_tags": [
+        "beach",
+        "dune-grass",
+        "tan-and-green",
+        "transition",
+        "scrubby",
+        "shore-edge"
+      ],
+      "felt": "Tan sand dotted with tufts of green grass. Felt: the dune line where beach becomes land, scrubby and half-alive; the transition zone. Neither pure sand nor grass - the seam.",
+      "use_when": "The band where a beach meets grassland, dune grass, a vegetated shore. Use as the natural gradient between Beach and Grass; softens a hard sand/grass edge.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 32,
+      "name": "Snow",
+      "name_2": "g_sno",
+      "category": "snow_ice",
+      "material": "snow",
+      "biome": [
+        "arctic",
+        "winter"
+      ],
+      "mood": "cold, clean, quiet",
+      "vibe_tags": [
+        "snow",
+        "pale-blue-white",
+        "fresh",
+        "winter",
+        "clean",
+        "quiet",
+        "cold"
+      ],
+      "felt": "Pale blue-white, soft and mottled - fresh snow. Felt: winter, cold hush, a clean covering over everything; quiet and still. The blanket that mutes the world.",
+      "use_when": "Winter and arctic scenes, snowy mountains, a frozen village. The base under snow trees, the Frozen Pass; pairs with ice and snow-cliffs.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 74,
+      "name": "Snow Deep",
+      "name_2": "g_sno",
+      "category": "snow_ice",
+      "material": "deep-snow",
+      "biome": [
+        "arctic",
+        "winter"
+      ],
+      "mood": "cold, heavy, deep-winter",
+      "vibe_tags": [
+        "snow",
+        "deep",
+        "pale-blue-white",
+        "heavy",
+        "deep-winter"
+      ],
+      "felt": "Pale blue-white deep snow (base reads like Snow - the depth shows in-game). Felt: heavy accumulated snow, hard going, deep winter; the drifts you sink into. Colder and more total than a dusting.",
+      "use_when": "The heart of a winter map, deep drifts, an impassable-feeling snowfield, a high alpine floor. Use for the deepest/coldest zones; pairs with Snow and mountains.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 35,
+      "name": "Ice",
+      "name_2": "g_ice",
+      "category": "snow_ice",
+      "material": "ice",
+      "biome": [
+        "arctic",
+        "winter"
+      ],
+      "mood": "brittle, treacherous, frozen",
+      "vibe_tags": [
+        "ice",
+        "pale-blue",
+        "crackled",
+        "frozen-water",
+        "brittle",
+        "treacherous",
+        "glassy"
+      ],
+      "felt": "Pale blue crackled ice sheet - a web of frozen fractures. Felt: frozen water, a lake gone solid, brittle and treacherous; beautiful and untrustworthy. Might hold, might crack.",
+      "use_when": "Frozen lakes and rivers, an ice sheet, a glacier surface, a treacherous crossing. Use as frozen-over water; pairs with snow, ice floes, snow trees; the Frozen Pass.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 24,
+      "name": "Road",
+      "name_2": "g_rd1",
+      "category": "road",
+      "material": "cobblestone",
+      "biome": [
+        "civilization"
+      ],
+      "mood": "made, human, traveled",
+      "vibe_tags": [
+        "road",
+        "cobblestone",
+        "gravel",
+        "paved",
+        "travel",
+        "civilization",
+        "made"
+      ],
+      "felt": "Tightly-packed small tan stones - a paved road. Felt: civilization, travel, human intent laid on the land; a way that goes somewhere. The strongest 'people made this' terrain.",
+      "use_when": "Roads, paths between scenes, a town's streets, a market approach, an RPG's connective route. Literally the thing that guides players scene to scene; pairs with dirt and structures.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 25,
+      "name": "Road, Broken",
+      "name_2": "g_rd2",
+      "category": "road",
+      "material": "broken-cobblestone",
+      "biome": [
+        "civilization",
+        "ruin"
+      ],
+      "mood": "decayed, abandoned, old",
+      "vibe_tags": [
+        "road",
+        "broken",
+        "cobblestone",
+        "earth-through",
+        "decayed",
+        "abandoned",
+        "old-route"
+      ],
+      "felt": "Cobblestone road breaking up, earth showing through the gaps. Felt: an old road going back to the land, disuse, a route people stopped keeping; decay and passed-time. The way that was.",
+      "use_when": "Ruined/abandoned roads, an overgrown route to a fallen place, a road through ruins. Pairs with ruins, the Fallen Forum, and the death register; the decayed twin of Road.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 10,
+      "name": "Forest Floor (generic)",
+      "name_2": "g_for",
+      "category": "forest_floor",
+      "material": "leaf-litter",
+      "texture_shared_by": [
+        5,
+        17,
+        18,
+        19,
+        20,
+        88,
+        89,
+        92,
+        104,
+        110,
+        128
+      ],
+      "biome": [
+        "temperate",
+        "generic"
+      ],
+      "mood": "dappled, woodland, brown-gold",
+      "vibe_tags": [
+        "forest-floor",
+        "leaf-litter",
+        "yellow-brown",
+        "moss",
+        "dappled",
+        "woodland",
+        "shared-canvas"
+      ],
+      "felt": "Yellow-brown mottled leaf-litter flecked with green and moss - the generic woodland floor. Felt: a forest understory in dappled light, fallen leaves and duff, the ground beneath a canopy. THE shared forest canvas: Pine/Oak/Mediterranean/Birch/Autumn/Jungle/Bamboo/Reeds/Bush all use THIS same floor - their biome comes from the TREES, not the ground.",
+      "use_when": "Under any temperate/generic forest. Do NOT expect a distinct pine-vs-oak floor - place the right TREES on this shared floor to set the biome. Pairs with the whole tree register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 56,
+      "name": "Forest Floor (green tropical)",
+      "name_2": "g_fo2",
+      "category": "forest_floor",
+      "material": "green-leaf",
+      "texture_shared_by": [
+        77,
+        113
+      ],
+      "biome": [
+        "tropical"
+      ],
+      "mood": "lush, wet, verdant",
+      "vibe_tags": [
+        "forest-floor",
+        "green-leaf",
+        "lush",
+        "tropical",
+        "wet",
+        "verdant",
+        "rainforest"
+      ],
+      "felt": "A lush GREEN leaf-covered floor - dense green leaves over brown, wet and verdant. Felt: the rainforest floor, humid and alive, greener and wetter than the brown temperate litter. The tropical-canopy ground (Rainforest, New-Leaves-Jungle, Lush-Bamboo share it).",
+      "use_when": "Under rainforest, jungle, and lush-bamboo. The wet green floor for tropical scenes; pairs with jungle grass, green/brown water, and the Sunken Temple register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 105,
+      "name": "Forest Floor (snowy)",
+      "name_2": "g_snf",
+      "category": "snow_ice",
+      "material": "snow-leaf",
+      "texture_shared_by": [
+        106
+      ],
+      "biome": [
+        "winter",
+        "boreal"
+      ],
+      "mood": "frosted, wintering, patchy",
+      "vibe_tags": [
+        "forest-floor",
+        "snow",
+        "gold-patches",
+        "frosted",
+        "winter",
+        "boreal",
+        "wintering"
+      ],
+      "felt": "Pale snow with gold-brown leaf patches breaking through - a forest floor under first/melting snow. Felt: a wintering wood, the season caught mid-turn, snow settling over fallen leaves; cold but not dead. Shared by Snow-Autumn and Dead Forest.",
+      "use_when": "Under snow-autumn oak, snow pine, a boreal or first-frost wood. Pairs with the Frozen Pass register, snow terrain, ice; the floor for winter forests.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 55,
+      "name": "Mangrove Floor",
+      "name_2": "g_sh3",
+      "category": "water",
+      "material": "root-shallows",
+      "biome": [
+        "tropical",
+        "wetland"
+      ],
+      "mood": "tangled, brackish, alive",
+      "vibe_tags": [
+        "mangrove",
+        "teal-shallows",
+        "roots",
+        "brackish",
+        "tangled",
+        "wetland",
+        "water-and-wood"
+      ],
+      "felt": "Teal-turquoise shallows criss-crossed with brown roots and sticks - the tangled floor of a mangrove. Felt: brackish water threaded with prop-roots, the living seam of land and sea, dense and half-submerged. Water AND wood at once, unlike any dry floor.",
+      "use_when": "Under mangroves, a coastal swamp, a tidal root-forest. Pairs with mangrove trees, reeds, brown/azure water, the Coastal Village; a distinctive wet-forest floor.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 49,
+      "name": "Baobab Forest Floor",
+      "name_2": "g_ds4",
+      "category": "forest_floor",
+      "material": "cracked-dry-earth",
+      "biome": [
+        "savanna",
+        "arid"
+      ],
+      "mood": "cracked, dry-woodland, warm",
+      "vibe_tags": [
+        "baobab",
+        "cracked-earth",
+        "orange",
+        "sparse-green",
+        "dry-woodland",
+        "savanna",
+        "warm"
+      ],
+      "felt": "Cracked orange-tan earth with irregular green patches - a dry savanna-woodland floor. Felt: the parched ground under a baobab, drought-cracked but not dead, green clinging in the hollows. Warmer and drier than temperate litter, harder than grass.",
+      "use_when": "Under baobab and dry-country trees, a savanna woodland, an African dry forest. Pairs with Savannah/dry-grass terrain and the Savanna register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 48,
+      "name": "Dragon Forest Floor",
+      "name_2": "g_des",
+      "category": "forest_floor",
+      "material": "arid-soil",
+      "texture_shared_by": [
+        6
+      ],
+      "biome": [
+        "arid",
+        "exotic"
+      ],
+      "mood": "smooth, warm, otherworldly-bare",
+      "vibe_tags": [
+        "dragon-forest",
+        "arid",
+        "smooth-orange-tan",
+        "bare",
+        "exotic",
+        "warm-soil"
+      ],
+      "felt": "Smooth warm orange-tan soil, near-featureless - an arid bare ground (the same texture as Dirt id 6). Felt: a dry exotic floor, warm and sparse, the ground of a dragon-tree waste; nothing grows easily here. Bare and a little alien.",
+      "use_when": "Under dragon trees, an arid/exotic wilderness, a strange dry land. Note it reuses the Dirt texture; pairs with the Dragon-Tree Wastes register, mesa rocks, cactus.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 71,
+      "name": "Underbrush, Leaves",
+      "name_2": "g_underbrush_leaves",
+      "category": "forest_floor",
+      "material": "dense-leaf-litter",
+      "biome": [
+        "temperate"
+      ],
+      "mood": "thick, cluttered, deep-wood",
+      "vibe_tags": [
+        "underbrush",
+        "dense-leaf-litter",
+        "fine",
+        "cluttered",
+        "deep-forest",
+        "thick"
+      ],
+      "felt": "Fine, dense yellow-green-brown leaf litter - thicker and busier than the generic floor. Felt: deep-forest floor buried in fallen leaves and twigs, the cluttered understory where light barely reaches. Richer detail than plain forest floor.",
+      "use_when": "Deep/old forest interiors, a thick understory, where you want the floor itself to read as overgrown. Layer under dense tree stands; the busiest temperate floor.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 111,
+      "name": "Swamp",
+      "name_2": "g_sh4",
+      "category": "other",
+      "material": "marsh",
+      "biome": [
+        "swamp",
+        "wetland"
+      ],
+      "mood": "rotting, green, foreboding",
+      "vibe_tags": [
+        "swamp",
+        "olive-green",
+        "rot",
+        "marsh",
+        "mossy",
+        "decay",
+        "wet",
+        "foreboding"
+      ],
+      "felt": "Olive-green ground mottled with dark rot patches - a wet, mossy, decaying marsh. Felt: a swamp, stagnant and green-rotting, life and decay tangled; oppressive and unhealthy. Greener sibling of Bogland - both are the ground of dread.",
+      "use_when": "Swamps, fens, a witch-wood floor, a fetid lowland, a cursed marsh. Pairs with brown/weed water, mangroves, reeds, dead trees, the Witch-Wood register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 122,
+      "name": "Grass Flowers",
+      "name_2": "g_gr8",
+      "category": "grass",
+      "material": "flowered-grass",
+      "texture_shared_by": [
+        123
+      ],
+      "biome": [
+        "temperate",
+        "spring"
+      ],
+      "mood": "cheerful, blooming, alive",
+      "vibe_tags": [
+        "wildflowers",
+        "grass",
+        "red-white-flowers",
+        "meadow",
+        "spring",
+        "cheerful",
+        "blooming"
+      ],
+      "felt": "Green grass dotted all over with tiny red and white flowers - a wildflower meadow. Felt: spring, cheer, a field in bloom; the happiest ground in the set, life celebrating. Color scattered through the green.",
+      "use_when": "Meadows in bloom, a spring scene, a peaceful/idyllic locale, a garden's wild edge, a fairy-tale field. The terrain that says 'gentle and alive'; pairs with the Sacred Grove register.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 130,
+      "name": "Water, Weeds",
+      "name_2": "g_wt6",
+      "category": "water",
+      "material": "weed-water",
+      "biome": [
+        "pond",
+        "wetland"
+      ],
+      "mood": "choked, lush, still",
+      "vibe_tags": [
+        "weed-water",
+        "green-mats",
+        "algae",
+        "pond",
+        "lily-pad-like",
+        "choked",
+        "still",
+        "overgrown"
+      ],
+      "felt": "Bright blue water carpeted with clumps of green weed and algae mats. Felt: a weed-choked pond, a still overgrown water, nature reclaiming a pool; lush and stagnant at once. The water equivalent of an overgrown field.",
+      "use_when": "Ponds, a swamp's open water, a neglected moat, a lily-pond feel (works where water lilies want a base). Pairs with swamp, reeds, mangroves; a distinctive overgrown water.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 114,
+      "name": "Water, Yellow Shallow",
+      "name_2": "g_wt_yellow",
+      "category": "water",
+      "material": "water",
+      "texture_shared_by": [
+        115,
+        116
+      ],
+      "biome": [
+        "swamp",
+        "sulfurous"
+      ],
+      "mood": "sickly, murky, sulfurous",
+      "vibe_tags": [
+        "yellow-water",
+        "teal-yellow",
+        "murky",
+        "sulfurous",
+        "sickly",
+        "swamp",
+        "tainted"
+      ],
+      "felt": "Murky teal shot through with sickly yellow-brown - a tainted, sulfurous shallow. Felt: poisoned or sulfur water, a fetid pool, something wrong with the water; unhealthy and off. The most 'do not drink' water in the set.",
+      "use_when": "Sulfur springs, a poisoned/cursed water, a fetid swamp pool, a volcanic or diseased land. Pairs with swamp, bogland, the Witch-Wood/ominous registers.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 80,
+      "name": "Beach, Wet",
+      "name_2": "g_beach_wet",
+      "category": "shore_sand",
+      "material": "wet-sand",
+      "texture_shared_by": [
+        91,
+        107
+      ],
+      "biome": [
+        "coastal"
+      ],
+      "mood": "tidal, dark, glistening",
+      "vibe_tags": [
+        "wet-sand",
+        "tide-line",
+        "dark-tan",
+        "glistening",
+        "shore",
+        "waterline"
+      ],
+      "felt": "Smooth dark wet tan sand - the tide-line, sand the water just left. Felt: the glistening strip between dry beach and sea, footprints-fill-with-water; the living edge of the shore. Darker and wetter than dry beach.",
+      "use_when": "The waterline strip between Beach and water, a tidal flat, a wet shore. Use as the immediate shore band; pairs with Beach (dry) landward and shallow water seaward.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 82,
+      "name": "Beach, Rock Wet",
+      "name_2": "g_rock_wet",
+      "category": "shore_sand",
+      "material": "wet-rock",
+      "texture_shared_by": [
+        109
+      ],
+      "biome": [
+        "coastal"
+      ],
+      "mood": "rugged, tidal, slick",
+      "vibe_tags": [
+        "wet-rock",
+        "cobbled-shore",
+        "grey",
+        "mossy",
+        "tidal",
+        "rugged",
+        "slick"
+      ],
+      "felt": "Grey wet cobbled rock threaded with green moss - a rocky tidal shore. Felt: a stony coast the waves break on, slick and rugged, tide pools between the stones; harsher than a sand beach. Northern/rocky coast.",
+      "use_when": "Rocky coasts, a stony tidal shore, a northern/cold seaside, the base under sea rocks and karst. Pairs with sea rocks, the Coastal Village's harder edges.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 37,
+      "name": "Ice, Beach",
+      "name_2": "g_ice_beach",
+      "category": "shore_sand",
+      "material": "frozen-shore",
+      "biome": [
+        "arctic",
+        "coastal"
+      ],
+      "mood": "frozen, pale, still",
+      "vibe_tags": [
+        "ice-beach",
+        "frozen-shore",
+        "pale-blue-white",
+        "arctic",
+        "frozen-waterline"
+      ],
+      "felt": "Pale blue-white mottled - a frozen shore where ice meets land. Felt: an arctic coast, the waterline gone solid with cold, a frozen strand; the cold cousin of a wet beach. Still and pale.",
+      "use_when": "Arctic/frozen coasts, the shore of a frozen sea, the edge of an ice sheet. Pairs with Ice, Snow, snow trees, the Frozen Pass by water.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 76,
+      "name": "Dirt Mud",
+      "name_2": "g_gr4",
+      "category": "dirt",
+      "material": "mud",
+      "biome": [
+        "generic",
+        "wetland"
+      ],
+      "mood": "muddy, wet, churned",
+      "vibe_tags": [
+        "mud",
+        "brown",
+        "wet-earth",
+        "churned",
+        "boggy",
+        "trodden"
+      ],
+      "felt": "Wet churned brown earth - mud. Felt: a rained-on path, a churned field, a boggy trodden ground; heavier and wetter than dry dirt. Where feet and wheels have made a mire.",
+      "use_when": "Muddy paths, a rain-churned village center, a marsh edge, a battlefield's trampled ground, a pig-pen. Wetter transition than Dirt; pairs with swamp and wet scenes.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 70,
+      "name": "Gravel Default",
+      "name_2": "g_gravel_default",
+      "category": "rock_gravel",
+      "material": "gravel",
+      "biome": [
+        "generic",
+        "arid"
+      ],
+      "mood": "coarse, bare, dry",
+      "vibe_tags": [
+        "gravel",
+        "pebbles",
+        "grey-tan",
+        "coarse",
+        "bare",
+        "dry-ground"
+      ],
+      "felt": "Grey-tan pebbly gravel. Felt: a coarse bare ground, a dry riverbed, a quarry floor, a rough yard; hard and lifeless-neutral. Nothing grows in gravel.",
+      "use_when": "Quarries, dry riverbeds, a rough industrial yard, a bare mountain foot, a construction site. Pairs with the City Rising/quarry register and rock terrain.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 102,
+      "name": "Desert, Gravel",
+      "name_2": "g_ds5",
+      "category": "dirt",
+      "material": "desert-gravel",
+      "biome": [
+        "desert",
+        "arid"
+      ],
+      "mood": "stony, arid, harsh",
+      "vibe_tags": [
+        "desert-gravel",
+        "tan-pebbles",
+        "stony",
+        "arid",
+        "harsh",
+        "reg"
+      ],
+      "felt": "Tan pebbly desert gravel - coarse stony arid ground. Felt: a stony desert (reg/hamada), a hard sun-baked flat of loose stones; harsher underfoot than soft sand. The desert where even sand gave up.",
+      "use_when": "Stony deserts, a hardpan flat, a desert road's edge, a barren waste. Pairs with Desert, Cracked-Desert, mesa rocks, the Necropolis/desert registers.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 3,
+      "name": "Dirt 3 (grassy)",
+      "name_2": "g_ds3",
+      "category": "dirt",
+      "material": "grassy-dirt",
+      "biome": [
+        "generic"
+      ],
+      "mood": "patchy, transitional, worn",
+      "vibe_tags": [
+        "dirt",
+        "grass-patches",
+        "green-tan",
+        "transition",
+        "worn",
+        "half-grass"
+      ],
+      "felt": "Tan dirt heavily patched with green - a half-grass, half-bare ground. Felt: worn grass giving way to earth, a well-used field edge, the seam between meadow and path. A natural transition ground.",
+      "use_when": "Transitions between grass and dirt/road, worn field edges, a semi-cleared area. Softens hard grass/dirt borders; a gentler wear than bare Dirt.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 26,
+      "name": "Ice Navigable",
+      "name_2": "g_ic2",
+      "category": "snow_ice",
+      "material": "sea-ice",
+      "biome": [
+        "arctic"
+      ],
+      "mood": "jagged, bright, frozen-sea",
+      "vibe_tags": [
+        "sea-ice",
+        "jagged",
+        "bright-blue",
+        "faceted",
+        "navigable",
+        "frozen-ocean"
+      ],
+      "felt": "Bright blue ice broken into sharp jagged facets - navigable sea ice. Felt: a frozen ocean, pack-ice you could sail a ship through, brilliant and broken; more dramatic and blue than a still ice lake. Cold and alive-with-fracture.",
+      "use_when": "A frozen sea, pack ice, an arctic ocean a ship crosses, a dramatic ice field. Bolder than lake Ice; pairs with Ice Beach, snow, the coldest maritime scenes.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 127,
+      "name": "Ice Soft",
+      "name_2": "g_ic3",
+      "category": "snow_ice",
+      "material": "soft-ice",
+      "biome": [
+        "arctic",
+        "winter"
+      ],
+      "mood": "gentle, frozen, smooth",
+      "vibe_tags": [
+        "ice",
+        "soft",
+        "pale-blue",
+        "smooth-crackle",
+        "gentle-frozen"
+      ],
+      "felt": "Pale blue smooth-crackled ice, gentler than the navigable sea ice. Felt: a quietly frozen pond, ice that formed calm; softer, less treacherous-looking, more serene. The gentle end of frozen water.",
+      "use_when": "A calm frozen pond or lake, a gentle winter water, a skating-pond feel. The softer alternative to Ice/Ice-Navigable; pairs with snow and the quieter winter scenes.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 124,
+      "name": "Snow Soft",
+      "name_2": "g_sn2",
+      "category": "snow_ice",
+      "material": "soft-snow",
+      "texture_shared_by": [
+        125,
+        126
+      ],
+      "biome": [
+        "arctic",
+        "winter"
+      ],
+      "mood": "pristine, pillowy, hushed",
+      "vibe_tags": [
+        "snow",
+        "soft",
+        "pillowy",
+        "pure-white",
+        "pristine",
+        "fresh-fallen",
+        "hushed"
+      ],
+      "felt": "Pure soft white-blue snow, smooth and pillowy - fresh untouched snowfall. Felt: pristine new snow, a hushed white world, deep quiet; cleaner and softer than the standard snow. The most peaceful, untouched cold.",
+      "use_when": "Pristine winter scenes, fresh snowfall, an untrodden white expanse, a serene frozen land. Softer/cleaner than Snow(32); pairs with snow trees, ice, the Frozen Pass.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 78,
+      "name": "Road, Gravel (Desert)",
+      "name_2": "g_rd5",
+      "category": "road",
+      "material": "flagstone-gravel",
+      "biome": [
+        "civilization",
+        "arid"
+      ],
+      "mood": "paved, worn, sun-baked",
+      "vibe_tags": [
+        "road",
+        "flagstone",
+        "gravel",
+        "desert-road",
+        "worn-paving",
+        "made"
+      ],
+      "felt": "Grey-tan worn flagstones and packed gravel - a paved desert road. Felt: a made way through dry country, an old trade road, sun-baked paving; civilization laid across the arid. Harder and stonier than the cobbled Road.",
+      "use_when": "Desert/arid roads, a caravan route, a Roman road in dry country, a stone-paved street. Pairs with desert, the Bazaar/caravan and Fallen Forum registers.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 75,
+      "name": "Road, Fungus",
+      "name_2": "g_sr2",
+      "category": "road",
+      "material": "mossy-paving",
+      "biome": [
+        "civilization",
+        "ruin"
+      ],
+      "mood": "overgrown, damp, reclaimed",
+      "vibe_tags": [
+        "road",
+        "fungus",
+        "moss",
+        "overgrown",
+        "damp",
+        "reclaimed",
+        "stone-paving"
+      ],
+      "felt": "Grey stone paving heavily overgrown with green moss and fungus. Felt: a road nature is taking back, damp and shadowed, a path through a dark wood or ruin; the way people stopped using. Reclaimed and a little eerie.",
+      "use_when": "Overgrown roads through forest or ruins, a damp shadowed path, a route to an abandoned place, a witch-wood trail. Pairs with ruins, swamp, the Witch-Wood/Fallen registers.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 7,
+      "name": "Farm",
+      "name_2": "g_fm1",
+      "category": "farm",
+      "material": "crop-rows",
+      "texture_shared_by": [
+        8,
+        63,
+        64
+      ],
+      "biome": [
+        "agriculture"
+      ],
+      "mood": "cultivated, ordered, productive",
+      "vibe_tags": [
+        "farm",
+        "crop-rows",
+        "green-brown",
+        "tilled",
+        "agriculture",
+        "cultivated",
+        "ordered"
+      ],
+      "felt": "Regular rows of green crops on brown tilled earth. Felt: agriculture, human order imposed on land, food growing in lines; the tidiest, most-managed ground. Labor and sustenance made visible.",
+      "use_when": "Farmland, a village's fields, a manor's holdings, cultivated land around a settlement. The 'people farm here' terrain; pairs with granary, haystack, village registers. (All Farm slots share this crop-row look.)",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 47,
+      "name": "Black",
+      "name_2": "g_bla",
+      "category": "other",
+      "material": "void",
+      "biome": [
+        "abstract"
+      ],
+      "mood": "void, nothing, edge",
+      "vibe_tags": [
+        "black",
+        "void",
+        "nothing",
+        "unexplored",
+        "edge",
+        "abstract"
+      ],
+      "felt": "Pure black - nothing. Felt: the void, the unexplored edge, the end of the world, absence. Not a place but the lack of one. A scenario tool, not a natural ground.",
+      "use_when": "Map edges, unexplored void, a black abyss, a stylized boundary, blocking sightlines. An abstract/utility terrain, not decorative.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    },
+    {
+      "terrain_id": 69,
+      "name": "Very Evil Fog",
+      "name_2": "g_kf1",
+      "category": "other",
+      "material": "fog-void",
+      "biome": [
+        "abstract",
+        "eldritch"
+      ],
+      "mood": "ominous, eldritch, dread",
+      "vibe_tags": [
+        "evil-fog",
+        "dark-grey",
+        "cracked-veins",
+        "ominous",
+        "eldritch",
+        "dread",
+        "otherworldly"
+      ],
+      "felt": "Dark grey-black webbed with faint pale cracked veins - an ominous fog-void. Felt: a cursed or eldritch ground, a nightmare realm, creeping dread; something deeply wrong with this place. A mood-terrain for horror and the unnatural.",
+      "use_when": "A cursed land, a nightmare/underworld realm, an eldritch corruption, a boss lair's floor, the heart of a Witch-Wood. Pure dread terrain; pairs with the ominous/climax registers.",
+      "standing": "ai_felt_from_render",
+      "source": "AoE2DE base terrain texture swatch."
+    }
+  ]
+}

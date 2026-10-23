@@ -163,6 +163,30 @@ func TestPortablePublicRejectsImageFilesByExtensionAndContent(t *testing.T) {
 	t.Fatal("missing public_images check")
 }
 
+func TestPublicReleaseAllowsOnlyFeltCatalogData(t *testing.T) {
+	allowed := []string{
+		"compendiums/felt/README.md",
+		"compendiums/felt/docs/FIELD_SCHEMA.md",
+		"compendiums/felt/data/art-felt-compendium.json",
+		"compendiums/felt/data/manifests/terrain-manifest.json",
+	}
+	for _, path := range allowed {
+		if publicReleaseForbidden(path) {
+			t.Errorf("public felt catalog path was rejected: %s", path)
+		}
+	}
+	for _, path := range []string{
+		"compendiums/felt/contact-sheets/art/1.png",
+		"compendiums/felt/data/private-notes.json",
+		"compendiums/other/data/catalog.json",
+		"compendiums/felt/data/game.sld",
+	} {
+		if !publicReleaseForbidden(path) {
+			t.Errorf("non-catalog compendium path was allowed: %s", path)
+		}
+	}
+}
+
 func writePublicAllowlistForTest(t *testing.T, root string, files ...string) {
 	t.Helper()
 	data := `{"profile":"public","baseline_commit":"test-baseline","files":[` + `"` + strings.Join(files, `","`) + `"]}`

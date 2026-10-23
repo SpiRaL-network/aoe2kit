@@ -1,0 +1,342 @@
+[
+  {
+    "unit_const": 1808,
+    "unit_name": "MULECART",
+    "file_name": "b_misc_cart_mule_idleA_x1",
+    "classification": "ambiguous",
+    "angle_count": 16,
+    "sld_size_kb": 5190.4,
+    "contact_sheet": "contact-sheets/b_misc_cart_mule_idleA_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 199,
+    "unit_name": "FTRAP",
+    "file_name": "b_misc_fish_trap_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 181.1,
+    "contact_sheet": "contact-sheets/b_misc_fish_trap_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2262,
+    "unit_name": "Greek Commander Tent A",
+    "file_name": "b_scen_greek_command_tent_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 52,
+    "contact_sheet": "contact-sheets/b_scen_greek_command_tent_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2176,
+    "unit_name": "Greek Army Tent A",
+    "file_name": "b_scen_greek_tent_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 60.4,
+    "contact_sheet": "contact-sheets/b_scen_greek_tent_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1196,
+    "unit_name": "ARMTENT1",
+    "file_name": "b_scen_tent_army_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 18.4,
+    "contact_sheet": "contact-sheets/b_scen_tent_army_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1097,
+    "unit_name": "TENTA",
+    "file_name": "b_scen_tent_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 34.4,
+    "contact_sheet": "contact-sheets/b_scen_tent_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 59,
+    "unit_name": "FORAG",
+    "file_name": "n_forage_bush_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 15.6,
+    "contact_sheet": "contact-sheets/n_forage_bush_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2018,
+    "unit_name": "ASIANCARTS",
+    "file_name": "s_asian_carts_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 29.9,
+    "contact_sheet": "contact-sheets/s_asian_carts_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2022,
+    "unit_name": "ASIANLANTERNS",
+    "file_name": "s_asian_lanterns_x1",
+    "classification": "multi_variant",
+    "angle_count": 10,
+    "sld_size_kb": 10,
+    "contact_sheet": "contact-sheets/s_asian_lanterns_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2024,
+    "unit_name": "ASIANMARKETSTALLS",
+    "file_name": "s_asian_market_stalls_x1",
+    "classification": "multi_variant",
+    "angle_count": 30,
+    "sld_size_kb": 203.5,
+    "contact_sheet": "contact-sheets/s_asian_market_stalls_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 933,
+    "unit_name": "BARRELS",
+    "file_name": "s_barrels_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 9.5,
+    "contact_sheet": "contact-sheets/s_barrels_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2524,
+    "unit_name": "Benches (Stone)",
+    "file_name": "s_benches_stone_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 13.6,
+    "contact_sheet": "contact-sheets/s_benches_stone_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2523,
+    "unit_name": "Benches (Wooden)",
+    "file_name": "s_benches_wooden_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 12.6,
+    "contact_sheet": "contact-sheets/s_benches_wooden_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 304,
+    "unit_name": "BONFI",
+    "file_name": "s_campfire_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 0.6,
+    "contact_sheet": "contact-sheets/s_campfire_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 858,
+    "unit_name": "BCART",
+    "file_name": "s_cart_broken_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 31.3,
+    "contact_sheet": "contact-sheets/s_cart_broken_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2288,
+    "unit_name": "Fire Shrine",
+    "file_name": "s_fire_shrine_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 78.2,
+    "contact_sheet": "contact-sheets/s_fire_shrine_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 600,
+    "unit_name": "FLAGA",
+    "file_name": "s_flag_a_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 172.6,
+    "contact_sheet": "contact-sheets/s_flag_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2498,
+    "unit_name": "Macedonian Flag",
+    "file_name": "s_flag_macedonian_x1",
+    "classification": "ambiguous",
+    "angle_count": 3,
+    "sld_size_kb": 793.6,
+    "contact_sheet": "contact-sheets/s_flag_macedonian_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2013,
+    "unit_name": "FLAGRITA",
+    "file_name": "s_flag_ritual_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 2.9,
+    "contact_sheet": "contact-sheets/s_flag_ritual_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2528,
+    "unit_name": "Fountain Antiquity",
+    "file_name": "s_fountain_antiquity_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 35.2,
+    "contact_sheet": "contact-sheets/s_fountain_antiquity_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1991,
+    "unit_name": "FOUNTAIN",
+    "file_name": "s_fountain_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 17.8,
+    "contact_sheet": "contact-sheets/s_fountain_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 857,
+    "unit_name": "HSTAC",
+    "file_name": "s_haystack_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 4.8,
+    "contact_sheet": "contact-sheets/s_haystack_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 472,
+    "unit_name": "LOOT",
+    "file_name": "s_loot_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 84.7,
+    "contact_sheet": "contact-sheets/s_loot_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2284,
+    "unit_name": "Market Stall",
+    "file_name": "s_market_stalls_x1",
+    "classification": "multi_variant",
+    "angle_count": 32,
+    "sld_size_kb": 188.8,
+    "contact_sheet": "contact-sheets/s_market_stalls_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2534,
+    "unit_name": "Mediterranean Stall",
+    "file_name": "s_mediterranean_stalls_x1",
+    "classification": "multi_variant",
+    "angle_count": 10,
+    "sld_size_kb": 76.4,
+    "contact_sheet": "contact-sheets/s_mediterranean_stalls_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2535,
+    "unit_name": "Mesopotamian Stall",
+    "file_name": "s_mesopotamian_stalls_x1",
+    "classification": "multi_variant",
+    "angle_count": 10,
+    "sld_size_kb": 79.9,
+    "contact_sheet": "contact-sheets/s_mesopotamian_stalls_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1986,
+    "unit_name": "PAPERLANTERN",
+    "file_name": "s_paper_lantern_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 23.4,
+    "contact_sheet": "contact-sheets/s_paper_lantern_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2527,
+    "unit_name": "Scaffolding",
+    "file_name": "s_scaffolding_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 90.9,
+    "contact_sheet": "contact-sheets/s_scaffolding_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 499,
+    "unit_name": "TORCH",
+    "file_name": "s_torch_a_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 1.4,
+    "contact_sheet": "contact-sheets/s_torch_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1376,
+    "unit_name": "TORCHB",
+    "file_name": "s_torch_b_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 2.5,
+    "contact_sheet": "contact-sheets/s_torch_b_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2289,
+    "unit_name": "Treasure Chest",
+    "file_name": "s_treasure_chest_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 6.7,
+    "contact_sheet": "contact-sheets/s_treasure_chest_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2293,
+    "unit_name": "Weapon Rack",
+    "file_name": "s_weapon_racks_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 18,
+    "contact_sheet": "contact-sheets/s_weapon_racks_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1567,
+    "unit_name": "PAGODA1",
+    "file_name": "s_well_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 12.6,
+    "contact_sheet": "contact-sheets/s_well_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1271,
+    "unit_name": "OXCART",
+    "file_name": "u_misc_cart_ox_idleA_x1",
+    "classification": "ambiguous",
+    "angle_count": 16,
+    "sld_size_kb": 2844.2,
+    "contact_sheet": "contact-sheets/u_misc_cart_ox_idleA_x1.png",
+    "felt_done": true
+  }
+]

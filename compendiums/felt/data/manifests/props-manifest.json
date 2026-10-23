@@ -1,0 +1,182 @@
+[
+  {
+    "unit_const": 1089,
+    "unit_name": "GRANARY",
+    "file_name": "b_scen_granary_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 42.4,
+    "contact_sheet": "contact-sheets/b_scen_granary_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2519,
+    "unit_name": "Amphorae",
+    "file_name": "s_amphorae_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 30,
+    "contact_sheet": "contact-sheets/s_amphorae_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2520,
+    "unit_name": "Construction Crane",
+    "file_name": "s_construction_crane_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 61.1,
+    "contact_sheet": "contact-sheets/s_construction_crane_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2510,
+    "unit_name": "Furnace",
+    "file_name": "s_furnace_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 21.4,
+    "contact_sheet": "contact-sheets/s_furnace_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1095,
+    "unit_name": "GALLOW",
+    "file_name": "s_gallow_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 20.6,
+    "contact_sheet": "contact-sheets/s_gallow_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2501,
+    "unit_name": "Grain Storage",
+    "file_name": "s_grain_storage_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 40.9,
+    "contact_sheet": "contact-sheets/s_grain_storage_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2607,
+    "unit_name": "GUNPOWDERKEG",
+    "file_name": "s_gunpowder_keg_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 6.7,
+    "contact_sheet": "contact-sheets/s_gunpowder_keg_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2306,
+    "unit_name": "Hero Shrine",
+    "file_name": "s_hero_shrine_1_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 118,
+    "contact_sheet": "contact-sheets/s_hero_shrine_1_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2291,
+    "unit_name": "Leatherworking Equipment",
+    "file_name": "s_leatherworking_equipment_x1",
+    "classification": "multi_variant",
+    "angle_count": 24,
+    "sld_size_kb": 39.6,
+    "contact_sheet": "contact-sheets/s_leatherworking_equipment_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 915,
+    "unit_name": "LUMBER",
+    "file_name": "s_lumberB_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 38.9,
+    "contact_sheet": "contact-sheets/s_lumberB_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 914,
+    "unit_name": "QUARRY",
+    "file_name": "s_quarryB_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 45.3,
+    "contact_sheet": "contact-sheets/s_quarryB_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 711,
+    "unit_name": "RUGS",
+    "file_name": "s_rugs_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 8.4,
+    "contact_sheet": "contact-sheets/s_rugs_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2283,
+    "unit_name": "Siege Camp Weapons",
+    "file_name": "s_siege_camp_clutter_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 24.8,
+    "contact_sheet": "contact-sheets/s_siege_camp_clutter_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2282,
+    "unit_name": "Siege Camp Equipment",
+    "file_name": "s_siege_camp_weapons_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 85.9,
+    "contact_sheet": "contact-sheets/s_siege_camp_weapons_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2021,
+    "unit_name": "SIEGEPROPS",
+    "file_name": "s_siege_props_x1",
+    "classification": "multi_variant",
+    "angle_count": 15,
+    "sld_size_kb": 83.7,
+    "contact_sheet": "contact-sheets/s_siege_props_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 819,
+    "unit_name": "SIGN",
+    "file_name": "s_sign_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 39,
+    "contact_sheet": "contact-sheets/s_sign_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2491,
+    "unit_name": "Water Pots",
+    "file_name": "s_water_pots_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 10.6,
+    "contact_sheet": "contact-sheets/s_water_pots_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 36,
+    "unit_name": "BCANN",
+    "file_name": "u_sie_siege_ballista_idleA_x1",
+    "classification": "ambiguous",
+    "angle_count": 16,
+    "sld_size_kb": 1760.3,
+    "contact_sheet": "contact-sheets/u_sie_siege_ballista_idleA_x1.png",
+    "felt_done": true
+  }
+]

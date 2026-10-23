@@ -1,0 +1,295 @@
+[
+  {
+    "unit_const": 455,
+    "unit_name": "FISH1",
+    "file_name": "a_fish_dorado_x1",
+    "classification": "animated",
+    "angle_count": 2,
+    "sld_size_kb": 55.8,
+    "contact_sheet": "contact-sheets-sampled/a_fish_dorado_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_dorado_x1.png"
+  },
+  {
+    "unit_const": 450,
+    "unit_name": "DOLP1",
+    "file_name": "a_fish_marlin1_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 26.2,
+    "contact_sheet": "contact-sheets-sampled/a_fish_marlin1_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_marlin1_x1.png"
+  },
+  {
+    "unit_const": 53,
+    "unit_name": "FISHX",
+    "file_name": "a_fish_perch_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 16.4,
+    "contact_sheet": "contact-sheets-sampled/a_fish_perch_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_perch_x1.png"
+  },
+  {
+    "unit_const": 456,
+    "unit_name": "FISH2",
+    "file_name": "a_fish_salmon_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 71.4,
+    "contact_sheet": "contact-sheets-sampled/a_fish_salmon_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_salmon_x1.png"
+  },
+  {
+    "unit_const": 458,
+    "unit_name": "FISH4",
+    "file_name": "a_fish_snapper_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 8.9,
+    "contact_sheet": "contact-sheets-sampled/a_fish_snapper_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_snapper_x1.png"
+  },
+  {
+    "unit_const": 457,
+    "unit_name": "FISH3",
+    "file_name": "a_fish_tuna_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 34.5,
+    "contact_sheet": "contact-sheets-sampled/a_fish_tuna_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_tuna_x1.png"
+  },
+  {
+    "unit_const": 2625,
+    "unit_name": "WHALE",
+    "file_name": "a_fish_whale_x1",
+    "classification": "animated",
+    "angle_count": 1,
+    "sld_size_kb": 50.6,
+    "contact_sheet": "contact-sheets-sampled/a_fish_whale_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/a_fish_whale_x1.png"
+  },
+  {
+    "unit_const": 939,
+    "unit_name": "FLAME1",
+    "file_name": "FLM1B_NN",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 0,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "graphics path has legacy .smp asset, not .sld; SLD contact-sheet pipeline cannot render this row"
+  },
+  {
+    "unit_const": 940,
+    "unit_name": "FLAME2",
+    "file_name": "FLM2A_NN",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 0,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "graphics path has legacy .smp asset, not .sld; SLD contact-sheet pipeline cannot render this row"
+  },
+  {
+    "unit_const": 941,
+    "unit_name": "FLAME3",
+    "file_name": "FLM3A_NN",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 0,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "graphics path has legacy .smp asset, not .sld; SLD contact-sheet pipeline cannot render this row"
+  },
+  {
+    "unit_const": 942,
+    "unit_name": "FLAME4",
+    "file_name": "FLM4B_NN",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 0,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "graphics path has legacy .smp asset, not .sld; SLD contact-sheet pipeline cannot render this row"
+  },
+  {
+    "unit_const": 728,
+    "unit_name": "Ice",
+    "file_name": "n_decal_ice_x1",
+    "classification": "multi_variant",
+    "angle_count": 7,
+    "sld_size_kb": 10.3,
+    "contact_sheet": "contact-sheets/n_decal_ice_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 1059,
+    "unit_name": "FORAGM",
+    "file_name": "n_forage_fruit_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 19.3,
+    "contact_sheet": "contact-sheets/n_forage_fruit_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 2599,
+    "unit_name": "PAPAYA",
+    "file_name": "n_forage_papaya_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 20.8,
+    "contact_sheet": "contact-sheets/n_forage_papaya_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 2170,
+    "unit_name": "Oysters",
+    "file_name": "n_oysters_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 10.8,
+    "contact_sheet": "contact-sheets/n_oysters_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 709,
+    "unit_name": "FCAC",
+    "file_name": "n_plant_cactus_x1",
+    "classification": "multi_variant",
+    "angle_count": 11,
+    "sld_size_kb": 9.7,
+    "contact_sheet": "contact-sheets/n_plant_cactus_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 1175,
+    "unit_name": "GRSSP3",
+    "file_name": "n_plant_fernpatch_rainforest_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 52.7,
+    "contact_sheet": "contact-sheets/n_plant_fernpatch_rainforest_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 334,
+    "unit_name": "TERRM",
+    "file_name": "n_plant_flower_1_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 51,
+    "contact_sheet": "contact-sheets/n_plant_flower_1_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 335,
+    "unit_name": "TERRN",
+    "file_name": "n_plant_flower_2_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 39.8,
+    "contact_sheet": "contact-sheets/n_plant_flower_2_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 336,
+    "unit_name": "TERRO",
+    "file_name": "n_plant_flower_3_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 30.7,
+    "contact_sheet": "contact-sheets/n_plant_flower_3_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 337,
+    "unit_name": "TERRP",
+    "file_name": "n_plant_flower_4_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 24.4,
+    "contact_sheet": "contact-sheets/n_plant_flower_4_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 859,
+    "unit_name": "FLWRB",
+    "file_name": "n_plant_flowerbed_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 37.4,
+    "contact_sheet": "contact-sheets/n_plant_flowerbed_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 1033,
+    "unit_name": "GRSSP2",
+    "file_name": "n_plant_grass_dry_patch_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 35,
+    "contact_sheet": "contact-sheets/n_plant_grass_dry_patch_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 301,
+    "unit_name": "GRSSP",
+    "file_name": "n_plant_grass_green_patch_x1",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": 35,
+    "contact_sheet": "contact-sheets/n_plant_grass_green_patch_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 601,
+    "unit_name": "FLAGB",
+    "file_name": "s_flag_b_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 245.4,
+    "contact_sheet": "contact-sheets/s_flag_b_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 602,
+    "unit_name": "FLAGC",
+    "file_name": "s_flag_c_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 225.3,
+    "contact_sheet": "contact-sheets/s_flag_c_x1.png",
+    "felt_done": false
+  },
+  {
+    "unit_const": 2585,
+    "unit_name": "HowlerMonkey",
+    "file_name": "s_howler_monkey_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 9374.7,
+    "contact_sheet": "contact-sheets-sampled/s_howler_monkey_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/s_howler_monkey_x1.png"
+  },
+  {
+    "unit_const": 2082,
+    "unit_name": "PandaRock",
+    "file_name": "s_panda_rock_x1",
+    "classification": "ambiguous",
+    "angle_count": 1,
+    "sld_size_kb": 9838.1,
+    "contact_sheet": "contact-sheets-sampled/s_panda_rock_x1.png",
+    "felt_done": false,
+    "note": "sampled animation contact sheet (16 evenly spaced frames); full render remains at contact-sheets/s_panda_rock_x1.png"
+  }
+]

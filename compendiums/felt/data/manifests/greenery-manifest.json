@@ -1,0 +1,525 @@
+[
+  {
+    "unit_const": 1893,
+    "unit_name": "PASTURE_MANGROVE",
+    "file_name": "FARM0NNG",
+    "classification": "single_artwork",
+    "angle_count": 1,
+    "sld_size_kb": null,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "missing on box"
+  },
+  {
+    "unit_const": 2031,
+    "unit_name": "FALLENLEAVESMA",
+    "file_name": "n_fallen_leaves_maple_autumn_x1",
+    "classification": "multi_variant",
+    "angle_count": 18,
+    "sld_size_kb": 137.8,
+    "contact_sheet": "contact-sheets/n_fallen_leaves_maple_autumn_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2030,
+    "unit_name": "FALLENLEAVESMR",
+    "file_name": "n_fallen_leaves_maple_red_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 45.6,
+    "contact_sheet": "contact-sheets/n_fallen_leaves_maple_red_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2029,
+    "unit_name": "FALLENLEAVESPB",
+    "file_name": "n_fallen_leaves_peach_blossom_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 45.5,
+    "contact_sheet": "contact-sheets/n_fallen_leaves_peach_blossom_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2650,
+    "unit_name": "FORAGPINEAPPLE",
+    "file_name": "n_forage_pineapple_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 22.2,
+    "contact_sheet": "contact-sheets/n_forage_pineapple_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1361,
+    "unit_name": "Plan Bush Dry",
+    "file_name": "n_plant_bush_dry_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": null,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "missing on box"
+  },
+  {
+    "unit_const": 1360,
+    "unit_name": "Plan Bush Green",
+    "file_name": "n_plant_bush_green_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 21.5,
+    "contact_sheet": "contact-sheets/n_plant_bush_green_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1365,
+    "unit_name": "Plant Dead",
+    "file_name": "n_plant_dead_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 7.6,
+    "contact_sheet": "contact-sheets/n_plant_dead_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1366,
+    "unit_name": "Plant (Flower)",
+    "file_name": "n_plant_flower_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 20.4,
+    "contact_sheet": "contact-sheets/n_plant_flower_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1359,
+    "unit_name": "Grass Dry",
+    "file_name": "n_plant_grass_dry_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 23.5,
+    "contact_sheet": "contact-sheets/n_plant_grass_dry_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1358,
+    "unit_name": "Grass Green",
+    "file_name": "n_plant_grass_green_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 23.5,
+    "contact_sheet": "contact-sheets/n_plant_grass_green_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1351,
+    "unit_name": "PLANT JUNGLE",
+    "file_name": "n_plant_jungle_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 28.1,
+    "contact_sheet": "contact-sheets/n_plant_jungle_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1354,
+    "unit_name": "PLANT RAINFOREST",
+    "file_name": "n_plant_rainforest_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 30.1,
+    "contact_sheet": "contact-sheets/n_plant_rainforest_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1362,
+    "unit_name": "Plan Shrub Green",
+    "file_name": "n_plant_shrub_green_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 16.1,
+    "contact_sheet": "contact-sheets/n_plant_shrub_green_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1352,
+    "unit_name": "PLANT UNDERBRUSH JUNGLE",
+    "file_name": "n_plant_underbrush_jungle_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 63.6,
+    "contact_sheet": "contact-sheets/n_plant_underbrush_jungle_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1353,
+    "unit_name": "PLANT UNDERBRUSH",
+    "file_name": "n_plant_underbrush_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 60.5,
+    "contact_sheet": "contact-sheets/n_plant_underbrush_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 818,
+    "unit_name": "PLANTS",
+    "file_name": "n_plant_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 3.5,
+    "contact_sheet": "contact-sheets/n_plant_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2410,
+    "unit_name": "Rock Jungle Hover",
+    "file_name": "n_rock_jungle_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 47.9,
+    "contact_sheet": "contact-sheets/n_rock_jungle_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2016,
+    "unit_name": "FASIANPINE",
+    "file_name": "n_tree_asian_pine_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 52.9,
+    "contact_sheet": "contact-sheets/n_tree_asian_pine_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1717,
+    "unit_name": "BIRCH",
+    "file_name": "n_tree_birch_x1",
+    "classification": "multi_variant",
+    "angle_count": 42,
+    "sld_size_kb": 581.5,
+    "contact_sheet": "contact-sheets/n_tree_birch_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 302,
+    "unit_name": "BUSH",
+    "file_name": "n_tree_bush_a_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 38,
+    "contact_sheet": "contact-sheets/n_tree_bush_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1053,
+    "unit_name": "BUSH2",
+    "file_name": "n_tree_bush_b_x1",
+    "classification": "multi_variant",
+    "angle_count": 54,
+    "sld_size_kb": 225.5,
+    "contact_sheet": "contact-sheets/n_tree_bush_b_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1054,
+    "unit_name": "BUSH3",
+    "file_name": "n_tree_bush_c_x1",
+    "classification": "multi_variant",
+    "angle_count": 27,
+    "sld_size_kb": 114.3,
+    "contact_sheet": "contact-sheets/n_tree_bush_c_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2529,
+    "unit_name": "Cypress Tree (Decorative)",
+    "file_name": "n_tree_cypress_decorative_x1",
+    "classification": "multi_variant",
+    "angle_count": 12,
+    "sld_size_kb": 27.8,
+    "contact_sheet": "contact-sheets/n_tree_cypress_decorative_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1539,
+    "unit_name": "TREEAFELL",
+    "file_name": "n_tree_felled_generic_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 19.6,
+    "contact_sheet": "contact-sheets/n_tree_felled_generic_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2567,
+    "unit_name": "GREENOAK",
+    "file_name": "n_tree_green_oak_x1",
+    "classification": "multi_variant",
+    "angle_count": 27,
+    "sld_size_kb": 311.4,
+    "contact_sheet": "contact-sheets/n_tree_green_oak_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1348,
+    "unit_name": "ITPINE",
+    "file_name": "n_tree_italian_pine_x1",
+    "classification": "multi_variant",
+    "angle_count": 24,
+    "sld_size_kb": 121.5,
+    "contact_sheet": "contact-sheets/n_tree_italian_pine_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 768,
+    "unit_name": "Blue Tree",
+    "file_name": "n_tree_oak_b_x1",
+    "classification": "multi_variant",
+    "angle_count": 42,
+    "sld_size_kb": null,
+    "contact_sheet": null,
+    "felt_done": false,
+    "note": "missing on box"
+  },
+  {
+    "unit_const": 349,
+    "unit_name": "FOAK",
+    "file_name": "n_tree_oak_x1",
+    "classification": "multi_variant",
+    "angle_count": 42,
+    "sld_size_kb": 473.3,
+    "contact_sheet": "contact-sheets/n_tree_oak_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1349,
+    "unit_name": "OLIVE",
+    "file_name": "n_tree_olive_x1",
+    "classification": "multi_variant",
+    "angle_count": 24,
+    "sld_size_kb": 236.9,
+    "contact_sheet": "contact-sheets/n_tree_olive_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 284,
+    "unit_name": "TREETD",
+    "file_name": "n_tree_scenario_a_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 33.1,
+    "contact_sheet": "contact-sheets/n_tree_scenario_a_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 400,
+    "unit_name": "TREEB",
+    "file_name": "n_tree_scenario_b_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 37.6,
+    "contact_sheet": "contact-sheets/n_tree_scenario_b_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 401,
+    "unit_name": "TREEC",
+    "file_name": "n_tree_scenario_c_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 35.4,
+    "contact_sheet": "contact-sheets/n_tree_scenario_c_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 402,
+    "unit_name": "TREED",
+    "file_name": "n_tree_scenario_d_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 32.8,
+    "contact_sheet": "contact-sheets/n_tree_scenario_d_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 403,
+    "unit_name": "TREEE",
+    "file_name": "n_tree_scenario_e_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 31.8,
+    "contact_sheet": "contact-sheets/n_tree_scenario_e_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 404,
+    "unit_name": "TREEF",
+    "file_name": "n_tree_scenario_f_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 25.9,
+    "contact_sheet": "contact-sheets/n_tree_scenario_f_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 405,
+    "unit_name": "TREEG",
+    "file_name": "n_tree_scenario_g_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 39.1,
+    "contact_sheet": "contact-sheets/n_tree_scenario_g_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 406,
+    "unit_name": "TREEH",
+    "file_name": "n_tree_scenario_h_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 39.4,
+    "contact_sheet": "contact-sheets/n_tree_scenario_h_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 407,
+    "unit_name": "TREEI",
+    "file_name": "n_tree_scenario_i_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 41.4,
+    "contact_sheet": "contact-sheets/n_tree_scenario_i_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 408,
+    "unit_name": "TREEJ",
+    "file_name": "n_tree_scenario_j_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 34.6,
+    "contact_sheet": "contact-sheets/n_tree_scenario_j_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 409,
+    "unit_name": "TREEK",
+    "file_name": "n_tree_scenario_k_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 33,
+    "contact_sheet": "contact-sheets/n_tree_scenario_k_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 410,
+    "unit_name": "TREEL",
+    "file_name": "n_tree_scenario_l_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 28.4,
+    "contact_sheet": "contact-sheets/n_tree_scenario_l_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 1536,
+    "unit_name": "STUMPB2",
+    "file_name": "n_tree_stump_bamboo_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 2.8,
+    "contact_sheet": "contact-sheets/n_tree_stump_bamboo_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 415,
+    "unit_name": "STUMP",
+    "file_name": "n_tree_stump_generic_x1",
+    "classification": "multi_variant",
+    "angle_count": 9,
+    "sld_size_kb": 4.3,
+    "contact_sheet": "contact-sheets/n_tree_stump_generic_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2583,
+    "unit_name": "WAXPALM",
+    "file_name": "n_tree_wax_palm_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 91.6,
+    "contact_sheet": "contact-sheets/n_tree_wax_palm_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2025,
+    "unit_name": "FWILLOW",
+    "file_name": "n_tree_willow_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 69.9,
+    "contact_sheet": "contact-sheets/n_tree_willow_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2536,
+    "unit_name": "Water Lily",
+    "file_name": "n_water_lily_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 4.7,
+    "contact_sheet": "contact-sheets/n_water_lily_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2020,
+    "unit_name": "GARDENBRIDGE",
+    "file_name": "s_garden_bridge_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 35.7,
+    "contact_sheet": "contact-sheets/s_garden_bridge_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2007,
+    "unit_name": "GARDENPAVILION",
+    "file_name": "s_garden_pavilion_x1",
+    "classification": "multi_variant",
+    "angle_count": 3,
+    "sld_size_kb": 40.3,
+    "contact_sheet": "contact-sheets/s_garden_pavilion_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2290,
+    "unit_name": "Grapevine",
+    "file_name": "s_grapevine_x1",
+    "classification": "multi_variant",
+    "angle_count": 16,
+    "sld_size_kb": 76.4,
+    "contact_sheet": "contact-sheets/s_grapevine_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2252,
+    "unit_name": "Mesopotamian Garden",
+    "file_name": "s_mesopotamian_garden_x1",
+    "classification": "multi_variant",
+    "angle_count": 10,
+    "sld_size_kb": 46,
+    "contact_sheet": "contact-sheets/s_mesopotamian_garden_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2294,
+    "unit_name": "Sacred Tree",
+    "file_name": "s_sacred_tree_x1",
+    "classification": "multi_variant",
+    "angle_count": 4,
+    "sld_size_kb": 42.5,
+    "contact_sheet": "contact-sheets/s_sacred_tree_x1.png",
+    "felt_done": true
+  }
+]

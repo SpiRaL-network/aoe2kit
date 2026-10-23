@@ -1,0 +1,92 @@
+[
+  {
+    "unit_const": 1091,
+    "unit_name": "SKELA",
+    "file_name": "s_animal_skeleton_x1",
+    "classification": "multi_variant",
+    "angle_count": 2,
+    "sld_size_kb": 5.2,
+    "contact_sheet": "contact-sheets/s_animal_skeleton_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2456,
+    "unit_name": "Antiquity Impaled Corpse",
+    "file_name": "s_antiquity_impaled_corpse_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 9.6,
+    "contact_sheet": "contact-sheets/s_antiquity_impaled_corpse_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2457,
+    "unit_name": "Beached Whale",
+    "file_name": "s_beached_whale_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 97.2,
+    "contact_sheet": "contact-sheets/s_beached_whale_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 820,
+    "unit_name": "GRAVES",
+    "file_name": "s_graves_x1",
+    "classification": "multi_variant",
+    "angle_count": 6,
+    "sld_size_kb": 3.3,
+    "contact_sheet": "contact-sheets/s_graves_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 910,
+    "unit_name": "IMPALED",
+    "file_name": "s_impaled_corpse_x1",
+    "classification": "multi_variant",
+    "angle_count": 5,
+    "sld_size_kb": 11,
+    "contact_sheet": "contact-sheets/s_impaled_corpse_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2287,
+    "unit_name": "Mesopotamian Tomb",
+    "file_name": "s_mesopotamian_tomb_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 62.8,
+    "contact_sheet": "contact-sheets/s_mesopotamian_tomb_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2517,
+    "unit_name": "Skeleton Civilian",
+    "file_name": "s_skeleton_civilian_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 13.5,
+    "contact_sheet": "contact-sheets/s_skeleton_civilian_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 2518,
+    "unit_name": "Skeleton Soldier",
+    "file_name": "s_skeleton_soldier_x1",
+    "classification": "multi_variant",
+    "angle_count": 8,
+    "sld_size_kb": 13.7,
+    "contact_sheet": "contact-sheets/s_skeleton_soldier_x1.png",
+    "felt_done": true
+  },
+  {
+    "unit_const": 710,
+    "unit_name": "SKELETON",
+    "file_name": "s_skeleton_x1",
+    "classification": "multi_variant",
+    "angle_count": 15,
+    "sld_size_kb": 18.8,
+    "contact_sheet": "contact-sheets/s_skeleton_x1.png",
+    "felt_done": true
+  }
+]

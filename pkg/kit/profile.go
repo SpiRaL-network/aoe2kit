@@ -161,7 +161,6 @@ func readPublicAllowlist(root string) (map[string]bool, error) {
 func publicReleaseForbidden(rel string) bool {
 	low := strings.ToLower(filepath.ToSlash(rel))
 	for _, prefix := range []string{
-		"compendiums/",
 		"testdata/",
 		"pkg/scenario/evidence/",
 		"pkg/scenario/testdata/",
@@ -170,12 +169,44 @@ func publicReleaseForbidden(rel string) bool {
 			return true
 		}
 	}
+	if strings.HasPrefix(low, "compendiums/") && !publicFeltCatalogFile(low) {
+		return true
+	}
 	for _, ext := range []string{".aoe2scenario", ".aoe2campaign", ".sld", ".dds", ".slp", ".dat", ".exe"} {
 		if strings.HasSuffix(low, ext) {
 			return true
 		}
 	}
 	return isImageFileName(low)
+}
+
+// publicFeltCatalogFile is a deliberately narrow exception to the default
+// compendium exclusion: only the scrubbed Felt data catalog is public. Rendered
+// sheets and all other compendium content remain excluded.
+func publicFeltCatalogFile(path string) bool {
+	switch path {
+	case "compendiums/felt/readme.md",
+		"compendiums/felt/docs/field_schema.md",
+		"compendiums/felt/data/art-felt-compendium.json",
+		"compendiums/felt/data/gaia_palette.json",
+		"compendiums/felt/data/px-dims.json",
+		"compendiums/felt/data/terrain-felt-compendium.json",
+		"compendiums/felt/data/visual_variants.json",
+		"compendiums/felt/data/manifests/contact-manifest.json",
+		"compendiums/felt/data/manifests/cultstatue-manifest.json",
+		"compendiums/felt/data/manifests/death-manifest.json",
+		"compendiums/felt/data/manifests/finalart-manifest.json",
+		"compendiums/felt/data/manifests/greenery-manifest.json",
+		"compendiums/felt/data/manifests/inhabited-manifest.json",
+		"compendiums/felt/data/manifests/props-manifest.json",
+		"compendiums/felt/data/manifests/rock-manifest.json",
+		"compendiums/felt/data/manifests/ruins-manifest.json",
+		"compendiums/felt/data/manifests/terrain-manifest.json",
+		"compendiums/felt/data/manifests/trees2-manifest.json":
+		return true
+	default:
+		return false
+	}
 }
 
 func isImageFileName(name string) bool {
