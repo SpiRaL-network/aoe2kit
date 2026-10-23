@@ -110,6 +110,7 @@ type Report struct {
 	Palette            string                `json:"palette,omitempty"`
 	ElevationMode      string                `json:"elevation_mode,omitempty"`
 	ElevationPadding   int                   `json:"elevation_padding,omitempty"`
+	ObjectHeightMode   string                `json:"object_height_mode,omitempty"`
 	Fallbacks          []string              `json:"fallbacks,omitempty"`
 	Textures           *TerrainTextureReport `json:"textures,omitempty"`
 	Mood               *MoodReport           `json:"mood,omitempty"`
@@ -575,7 +576,9 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 	for _, t := range s.Terrain {
 		terrain[t.Y*s.Width+t.X] = t
 	}
-	groundOffset := func(o Object) int { return pad - objectGroundLift(s, ground, o, scale, projection) }
+	groundOffset := func(o Object) int {
+		return pad - objectGroundLift(s, ground, o, scale, projection, opts.StoredObjectHeights)
+	}
 	for y := crop.Y1; y < crop.Y2; y++ {
 		for x := crop.X1; x < crop.X2; x++ {
 			if !layerEnabled(opts.Layers, "terrain") {

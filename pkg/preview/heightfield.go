@@ -29,7 +29,7 @@ func cornerHeight(tiles []Tile, width, height, x, y int) float64 {
 	return h
 }
 
-func elevationPadding(s Snapshot, crop Crop, scale int, projection string, enabled bool) int {
+func elevationPadding(s Snapshot, crop Crop, scale int, projection string, enabled bool, stored ...bool) int {
 	if !enabled || defaultProjection(projection) != "diamond" {
 		return 0
 	}
@@ -39,15 +39,37 @@ func elevationPadding(s Snapshot, crop Crop, scale int, projection string, enabl
 			h = math.Max(h, t.Elevation)
 		}
 	}
+	if len(stored) > 0 && stored[0] {
+		for _, o := range s.Objects {
+			if o.X >= float64(crop.X1) && o.X < float64(crop.X2) && o.Y >= float64(crop.Y1) && o.Y < float64(crop.Y2) {
+				h = math.Max(h, o.Z)
+			}
+		}
+	}
 	return int(math.Ceil(h * float64(scale) / 4))
 }
 
+func validateStoredObjectHeights(s Snapshot) error {
+	for _, o := range s.Objects {
+		if math.IsNaN(o.Z) || math.IsInf(o.Z, 0) || o.Z < 0 || o.Z > 255 {
+			return fmt.Errorf("stored object height must be finite and between 0 and 255")
+		}
+	}
+	return nil
+}
+
 // SnapshotImageExtent adds the height-field headroom to the flat image frame.
-func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation bool) (ImageExtent, error) {
+// Optional stored=true also reserves headroom for recorded object Z values.
+func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation bool, stored ...bool) (ImageExtent, error) {
 	if err := validateSnapshot(s); err != nil {
 		return ImageExtent{}, err
 	}
 	if elevation {
+		if len(stored) > 0 && stored[0] {
+			if err := validateStoredObjectHeights(s); err != nil {
+				return ImageExtent{}, err
+			}
+		}
 		if err := validateHeightfield(s); err != nil {
 			return ImageExtent{}, err
 		}
@@ -56,7 +78,7 @@ func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation boo
 	if err != nil {
 		return e, err
 	}
-	pad := elevationPadding(s, Crop{X2: s.Width, Y2: s.Height}, e.Scale, projection, elevation)
+	pad := elevationPadding(s, Crop{X2: s.Width, Y2: s.Height}, e.Scale, projection, elevation, stored...)
 	e.Height += pad
 	e.MapOriginY += pad
 	return e, nil
@@ -158,9 +180,12 @@ func heightTiles(s Snapshot, session *renderSession) []Tile {
 
 // Bilinear attachment is provisional away from flat terraces: the object
 // capture verifies height-two plateau attachment, not slope interpolation.
-func objectGroundLift(s Snapshot, tiles []Tile, o Object, scale int, projection string) int {
+func objectGroundLift(s Snapshot, tiles []Tile, o Object, scale int, projection string, stored ...bool) int {
 	if tiles == nil || defaultProjection(projection) != "diamond" || math.IsNaN(o.X) || math.IsNaN(o.Y) || o.X < 0 || o.Y < 0 || o.X >= float64(s.Width) || o.Y >= float64(s.Height) {
 		return 0
+	}
+	if len(stored) > 0 && stored[0] {
+		return int(math.Round(o.Z * float64(scale) / 4))
 	}
 	x, y := int(o.X), int(o.Y)
 	u, v := o.X-float64(x), o.Y-float64(y)

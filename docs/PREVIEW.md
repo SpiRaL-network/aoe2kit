@@ -504,6 +504,17 @@ pixel windows and tile pyramids use that same padded frame; `map_origin_y` and
 shadows lift by the ground height at their anchor without changing sprite size.
 Attachment is verified only on a flat level-two terrace; bilinear interpolation
 of corner heights on slopes remains a candidate, not an engine-calibrated rule.
+For editor-saved scenarios, add `--stored-object-heights` with `--elevation`
+to use each object's recorded Z, including zero, instead of that approximation.
+Flat-control registration of a dense editor capture verified 17 black-tile
+markers against saved Z to within 0.05 pixels at a 72-pixel tile scale.
+This verifies those marker anchors, not every sprite class or shadow surface.
+Authored files can contain placeholder Z values that DE changes on load; use
+the editor-saved copy for this mode. The default remains inferred attachment.
+Sprites, particles, labels and shadow anchors share the selected lift; frame
+padding, pixel windows and tile pyramids include stored-height headroom.
+Stored heights must be finite and in 0..255. This option does not change terrain
+geometry or establish how the engine computes attachment heights.
 Depth sorting still uses flat positions, shadows are not warped across slopes,
 and terrain does not occlude objects. Topdown output retains slope shading only.
 The categorical elevation layer is a separate diagnostic.

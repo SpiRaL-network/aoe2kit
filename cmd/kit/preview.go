@@ -55,6 +55,7 @@ func runPreview(args []string) {
 	sprites := defaults.Sprites
 	shadows := defaults.Shadows
 	elevation := defaults.Elevation
+	storedObjectHeights := false
 	strict := false
 	rotationModel := ""
 	var fitIDs []int
@@ -139,6 +140,8 @@ func runPreview(args []string) {
 			sprites = false
 		case "--elevation":
 			elevation = true
+		case "--stored-object-heights":
+			storedObjectHeights = true
 		case "--no-elevation":
 			elevation = false
 		case "--fit-units":
@@ -207,6 +210,9 @@ func runPreview(args []string) {
 	}
 	if strict && (!sprites || minimap) {
 		die("kit preview", fmt.Errorf("--strict requires --sprites, without --minimap"))
+	}
+	if storedObjectHeights && !elevation {
+		die("kit preview", fmt.Errorf("--stored-object-heights requires --elevation"))
 	}
 	if rotationModel != "" {
 		if !sprites || minimap {
