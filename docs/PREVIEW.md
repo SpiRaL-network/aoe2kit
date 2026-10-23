@@ -489,16 +489,20 @@ level lifts the surface by one quarter of the tile width (`scale/4` pixels),
 measured from single-tile and pyramid editor captures through stored level 15.
 Shared corners provisionally use the maximum of the adjacent tiles; the more
 level diagonal splits each quad. Pair and pit captures are still needed to
-validate this rule. Vertex-interpolated slope lighting is fitted to three grass
-faces in one capture, not recovered engine maths. Textures, layer masks and border blends retain
+validate this rule. Per-triangle face-normal lighting is fitted to three grass
+faces in one capture, not recovered engine maths. Ridge lighting is not smoothed.
+Textures, layer masks and border blends retain
 their undeformed world coordinates. This option is off by default.
 
 The canvas grows upward by `ceil(max_level * scale/4)` pixels. `--print-extent`,
 pixel windows and tile pyramids use that same padded frame; `map_origin_y` and
 `elevation_padding` report the ground offset. Objects, particles and their
-shadows remain at their flat-ground positions plus this padding: they do not
-yet ride the surface or receive terrain occlusion. Topdown output retains
-slope shading only. The categorical elevation layer is a separate diagnostic.
+shadows lift by the ground height at their anchor without changing sprite size.
+Attachment is verified only on a flat level-two terrace; bilinear interpolation
+of corner heights on slopes remains a candidate, not an engine-calibrated rule.
+Depth sorting still uses flat positions, shadows are not warped across slopes,
+and terrain does not occlude objects. Topdown output retains slope shading only.
+The categorical elevation layer is a separate diagnostic.
 
 ## Local Missing-Sprite Repair
 

@@ -62,24 +62,21 @@ func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation boo
 	return e, nil
 }
 
-type heightVertex struct{ x, y, h, px, py, light float64 }
+type heightVertex struct{ x, y, h, px, py float64 }
 
 func heightVertexAt(tiles []Tile, s Snapshot, crop Crop, scale, pad, x, y int) heightVertex {
 	t := diamondTransform(crop.X2-crop.X1, crop.Y2-crop.Y1, float64(scale), float64(scale), "")
 	h := cornerHeight(tiles, s.Width, s.Height, x, y)
 	px, py := t.point(float64(x-crop.X1), float64(y-crop.Y1))
-	x0, x1 := max(0, x-1), min(s.Width, x+1)
-	y0, y1 := max(0, y-1), min(s.Height, y+1)
-	dx := (cornerHeight(tiles, s.Width, s.Height, x1, y) - cornerHeight(tiles, s.Width, s.Height, x0, y)) / float64(x1-x0)
-	dy := (cornerHeight(tiles, s.Width, s.Height, x, y1) - cornerHeight(tiles, s.Width, s.Height, x, y0)) / float64(y1-y0)
-	return heightVertex{float64(x), float64(y), h, px, py + float64(pad) - h*float64(scale)/4, heightLight(dx, dy)}
+	return heightVertex{float64(x), float64(y), h, px, py + float64(pad) - h*float64(scale)/4}
 }
 
 // Lighting fitted to three grass faces in one editor capture, not engine maths.
-// Opposite x slopes: .72/1.25; the brighter y slope: 1.13; flat: 1.
+// Front-left (+x): .72; front-right (-y): 1.25; back-right (-x):
+// 1.13. Those axis labels follow the shared engine diamond transform.
 func heightLight(dx, dy float64) float64 {
 	n := math.Sqrt(1 + dx*dx + dy*dy)
-	return math.Max(.4, math.Min(1.5, .949+(0.051-.375*dx-.205*dy)/n))
+	return math.Max(.4, math.Min(1.5, .743934+(0.256066-.289914*dx-.459619*dy)/n))
 }
 
 func heightShade(c color.RGBA, factor float64) color.RGBA {
@@ -98,6 +95,10 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 		if math.Abs(det) < 1e-9 {
 			return
 		}
+		worldDet := (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x)
+		dx := ((b.h-a.h)*(c.y-a.y) - (c.h-a.h)*(b.y-a.y)) / worldDet
+		dy := ((b.x-a.x)*(c.h-a.h) - (c.x-a.x)*(b.h-a.h)) / worldDet
+		light := heightLight(dx, dy)
 		x0 := max(img.Rect.Min.X, int(math.Floor(math.Min(a.px, math.Min(b.px, c.px)))))
 		x1 := min(img.Rect.Max.X, int(math.Ceil(math.Max(a.px, math.Max(b.px, c.px)))))
 		y0 := max(img.Rect.Min.Y, int(math.Floor(math.Min(a.py, math.Min(b.py, c.py)))))
@@ -112,10 +113,6 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 				wx, wy := a.x+u*(b.x-a.x)+v*(c.x-a.x), a.y+u*(b.y-a.y)+v*(c.y-a.y)
 				wx = math.Min(math.Nextafter(float64(crop.X2), 0), math.Max(float64(crop.X1), wx))
 				wy = math.Min(math.Nextafter(float64(crop.Y2), 0), math.Max(float64(crop.Y1), wy))
-				// Interpolate vertex lighting to avoid artificial flat-shaded
-				// teeth at slope/plateau junctions. This smoothing is fitted,
-				// not a claim about the engine's vertex-normal calculation.
-				light := a.light + u*(b.light-a.light) + v*(c.light-a.light)
 				img.SetRGBA(px, py, heightShade(sample(wx, wy), light))
 			}
 		}
@@ -140,8 +137,34 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 	}
 }
 
-// groundCanvas translates existing object drawing into the padded ground frame;
-// it deliberately does not lift objects onto the terrain yet.
+func heightTiles(s Snapshot, session *renderSession) []Tile {
+	if session != nil {
+		return session.terrain
+	}
+	tiles := make([]Tile, len(s.Terrain))
+	for _, t := range s.Terrain {
+		tiles[t.Y*s.Width+t.X] = t
+	}
+	return tiles
+}
+
+// Bilinear attachment is provisional away from flat terraces: the object
+// capture verifies height-two plateau attachment, not slope interpolation.
+func objectGroundLift(s Snapshot, tiles []Tile, o Object, scale int, projection string) int {
+	if tiles == nil || defaultProjection(projection) != "diamond" || math.IsNaN(o.X) || math.IsNaN(o.Y) || o.X < 0 || o.Y < 0 || o.X >= float64(s.Width) || o.Y >= float64(s.Height) {
+		return 0
+	}
+	x, y := int(o.X), int(o.Y)
+	u, v := o.X-float64(x), o.Y-float64(y)
+	a := cornerHeight(tiles, s.Width, s.Height, x, y)
+	b := cornerHeight(tiles, s.Width, s.Height, x+1, y)
+	c := cornerHeight(tiles, s.Width, s.Height, x+1, y+1)
+	d := cornerHeight(tiles, s.Width, s.Height, x, y+1)
+	h := (1-v)*((1-u)*a+u*b) + v*((1-u)*d+u*c)
+	return int(math.Round(h * float64(scale) / 4))
+}
+
+// groundCanvas translates object drawing into its padded, ground-attached frame.
 func groundCanvas(img *image.RGBA, pad int) *image.RGBA {
 	view := *img
 	view.Rect = view.Rect.Sub(image.Pt(0, pad))

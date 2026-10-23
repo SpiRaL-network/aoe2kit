@@ -575,6 +575,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 	for _, t := range s.Terrain {
 		terrain[t.Y*s.Width+t.X] = t
 	}
+	groundOffset := func(o Object) int { return pad - objectGroundLift(s, ground, o, scale, projection) }
 	for y := crop.Y1; y < crop.Y2; y++ {
 		for x := crop.X1; x < crop.X2; x++ {
 			if !layerEnabled(opts.Layers, "terrain") {
@@ -625,7 +626,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.ElevationMode = "flat textured surface; geometric elevation and lighting not modeled"
 	}
 	if opts.Elevation {
-		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners provisional; lighting fitted to one capture; objects remain at flat ground positions"
+		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners provisional; face-normal lighting fitted to one capture; objects/shadows use provisional bilinear ground attachment; flat-position depth order; no terrain occlusion"
 		if projection != "diamond" {
 			report.ElevationMode = "topdown slope shading only; no geometric displacement"
 		}
@@ -639,7 +640,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 			report.Skipped = append(report.Skipped, Skipped{UnitID: o.UnitID, Reason: "objects layer disabled"})
 			continue
 		}
-		paintObject(groundCanvas(img, pad), o, crop, scale, projection)
+		paintObject(groundCanvas(img, groundOffset(o)), o, crop, scale, projection)
 		report.Drawn++
 		class := o.Class
 		if class == "" {
@@ -648,7 +649,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.CountsByClass[class]++
 	}
 	if layerEnabled(opts.Layers, "starts") {
-		paintStarts(groundCanvas(img, pad), s.Objects, crop, scale, projection)
+		paintStarts(img, s.Objects, crop, scale, projection, groundOffset)
 	}
 	hash := sha256.Sum256(img.Pix)
 	report.PixelSHA256 = hex.EncodeToString(hash[:])
@@ -749,7 +750,7 @@ func fillPolygon(img *image.RGBA, points []image.Point, c color.RGBA) {
 	}
 }
 
-func paintStarts(img *image.RGBA, objects []Object, crop Crop, scale int, projection string) {
+func paintStarts(img *image.RGBA, objects []Object, crop Crop, scale int, projection string, offsetY func(Object) int) {
 	seen := map[int]bool{}
 	for _, o := range objects {
 		if o.Player <= 0 || seen[o.Player] || o.X < float64(crop.X1) || o.Y < float64(crop.Y1) || o.X >= float64(crop.X2) || o.Y >= float64(crop.Y2) {
@@ -757,6 +758,9 @@ func paintStarts(img *image.RGBA, objects []Object, crop Crop, scale int, projec
 		}
 		seen[o.Player] = true
 		x, y := mapPoint(o.X-float64(crop.X1), o.Y-float64(crop.Y1), crop, scale, projection)
+		if offsetY != nil {
+			y += offsetY(o)
+		}
 		fillRect(img, x-2, y-2, 5, 5, color.RGBA{255, 255, 255, 255})
 	}
 }

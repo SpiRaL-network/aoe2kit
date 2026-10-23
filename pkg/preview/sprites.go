@@ -171,7 +171,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 			report.Particles = append(report.Particles, r)
 			particleObjects[i] = p
 			if r.Status == "pending" && p.definition.Layer == "Terrain" {
-				drawParticle(base, particleAssets, o, p, crop, scale, nativeTile, &report)
+				drawParticle(base, particleAssets, o, p, crop, scale, nativeTile, groundOffset(o), &report)
 			}
 		}
 	}
@@ -206,7 +206,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 		for i, o := range objects {
 			if p, ok := particleObjects[i]; ok {
 				if !shadowPass && report.Particles[p.reportIndex].Status == "pending" {
-					drawParticle(base, particleAssets, o, p, crop, scale, nativeTile, &report)
+					drawParticle(base, particleAssets, o, p, crop, scale, nativeTile, groundOffset(o), &report)
 				}
 				continue
 			}
@@ -295,7 +295,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 			}
 			factor := float64(scale) / float64(nativeTile)
 			x, y := mapPoint(o.X-float64(crop.X1), o.Y-float64(crop.Y1), crop, scale, defaultProjection(opts.Projection))
-			y += report.ElevationPadding
+			y += groundOffset(o)
 			left, top := x-int(math.Round(float64(frame.HotspotX)*factor)), y-int(math.Round(float64(frame.HotspotY)*factor))
 			dest := image.Rect(left, top, left+max(1, int(math.Round(float64(img.Bounds().Dx())*factor))), top+max(1, int(math.Round(float64(img.Bounds().Dy())*factor))))
 			if shadowPass {
@@ -325,7 +325,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 	report.ImageWidth = base.Bounds().Dx()
 	report.ImageHeight = base.Bounds().Dy()
 	if layerEnabled(opts.Layers, "starts") {
-		paintStarts(groundCanvas(base, report.ElevationPadding), s.Objects, crop, scale, defaultProjection(opts.Projection))
+		paintStarts(base, s.Objects, crop, scale, defaultProjection(opts.Projection), groundOffset)
 	}
 	report.Fallbacks = append(report.Fallbacks, fmt.Sprintf("sprite scale convention: %d native pixels per tile; not engine-calibrated", nativeTile), "standing graphics from Gaia DAT; building annexes and animation are not composed")
 	if opts.Shadows == nil {
