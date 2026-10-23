@@ -142,6 +142,14 @@ from `resources/_common/terrain/textures/2x`, `masks`, and `blends` in that
 installation. No game images are included in Kit or its releases. Flat
 previews remain available without an installation; minimaps do not use textures.
 
+Texture and mask repeats default to ten world tiles, with separate overrides
+`--texture-repeat` and `--terrain-repeat`. The grass texture default is fitted
+to registered flat-ground samples: ten tiles gave correlations 0.476, 0.520
+and 0.560 across three views, versus approximately zero at the former nine-tile
+default. Only the first view selected the repeat/orientation/phase; the other
+two were checks. This calibrates grass texture scale and origin, not exact
+colour, other terrain materials, lighting, or filtering.
+
 The pure-Go decoder supports 2D DDS BC1/DXT1, BC2/DXT3 and BC3/DXT5, rejects
 unsupported formats, and bounds dimensions at 4096 per axis. Rendering samples
 the first mip at 512-2048 pixels per axis according to output scale, with a 128 MiB asset-cache
@@ -491,10 +499,16 @@ Shared corners use the maximum of the adjacent tiles, consistent with registered
 grid vertices in the available grass plateau, pit and terrace captures. A quad
 with one odd-height corner folds through it; ambiguous cases prefer the more
 level diagonal, with A-C on ties. Coverage beyond these fixtures remains limited.
-Per-triangle face-normal lighting is a single Lambert-style fit to flat ground
+Lighting coefficients retain a single Lambert-style fit to flat ground
 and all four axial grass faces in one capture, not recovered engine maths.
 Opposing-pair averages differ in that capture; the least-squares fit leaves
-about six percentage points of error per axial face. Ridge lighting is not smoothed.
+about six percentage points of error per axial face. Lighting now uses shared
+vertex values from central terrain gradients and interpolates them across each
+triangle, removing the former abrupt face-lighting seams. With calibrated grass
+texture repeat, this reduced sampled slope-vertex luminance RMSE in three
+registered views from 9.24/9.16/9.60 to 7.73/7.18/8.62. These are correlated
+grass samples with flat-ground brightness normalization, not general engine
+accuracy scores. The light field remains an approximation.
 Textures, layer masks and border blends retain
 their undeformed world coordinates. This option is off by default.
 

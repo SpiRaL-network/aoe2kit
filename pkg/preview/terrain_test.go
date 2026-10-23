@@ -167,6 +167,9 @@ func TestCandidateTerrainEdges(t *testing.T) {
 	if !strings.Contains(r.Textures.EdgeRule, "CANDIDATE") || len(r.Textures.EdgeEvidence) == 0 {
 		t.Fatal("edge assumption not reported")
 	}
+	if r.Textures.TextureRepeat != 10 {
+		t.Fatalf("default texture scale changed: %g", r.Textures.TextureRepeat)
+	}
 	if r.Textures.BlendomaticModes != 9 || len(r.Textures.BlendomaticSHA256) != 64 || r.Textures.EdgeIssue != "" {
 		t.Fatal("missing installed-mask provenance", r.Textures)
 	}

@@ -20,7 +20,8 @@ import (
 )
 
 // TerrainTextureOptions opts in to installed art. Repeat is in world tiles,
-// independent of DDS dimensions and crop. Zero selects the candidate 9 tiles.
+// independent of DDS dimensions and crop. Zero selects ten tiles for both
+// masks and textures; grass texture scale is calibrated to registered captures.
 type TerrainTextureOptions struct {
 	GameDir       string
 	Repeat        float64 // Mask repeat in world tiles.
@@ -169,7 +170,7 @@ func loadTerrainMaterials(tiles []Tile, s Snapshot, crop Crop, dat *datfile.Inde
 		LayerRule:     "top blended over base with alpha = named mask value; mask UV = world (x, y) / repeat, anchored at the map origin, no flip; fitted to marker-registered editor screenshots of road over grass and snow over dirt (96.7% and 98.2% pixel agreement)",
 		EmptyMaskRule: "UNVERIFIED: inverse default_strong as alpha; closest observed black-on-azure coverage, not an engine rule",
 		EdgeRule:      "disabled",
-		Assumptions:   []string{"mask repeat defaults to 10 tiles, origin-anchored (fitted on road over grass; other pairs not yet fitted); texture repeat independently defaults to 9 and is not calibrated", fmt.Sprintf("textures sampled at at most %dx%d; first mip, static water; no runtime shaders; geometric elevation requires --elevation", limit, limit)}}
+		Assumptions:   []string{"mask repeat defaults to 10 tiles, origin-anchored (fitted on road over grass; other pairs not yet fitted); texture repeat independently defaults to 10, fitted to flat grass samples in one registered capture and checked in two further views; other materials remain uncalibrated", fmt.Sprintf("textures sampled at at most %dx%d; first mip, static water; no runtime shaders; geometric elevation requires --elevation", limit, limit)}}
 	var blends []gfx.BlendomaticMode
 	if opts.Edges {
 		r.EdgeRule = "CANDIDATE: installed blendomatic diamonds selected by eight-neighbor topology; stored weight retains base, higher DAT priority draws last. Classic DAT-type pair-to-mode mapping and coordinate variants remain candidates for DE. Road single/ring outlines are closer to the probe, but the diagonal pinch is weaker; water mode 1 leaves a ring opening contrary to the human observation. No radial footprints. DE blend textures/shader are not reproduced."
@@ -356,7 +357,7 @@ func renderTexturedTerrain(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop,
 		o.Repeat = defaultMaskRepeat
 	}
 	if o.TextureRepeat == 0 {
-		o.TextureRepeat = 9
+		o.TextureRepeat = 10
 	}
 	if math.IsNaN(o.TextureRepeat) || math.IsInf(o.TextureRepeat, 0) || o.TextureRepeat < 1 || o.TextureRepeat > 256 {
 		return TerrainTextureReport{}, fmt.Errorf("texture repeat must be finite, between 1 and 256 tiles")

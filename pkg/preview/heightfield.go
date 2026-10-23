@@ -107,6 +107,16 @@ func heightShade(c color.RGBA, factor float64) color.RGBA {
 	return color.RGBA{channel(c.R), channel(c.G), channel(c.B), c.A}
 }
 
+// Candidate continuous light field: adjoining faces share the same vertex
+// light. Geometry and fold selection remain independent of this shading.
+func heightVertexLight(tiles []Tile, width, height, x, y int) float64 {
+	x0, x1 := max(0, x-1), min(width, x+1)
+	y0, y1 := max(0, y-1), min(height, y+1)
+	dx := (cornerHeight(tiles, width, height, x1, y) - cornerHeight(tiles, width, height, x0, y)) / float64(x1-x0)
+	dy := (cornerHeight(tiles, width, height, x, y1) - cornerHeight(tiles, width, height, x, y0)) / float64(y1-y0)
+	return heightLight(dx, dy)
+}
+
 func heightFoldBD(a, b, c, d float64) bool {
 	oddAC := (b == c && c == d && a != b) || (a == b && b == d && c != a)
 	oddBD := (a == c && c == d && b != a) || (a == b && b == c && d != a)
@@ -124,10 +134,9 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 		if math.Abs(det) < 1e-9 {
 			return
 		}
-		worldDet := (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x)
-		dx := ((b.h-a.h)*(c.y-a.y) - (c.h-a.h)*(b.y-a.y)) / worldDet
-		dy := ((b.x-a.x)*(c.h-a.h) - (c.x-a.x)*(b.h-a.h)) / worldDet
-		light := heightLight(dx, dy)
+		la := heightVertexLight(tiles, s.Width, s.Height, int(a.x), int(a.y))
+		lb := heightVertexLight(tiles, s.Width, s.Height, int(b.x), int(b.y))
+		lc := heightVertexLight(tiles, s.Width, s.Height, int(c.x), int(c.y))
 		x0 := max(img.Rect.Min.X, int(math.Floor(math.Min(a.px, math.Min(b.px, c.px)))))
 		x1 := min(img.Rect.Max.X, int(math.Ceil(math.Max(a.px, math.Max(b.px, c.px)))))
 		y0 := max(img.Rect.Min.Y, int(math.Floor(math.Min(a.py, math.Min(b.py, c.py)))))
@@ -142,6 +151,7 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 				wx, wy := a.x+u*(b.x-a.x)+v*(c.x-a.x), a.y+u*(b.y-a.y)+v*(c.y-a.y)
 				wx = math.Min(math.Nextafter(float64(crop.X2), 0), math.Max(float64(crop.X1), wx))
 				wy = math.Min(math.Nextafter(float64(crop.Y2), 0), math.Max(float64(crop.Y1), wy))
+				light := la + u*(lb-la) + v*(lc-la)
 				img.SetRGBA(px, py, heightShade(sample(wx, wy), light))
 			}
 		}
