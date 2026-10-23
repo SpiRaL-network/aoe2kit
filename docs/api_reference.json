@@ -1,10 +1,10 @@
 {
   "tool": "aoe2kit",
-  "version": "0.1.0",
+  "version": "0.4.2",
   "generated_by": "cmd/apiref (usage parsed from the kit binary; output contracts probed against fixtures)",
   "probe_fixtures": {},
-  "command_count": 247,
-  "probed_count": 18,
+  "command_count": 257,
+  "probed_count": 19,
   "commands": [
     {
       "path": [
@@ -2753,21 +2753,21 @@
         "doctor"
       ],
       "name": "doctor",
-      "usage": "kit doctor [--sandbox]",
+      "usage": "kit doctor [--sandbox] [--game-dir DIR]",
       "flags": [
         {
           "name": "--sandbox"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
         }
       ],
       "mutates": true,
       "network": false,
       "trait": "writes",
       "input": "none",
-      "probe_status": "non_json_output",
-      "probe_args": [
-        "doctor"
-      ],
-      "probe_note": "AoE2Kit doctor"
+      "probe_status": "skipped_mutating"
     },
     {
       "path": [
@@ -2796,6 +2796,62 @@
       "trait": "read_only",
       "input": "group",
       "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "felt"
+      ],
+      "name": "felt",
+      "usage": "kit felt \u003cgrammar\u003e ...",
+      "positional": [
+        "\u003cgrammar\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "group",
+      "probe_status": "group_entry"
+    },
+    {
+      "path": [
+        "felt",
+        "grammar"
+      ],
+      "name": "felt grammar",
+      "group": "felt",
+      "usage": "kit felt grammar \u003cunit-id\u003e --out sheet.png --json grammar.json [--game-dir DIR] [--dat FILE] [--compendium FILE]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "sheet.png",
+          "required": true
+        },
+        {
+          "name": "--json",
+          "value_hint": "grammar.json",
+          "required": true
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--compendium",
+          "value_hint": "FILE"
+        }
+      ],
+      "positional": [
+        "\u003cunit-id\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "dat",
+      "probe_status": "skipped_mutating"
     },
     {
       "path": [
@@ -2919,8 +2975,15 @@
       "mutates": false,
       "network": false,
       "trait": "read_only",
-      "input": "dat",
-      "probe_status": "skipped_no_fixture"
+      "input": "folder",
+      "probe_status": "non_json_output",
+      "probe_args": [
+        "fx",
+        "lint",
+        "."
+      ],
+      "probe_exit_code": 1,
+      "probe_note": "kit fx lint: read particles dir: open /tmp/kit-public-elevation-20261023/particles: no such file or directory"
     },
     {
       "path": [
@@ -3265,6 +3328,192 @@
         "warnings"
       ],
       "response_type": "kit.PortableReport"
+    },
+    {
+      "path": [
+        "preview"
+      ],
+      "name": "preview",
+      "usage": "kit preview \u003cscenario|replay|snapshot\u003e --out file.png [--minimap] [--minimap-orientation normal|transpose|flipx|flipy|rotate90|rotate180|rotate270 (default rotate270)] [--projection topdown|diamond] [--scale N] [--layers LIST] [--crop x1,y1,x2,y2] [--sprites] [--dat FILE] [--palette FILE] [--game-dir DIR] [--textures] [--terrain-repeat TILES] [--texture-repeat TILES] [--no-terrain-edges] [--mood NAME|scenario|none]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "file.png",
+          "required": true
+        },
+        {
+          "name": "--minimap"
+        },
+        {
+          "name": "--minimap-orientation",
+          "value_hint": "normal|transpose|flipx|flipy|rotate90|rotate180|rotate270"
+        },
+        {
+          "name": "--projection",
+          "value_hint": "topdown|diamond"
+        },
+        {
+          "name": "--scale",
+          "value_hint": "N"
+        },
+        {
+          "name": "--layers",
+          "value_hint": "LIST"
+        },
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2"
+        },
+        {
+          "name": "--sprites"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--palette",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--textures"
+        },
+        {
+          "name": "--terrain-repeat",
+          "value_hint": "TILES"
+        },
+        {
+          "name": "--texture-repeat",
+          "value_hint": "TILES"
+        },
+        {
+          "name": "--no-terrain-edges"
+        },
+        {
+          "name": "--mood",
+          "value_hint": "NAME|scenario|none"
+        }
+      ],
+      "subcommands": [
+        "scenario",
+        "replay",
+        "snapshot"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario or replay",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "preview",
+        "assets"
+      ],
+      "name": "preview assets",
+      "group": "preview",
+      "usage": "kit preview assets \u003cscenario\u003e [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--missing-only] [--paths]",
+      "flags": [
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2"
+        },
+        {
+          "name": "--missing-only"
+        },
+        {
+          "name": "--paths"
+        }
+      ],
+      "positional": [
+        "\u003cscenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "preview",
+        "calibrate-mood"
+      ],
+      "name": "preview calibrate-mood",
+      "group": "preview",
+      "usage": "kit preview calibrate-mood --manifest FILE [--game-dir DIR] [--fit --holdout MOOD] [--out FILE]",
+      "flags": [
+        {
+          "name": "--manifest",
+          "value_hint": "FILE",
+          "required": true
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--fit"
+        },
+        {
+          "name": "--holdout",
+          "value_hint": "MOOD",
+          "required": true
+        },
+        {
+          "name": "--out",
+          "value_hint": "FILE"
+        }
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "calibration manifest or sample report",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "preview",
+        "snapshot"
+      ],
+      "name": "preview snapshot",
+      "group": "preview",
+      "usage": "kit preview snapshot \u003cscenario\u003e --out file.json [--stage NAME] [--dat FILE]",
+      "flags": [
+        {
+          "name": "--out",
+          "value_hint": "file.json",
+          "required": true
+        },
+        {
+          "name": "--stage",
+          "value_hint": "NAME"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        }
+      ],
+      "positional": [
+        "\u003cscenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
     },
     {
       "path": [
@@ -5704,6 +5953,56 @@
     {
       "path": [
         "scen",
+        "census"
+      ],
+      "name": "scen census",
+      "group": "scen",
+      "usage": "kit scen census \u003cdir|files...\u003e [--gaia] [--player N] [--min-maps K] [--against DIR] [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--verbose] [--text|--json]",
+      "flags": [
+        {
+          "name": "--gaia"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--min-maps",
+          "value_hint": "K"
+        },
+        {
+          "name": "--against",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2"
+        },
+        {
+          "name": "--verbose"
+        }
+      ],
+      "positional": [
+        "\u003cdir|files...\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
         "coverage"
       ],
       "name": "scen coverage",
@@ -6060,6 +6359,81 @@
     {
       "path": [
         "scen",
+        "extract"
+      ],
+      "name": "scen extract",
+      "group": "scen",
+      "usage": "kit scen extract \u003cscenario\u003e --crop x1,y1,x2,y2 --out recipe.json [--terrain] [--relative]",
+      "flags": [
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2",
+          "required": true
+        },
+        {
+          "name": "--out",
+          "value_hint": "recipe.json",
+          "required": true
+        },
+        {
+          "name": "--terrain"
+        },
+        {
+          "name": "--relative"
+        }
+      ],
+      "positional": [
+        "\u003cscenario\u003e"
+      ],
+      "mutates": true,
+      "network": false,
+      "trait": "writes",
+      "input": "scenario",
+      "probe_status": "skipped_mutating"
+    },
+    {
+      "path": [
+        "scen",
+        "facets"
+      ],
+      "name": "scen facets",
+      "group": "scen",
+      "usage": "kit scen facets \u003cscenario\u003e [--unit ID[,ID]] [--dat FILE] [--game-dir DIR] [--player N|--gaia] [--crop x1,y1,x2,y2] [--text|--json]",
+      "flags": [
+        {
+          "name": "--unit",
+          "value_hint": "ID[,ID"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N|--gaia"
+        },
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2"
+        }
+      ],
+      "positional": [
+        "\u003cscenario\u003e",
+        "--text|--json"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
         "field"
       ],
       "name": "scen field",
@@ -6103,6 +6477,69 @@
       ],
       "positional": [
         "\u003cfile.aoe2scenario\u003e"
+      ],
+      "mutates": false,
+      "network": false,
+      "trait": "read_only",
+      "input": "scenario",
+      "probe_status": "skipped_no_fixture"
+    },
+    {
+      "path": [
+        "scen",
+        "hotspots"
+      ],
+      "name": "scen hotspots",
+      "group": "scen",
+      "usage": "kit scen hotspots \u003cscenario\u003e [--unit ID,ID] [--diverse] [--min-count N] [--dat FILE] [--game-dir DIR] [--player N] [--gaia=false] [--cell N] [--top N] [--rank variety|count] [--include-forest-fish] [--crop x1,y1,x2,y2] [--text|--json]",
+      "flags": [
+        {
+          "name": "--unit",
+          "value_hint": "ID,ID"
+        },
+        {
+          "name": "--diverse"
+        },
+        {
+          "name": "--min-count",
+          "value_hint": "N"
+        },
+        {
+          "name": "--dat",
+          "value_hint": "FILE"
+        },
+        {
+          "name": "--game-dir",
+          "value_hint": "DIR"
+        },
+        {
+          "name": "--player",
+          "value_hint": "N"
+        },
+        {
+          "name": "--cell",
+          "value_hint": "N"
+        },
+        {
+          "name": "--top",
+          "value_hint": "N"
+        },
+        {
+          "name": "--rank",
+          "value_hint": "variety|count"
+        },
+        {
+          "name": "--include-forest-fish"
+        },
+        {
+          "name": "--crop",
+          "value_hint": "x1,y1,x2,y2"
+        }
+      ],
+      "positional": [
+        "\u003cscenario\u003e",
+        "--gaia=false",
+        "--text|--json"
       ],
       "mutates": false,
       "network": false,
@@ -6260,12 +6697,24 @@
       ],
       "name": "scen patch",
       "group": "scen",
-      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--game-dir D] [--text|--json]",
+      "usage": "kit scen patch \u003cin.aoe2scenario\u003e \u003cout.aoe2scenario\u003e --recipe recipe.json [--at x,y] [--rotate 90|180|270] [--grammar review.json] [--game-dir D] [--text|--json]",
       "flags": [
         {
           "name": "--recipe",
           "value_hint": "recipe.json",
           "required": true
+        },
+        {
+          "name": "--at",
+          "value_hint": "x,y"
+        },
+        {
+          "name": "--rotate",
+          "value_hint": "90|180|270"
+        },
+        {
+          "name": "--grammar",
+          "value_hint": "review.json"
         },
         {
           "name": "--game-dir",
@@ -6656,10 +7105,13 @@
       ],
       "name": "scen units",
       "group": "scen",
-      "usage": "kit scen units \u003cfile.aoe2scenario\u003e [--named] [--text|--json]",
+      "usage": "kit scen units \u003cfile.aoe2scenario\u003e [--named] [--text|--json] [--peak-rss]",
       "flags": [
         {
           "name": "--named"
+        },
+        {
+          "name": "--peak-rss"
         }
       ],
       "positional": [
@@ -7004,6 +7456,7 @@
         "artifacts_ok",
         "docs_ok",
         "errors",
+        "generation",
         "go_available",
         "inventory_ok",
         "manifest_ok",
@@ -7057,11 +7510,18 @@
       "network": false,
       "trait": "read_only",
       "input": "none",
-      "probe_status": "non_json_output",
+      "probe_status": "ok",
       "probe_args": [
+        "version",
+        "--json"
+      ],
+      "output_top_level_keys": [
+        "build_type",
+        "commit",
+        "platform",
         "version"
       ],
-      "probe_note": "0.1.0"
+      "response_type": "kit.BuildInfo"
     },
     {
       "path": [

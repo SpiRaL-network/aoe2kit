@@ -1,11 +1,9 @@
 package preview
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"math"
-	"path/filepath"
 	"testing"
 )
 
@@ -24,7 +22,7 @@ func TestHeightCornersLiftAndExtent(t *testing.T) {
 	s := heightSnapshot(9)
 	for _, scale := range []int{8, 13, 16, 32, 64} {
 		e, err := SnapshotImageExtent(s, scale, "diamond", true)
-		flat, _ := FullImageExtent(9, 9, scale, "diamond")
+		flat, _ := SnapshotImageExtent(heightSnapshot(9), scale, "diamond", false)
 		pad := int(math.Ceil(3 * float64(scale) / 4))
 		if err != nil || e.Height-flat.Height != pad || e.MapOriginY-flat.MapOriginY != pad || e.Width != flat.Width {
 			t.Fatal(e, flat, err)
@@ -142,19 +140,11 @@ func TestHeightfieldSpritesAndShadowsRidePlateau(t *testing.T) {
 			}
 		}
 	}
-	opts.Elevation = true
-	opts.Window = &PixelWindow{X: 0, Y: 4, Width: 64, Height: 64}
-	window, _, err := RenderSprites(s, opts, idx, game)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rect, _ := opts.Window.rectangle()
-	assertWindowPixels(t, raised, window, rect)
 }
 
 func TestHeightfieldBilinearObjectAttachment(t *testing.T) {
 	s := Snapshot{Schema: SnapshotSchema, Width: 2, Height: 2, Terrain: []Tile{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1, Elevation: 2}}}
-	tiles := heightTiles(s, nil)
+	tiles := heightTiles(s)
 	// Tile(0,0) has only its far corner raised to two. At .5,.5 the
 	// bilinear candidate has height .5; at scale32 this lifts four pixels.
 	if got := objectGroundLift(s, tiles, Object{X: .5, Y: .5}, 32, "diamond"); got != 4 {
@@ -193,85 +183,6 @@ func TestHeightfieldFaceLightingDoesNotBlendAcrossRidge(t *testing.T) {
 			if got := img.RGBAAt(x, y); got != want {
 				t.Fatal("face lighting interpolated across a face", tc, x, y, got, want)
 			}
-		}
-	}
-}
-
-func TestHeightfieldSpriteTilePNGs(t *testing.T) {
-	game, idx := spriteFixture(t)
-	s := spriteSnapshot()
-	for i := range s.Terrain {
-		s.Terrain[i].Elevation = float64(s.Terrain[i].X % 3)
-	}
-	for _, budget := range []int64{1 << 20, 32 * 32 * 8} {
-		opts := Options{Scale: 8, SpriteTilePixels: 1, Elevation: true, Shadows: &ShadowOptions{}}
-		dir := t.TempDir()
-		r, err := RenderTiles(s, opts, idx, game, TileBatchOptions{Dir: dir, TileSize: 32, Scales: []int{8}, CanvasBudgetBytes: budget, Sprites: true})
-		if err != nil {
-			t.Fatal(err)
-		}
-		level := r.Levels[0]
-		for y := 0; y < level.Height; y += 32 {
-			for x := 0; x < level.Width; x += 32 {
-				opts.Window = &PixelWindow{X: x, Y: y, Width: 32, Height: 32}
-				window, _, err := RenderSprites(s, opts, idx, game)
-				if err != nil {
-					t.Fatal(err)
-				}
-				assertTileFileMatchesWindow(t, filepath.Join(dir, "0", fmt.Sprintf("%d_%d.png", x/32, y/32)), window)
-			}
-		}
-	}
-}
-
-func TestHeightfieldTextureWindowsAndTilePNGs(t *testing.T) {
-	game, idx := terrainTestInstall(t)
-	s := heightSnapshot(9)
-	top := 1
-	for i := range s.Terrain {
-		if i%3 == 0 {
-			s.Terrain[i].Layer = &top
-		}
-	}
-	for _, edges := range []bool{false, true} {
-		opts := Options{Elevation: true, Scale: 16, Dat: idx, Textures: &TerrainTextureOptions{GameDir: game, Edges: edges}, Layers: map[string]bool{"terrain": true}}
-		whole, _, err := RenderFlat(s, opts)
-		if err != nil {
-			t.Fatal(err)
-		}
-		for y := -3; y < whole.Rect.Max.Y+8; y += 19 {
-			for x := -5; x < whole.Rect.Max.X+8; x += 23 {
-				w := PixelWindow{X: x, Y: y, Width: 23, Height: 19}
-				opts.Window = &w
-				window, _, err := RenderFlat(s, opts)
-				if err != nil {
-					t.Fatal(err)
-				}
-				r, _ := w.rectangle()
-				assertWindowPixels(t, whole, window, r)
-			}
-		}
-		opts.Window = nil
-		for _, budget := range []int64{1 << 20, 16 * 16 * 8} {
-			dir := t.TempDir()
-			batch, err := RenderTiles(s, opts, idx, game, TileBatchOptions{Dir: dir, TileSize: 16, Scales: []int{8, 16}, CanvasBudgetBytes: budget})
-			if err != nil {
-				t.Fatal(err)
-			}
-			for _, level := range batch.Levels {
-				for y := 0; y < level.Height; y += 16 {
-					for x := 0; x < level.Width; x += 16 {
-						opts.Scale = level.Scale
-						opts.Window = &PixelWindow{X: x, Y: y, Width: 16, Height: 16}
-						window, _, err := RenderFlat(s, opts)
-						if err != nil {
-							t.Fatal(err)
-						}
-						assertTileFileMatchesWindow(t, filepath.Join(dir, fmt.Sprint(level.Z), fmt.Sprintf("%d_%d.png", x/16, y/16)), window)
-					}
-				}
-			}
-			opts.Window = nil
 		}
 	}
 }

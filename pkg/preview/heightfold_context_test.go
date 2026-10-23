@@ -20,7 +20,7 @@ func TestHeightTileFoldSeparatesIsolatedCornersFromRidges(t *testing.T) {
 						s.Terrain = append(s.Terrain, Tile{X: x, Y: y, Elevation: h})
 					}
 				}
-				tiles := heightTiles(s, nil)
+				tiles := heightTiles(s)
 				if got := heightTileFoldBD(tiles, 7, 7, 3, 3); got != tt.bd {
 					t.Fatalf("base %g: fold=%v want%v", base, got, tt.bd)
 				}
@@ -30,7 +30,7 @@ func TestHeightTileFoldSeparatesIsolatedCornersFromRidges(t *testing.T) {
 	// This connected pyramid tile has one raised shared corner too. Its
 	// surrounding lower terrain distinguishes it from the isolated case.
 	s := heightSnapshot(9)
-	tiles := heightTiles(s, nil)
+	tiles := heightTiles(s)
 	for _, xy := range [][2]int{{1, 1}, {2, 2}, {3, 3}} {
 		x, y := xy[0], xy[1]
 		a, b, c, d := cornerHeight(tiles, 9, 9, x, y), cornerHeight(tiles, 9, 9, x+1, y), cornerHeight(tiles, 9, 9, x+1, y+1), cornerHeight(tiles, 9, 9, x, y+1)

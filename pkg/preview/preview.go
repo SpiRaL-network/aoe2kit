@@ -74,19 +74,20 @@ type Crop struct {
 }
 
 type Options struct {
-	Projection         string
-	Scale              int
-	Layers             map[string]bool
-	Crop               *Crop
-	MinimapScale       int
-	MinimapOrientation string
-	Palette            []color.RGBA
-	SpriteTilePixels   int
-	Dat                *datfile.Index
-	Textures           *TerrainTextureOptions
-	Shadows            *ShadowOptions
-	Elevation          bool // Opt-in height field; shared-corner rule and lighting are provisional.
-	RotationModel      string
+	Projection          string
+	Scale               int
+	Layers              map[string]bool
+	Crop                *Crop
+	MinimapScale        int
+	MinimapOrientation  string
+	Palette             []color.RGBA
+	SpriteTilePixels    int
+	Dat                 *datfile.Index
+	Textures            *TerrainTextureOptions
+	Shadows             *ShadowOptions
+	Elevation           bool // Opt-in height field; shared-corner rule and lighting are provisional.
+	StoredObjectHeights bool // Use recorded object Z values when elevation is enabled.
+	RotationModel       string
 }
 
 type Report struct {
@@ -567,6 +568,18 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		w = (crop.X2-crop.X1+crop.Y2-crop.Y1)*scale/2 + 1
 		h = (crop.X2-crop.X1+crop.Y2-crop.Y1)*scale/4 + scale*2 + 1
 	}
+	if opts.Elevation && opts.StoredObjectHeights {
+		if err := validateStoredObjectHeights(s); err != nil {
+			return nil, Report{}, err
+		}
+	}
+	if opts.Elevation {
+		if err := validateHeightfield(s); err != nil {
+			return nil, Report{}, err
+		}
+	}
+	pad := elevationPadding(s, crop, scale, projection, opts.Elevation, opts.StoredObjectHeights)
+	h += pad
 	if int64(w)*int64(h) > maxImagePixels {
 		return nil, Report{}, fmt.Errorf("preview dimensions %dx%d exceed %d-pixel limit; crop or lower --scale", w, h, maxImagePixels)
 	}
@@ -575,6 +588,10 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 	terrain := make([]Tile, len(s.Terrain))
 	for _, t := range s.Terrain {
 		terrain[t.Y*s.Width+t.X] = t
+	}
+	ground := terrain
+	if !opts.Elevation {
+		ground = nil
 	}
 	groundOffset := func(o Object) int {
 		return pad - objectGroundLift(s, ground, o, scale, projection, opts.StoredObjectHeights)
@@ -612,6 +629,7 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 	report := Report{Schema: "aoe2kit.preview.report.v1", OK: true, Stage: s.Stage, Projection: projection, ImageWidth: w, ImageHeight: h, CountsByClass: map[string]int{}, TerrainColors: "builtin deterministic terrain-id palette"}
 	report.Fallbacks = append(report.Fallbacks, s.SourceWarnings...)
 	report.Crop, report.Scale = &crop, scale
+	report.ElevationPadding = pad
 	if opts.Dat != nil {
 		if len(opts.Palette) == 256 {
 			report.TerrainColors = "base terrain; DAT minimap medium-color index resolved through 256-color palette"
@@ -627,8 +645,15 @@ func RenderFlat(s Snapshot, opts Options) (*image.RGBA, Report, error) {
 		report.Textures = &textureReport
 		report.TerrainColors = "installed DDS textures with named layer masks; inspect textures report for assumptions and fallbacks"
 		report.ElevationMode = "flat textured surface; geometric elevation and lighting not modeled"
+		if opts.Elevation && projection == "diamond" {
+			report.ElevationMode = "experimental height field with textured terrain; geometry and lighting are candidates, not engine-verified"
+		}
 	}
 	if opts.Elevation {
+		report.ObjectHeightMode = "inferred-terrain"
+		if opts.StoredObjectHeights {
+			report.ObjectHeightMode = "stored-z"
+		}
 		report.ElevationMode = "experimental height field: scale/4 lift per stored level; max-of-four shared corners; isolated NW/NE/SE raised neighbors use level-diagonal folds with connected-ridge guard; shared-vertex lighting from central terrain gradients; inspect object_height_mode for stored Z or provisional inferred attachment; flat-position depth order; no terrain occlusion"
 		if projection != "diamond" {
 			report.ElevationMode = "topdown slope shading only; no geometric displacement"

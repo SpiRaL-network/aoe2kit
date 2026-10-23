@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Opt-in diamond height-field terrain rendering with registered corner
+  heights, context-aware diagonal folds, candidate slope lighting, and terrain
+  attachment for objects and sprites. Engine-specific folds and lighting remain
+  provisional; the renderer is documented as an art-preview tool, not an engine
+  oracle.
+- `--stored-object-heights` for editor-saved scenarios, plus screenshot camera
+  registration with explicit anchors and independent holdouts.
+
 ## v0.4.2 - 2026-10-17
 
 ### Added

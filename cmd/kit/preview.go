@@ -327,7 +327,7 @@ func runPreview(args []string) {
 			die("kit preview", err)
 		}
 	}
-	previewOpts := preview.Options{Projection: projection, Scale: scale, Layers: layers, Crop: crop, MinimapOrientation: minimapOrientation, Palette: palette, Dat: dat, SpriteTilePixels: spriteTilePixels, Elevation: elevation, RotationModel: rotationModel}
+	previewOpts := preview.Options{Projection: projection, Scale: scale, Layers: layers, Crop: crop, MinimapOrientation: minimapOrientation, Palette: palette, Dat: dat, SpriteTilePixels: spriteTilePixels, Elevation: elevation, StoredObjectHeights: storedObjectHeights, RotationModel: rotationModel}
 	if textures {
 		if resolveErr != nil {
 			die("kit preview", fmt.Errorf("textured terrain needs a game install: %w", resolveErr))

@@ -366,6 +366,20 @@ func renderTexturedTerrain(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop,
 		return TerrainTextureReport{}, fmt.Errorf("terrain repeat must be finite, between 1 and 256 tiles")
 	}
 	mats, r := loadTerrainMaterials(tiles, s, crop, opts.Dat, o, opts.Palette, scale)
+	if opts.Elevation && projection == "diamond" {
+		pad := elevationPadding(s, crop, scale, projection, true, opts.StoredObjectHeights)
+		sample := func(x, y float64) color.RGBA {
+			t := tiles[int(y)*s.Width+int(x)]
+			c := layeredPixel(t, mats, x, y, o.Repeat, o.TextureRepeat)
+			if o.Edges {
+				c = terrainEdgePixel(tiles, s.Width, s.Height, mats, x, y, o)
+			}
+			return lightTerrain(c)
+		}
+		renderHeightfield(img, tiles, s, crop, scale, pad, sample)
+		r.Assumptions = append(r.Assumptions, "opt-in height-field geometry; max-of-four shared corners and slope lighting remain provisional; textures are sampled in undeformed world coordinates")
+		return r, nil
+	}
 	transform := diamondTransform(crop.X2-crop.X1, crop.Y2-crop.Y1, float64(scale), float64(scale), "")
 	for py := 0; py < img.Bounds().Dy(); py++ {
 		for px := 0; px < img.Bounds().Dx(); px++ {

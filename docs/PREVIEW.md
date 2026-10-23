@@ -517,10 +517,9 @@ accuracy scores. The light field remains an approximation.
 Textures, layer masks and border blends retain
 their undeformed world coordinates. This option is off by default.
 
-The canvas grows upward by `ceil(max_level * scale/4)` pixels. `--print-extent`,
-pixel windows and tile pyramids use that same padded frame; `map_origin_y` and
-`elevation_padding` report the ground offset. Objects, particles and their
-shadows lift by the ground height at their anchor without changing sprite size.
+The canvas grows upward by `ceil(max_level * scale/4)` pixels; the report's
+`elevation_padding` gives that offset. Objects, particles and their shadows
+lift by the ground height at their anchor without changing sprite size.
 Attachment is verified only on a flat level-two terrace; bilinear interpolation
 of corner heights on slopes remains a candidate, not an engine-calibrated rule.
 For editor-saved scenarios, add `--stored-object-heights` with `--elevation`
@@ -530,8 +529,8 @@ markers against saved Z to within 0.05 pixels at a 72-pixel tile scale.
 This verifies those marker anchors, not every sprite class or shadow surface.
 Authored files can contain placeholder Z values that DE changes on load; use
 the editor-saved copy for this mode. The default remains inferred attachment.
-Sprites, particles, labels and shadow anchors share the selected lift; frame
-padding, pixel windows and tile pyramids include stored-height headroom.
+Sprites, particles and start markers share the selected lift; the canvas
+includes stored-height headroom.
 Stored heights must be finite and in 0..255. This option does not change terrain
 geometry or establish how the engine computes attachment heights.
 Depth sorting still uses flat positions, shadows are not warped across slopes,
@@ -634,7 +633,7 @@ the engine uses; they make competing hypotheses testable without rebuilding.
 | 1.36, 1.37, 1.40-1.54 | Raw rotations decoded; visual mapping not engine-calibrated |
 | 1.55-1.57 | Raw rotations decoded; visual mapping not engine-calibrated |
 | 1.58 | Existing stored-index preview convention; no separate version-specific engine calibration |
-| 1.59 | The modern oak fixture confirms stored index N renders SLD visual index N on build 101.103.54800.0; not proof for every unit/particle |
+| 1.59 | An editor-saved modern oak fixture confirms stored index N renders SLD visual index N on build 101.103.54800.0; not proof for every unit/particle |
 
 To calibrate an older family, compare the same original scenario/crop, unit IDs,
 raw rotations, DAT/assets, and camera view against engine screenshots. Hold all

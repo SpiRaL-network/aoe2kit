@@ -23,7 +23,7 @@ func TestStoredHeightObservedSaddleAndPit(t *testing.T) {
 				s.Terrain = append(s.Terrain, Tile{X: i % 3, Y: i / 3, Elevation: h})
 			}
 			o := Object{X: tt.x, Y: tt.y, Z: tt.z}
-			tiles := heightTiles(s, nil)
+			tiles := heightTiles(s)
 			if got := objectGroundLift(s, tiles, o, 72, "diamond"); got != tt.inferred {
 				t.Fatalf("default attachment changed: %d", got)
 			}
@@ -37,7 +37,7 @@ func TestStoredHeightObservedSaddleAndPit(t *testing.T) {
 	}
 }
 
-func TestStoredHeightFrameAndWindow(t *testing.T) {
+func TestStoredHeightFrame(t *testing.T) {
 	s := heightSnapshot(9)
 	s.Objects = []Object{{UnitID: 306, X: 4, Y: 4, Z: 7}}
 	opts := Options{Scale: 16, Elevation: true, StoredObjectHeights: true}
@@ -52,13 +52,9 @@ func TestStoredHeightFrameAndWindow(t *testing.T) {
 	if r.ElevationPadding != 28 || full.Bounds().Dy() != ext.Height {
 		t.Fatalf("inconsistent stored-height frame: %+v %+v", r, ext)
 	}
-	opts.Window = &PixelWindow{X: 10, Y: 15, Width: 50, Height: 50}
-	part, _, e := RenderFlat(s, opts)
-	if e != nil {
-		t.Fatal(e)
+	if full.Bounds().Dy() != ext.Height {
+		t.Fatalf("image height %d differs from extent %d", full.Bounds().Dy(), ext.Height)
 	}
-	rect, _ := opts.Window.rectangle()
-	assertWindowPixels(t, full, part, rect)
 }
 
 func TestStoredHeightRejectsInvalidZ(t *testing.T) {

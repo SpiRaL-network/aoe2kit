@@ -50,28 +50,30 @@ go run ./cmd/apiref --kit ./kit \
 Flags marked **required** in the tables below appear unbracketed in the tool's own
 usage line and must be supplied.
 
-Tool version `0.1.0` — 247 commands, 18 probed.
+Tool version `0.4.2` — 257 commands, 19 probed.
 
 ## Command index
 
-- **(top level)** — `campaign`, `ci`, `collect`, `credits`, `dat`, `docs`, `doctor`, `facts`, `identify`, `inventory`, `manifest`, `mod`, `pack`, `portable-check`, `project`, `recipe`, `release-check`, `replay`, `roadmap`, `scen`, `summary`, `verify`, `verify-run`, `version`
+- **(top level)** — `campaign`, `ci`, `collect`, `credits`, `dat`, `docs`, `doctor`, `facts`, `felt`, `identify`, `inventory`, `manifest`, `mod`, `pack`, `portable-check`, `preview`, `project`, `recipe`, `release-check`, `replay`, `roadmap`, `scen`, `summary`, `verify`, `verify-run`, `version`
 - **ai** — `ai diff`, `ai fingerprint`, `ai lint`
 - **campaign** — `campaign extract`, `campaign generate`
 - **cba** — `cba archive`, `cba axes`, `cba balance`, `cba export`, `cba ingest`, `cba phase-facts`, `cba registry`, `cba replay`, `cba sidechannels`, `cba trigger-razes`, `cba trigger-spawns`
 - **ci** — `ci check`, `ci init`
 - **dat** — `dat abilities`, `dat ability`, `dat ability-create`, `dat ability-delete`, `dat ability-disable`, `dat ability-patch`, `dat availability`, `dat availability-set`, `dat check`, `dat civ-patch`, `dat civs`, `dat codec-patch`, `dat codec-plan`, `dat command-matrix`, `dat delete`, `dat delete-plan`, `dat diff`, `dat disconnect`, `dat effect`, `dat effect-command-delete`, `dat effect-create`, `dat effect-delete`, `dat effect-disable`, `dat effect-explain`, `dat effect-patch`, `dat effects`, `dat facts`, `dat facts effect-command`, `dat graphic`, `dat graphic-angle-sound-delete`, `dat graphic-create`, `dat graphic-delete`, `dat graphic-delta-delete`, `dat graphic-patch`, `dat graphics`, `dat info`, `dat palette`, `dat patch`, `dat patch-graphic`, `dat patch-unit`, `dat plan`, `dat player-colour-create`, `dat player-colour-delete`, `dat player-colour-patch`, `dat player-colours`, `dat random-maps`, `dat refs`, `dat roundtrip`, `dat semantic-priors`, `dat semantics-pack`, `dat semantics-readback`, `dat sound`, `dat sound-create`, `dat sound-delete`, `dat sound-item-delete`, `dat sound-patch`, `dat sounds`, `dat spans`, `dat sprite`, `dat sql`, `dat tech`, `dat tech-create`, `dat tech-delete`, `dat tech-explain`, `dat tech-patch`, `dat tech-tree`, `dat tech-tree-connection-create`, `dat tech-tree-connection-delete`, `dat tech-tree-connection-patch`, `dat techs`, `dat terrain`, `dat terrain-patch`, `dat terrain-restriction-patch`, `dat terrain-restrictions`, `dat terrains`, `dat unit`, `dat unit-child-delete`, `dat unit-create`, `dat unit-delete`, `dat unit-header`, `dat unit-header-task-delete`, `dat unit-headers`, `dat units`
 - **docs** — `docs lint`
+- **felt** — `felt grammar`
 - **font** — `font glyphs`
 - **fx** — `fx bind`, `fx lint`, `fx new`
 - **geo** — `geo trace-dem`
 - **gfx** — `gfx export`, `gfx info`
 - **player** — `player stats`
+- **preview** — `preview assets`, `preview calibrate-mood`, `preview snapshot`
 - **project** — `project diff`, `project inspect`, `project lineage`, `project snapshot`
 - **recipe** — `recipe export`, `recipe list`, `recipe show`
 - **replay** — `replay actions`, `replay ai-manifest`, `replay camera`, `replay carrier`, `replay chat`, `replay checksum-phase`, `replay checksum-probe`, `replay combat`, `replay corpus`, `replay coverage`, `replay datamod-check`, `replay deaths`, `replay diff-state`, `replay diff-triggers`, `replay effective-data`, `replay effective-units`, `replay events`, `replay feedback`, `replay fetch`, `replay frontier`, `replay header-anchors`, `replay health`, `replay inbox`, `replay info`, `replay issues`, `replay lifecycle`, `replay object-shapes`, `replay object-state`, `replay objects`, `replay opaque-clusters`, `replay opaque-spans`, `replay opaque-target`, `replay player-events`, `replay player-profile`, `replay player-series`, `replay playtest`, `replay postgame`, `replay postgame-corpus`, `replay scan-value`, `replay sidecar-sync`, `replay spawns`, `replay story`, `replay sync`, `replay sync-log`, `replay telemetry`, `replay trigger-neighborhood`, `replay triggers`, `replay unknowns`, `replay viewlock`, `replay xs-telemetry`
 - **roadmap** — `roadmap crud`, `roadmap dark`, `roadmap rwd`
 - **rpg** — `rpg custom-store`, `rpg shop-demo`
-- **scen** — `scen analyze`, `scen audit-player-coverage`, `scen blank`, `scen bytediff`, `scen coverage`, `scen delete`, `scen delete-plan`, `scen deploycheck`, `scen describe`, `scen diff`, `scen diff-effects`, `scen diff-series`, `scen diff-triggers`, `scen disconnect`, `scen dump-body`, `scen effects`, `scen field`, `scen glossary`, `scen idioms`, `scen import-triggers`, `scen lint`, `scen mechanic`, `scen palette-usage`, `scen patch`, `scen plan`, `scen refs`, `scen settings`, `scen shop-catalog`, `scen smoke`, `scen smoke-recipe`, `scen strings`, `scen terrain`, `scen trigger-flow`, `scen trigger-neighborhood`, `scen triggers`, `scen units`, `scen watch`, `scen write-check`, `scen xs`, `scen xs attach`, `scen xs compare`, `scen xs deploy`, `scen xs embed`, `scen xs extract`
+- **scen** — `scen analyze`, `scen audit-player-coverage`, `scen blank`, `scen bytediff`, `scen census`, `scen coverage`, `scen delete`, `scen delete-plan`, `scen deploycheck`, `scen describe`, `scen diff`, `scen diff-effects`, `scen diff-series`, `scen diff-triggers`, `scen disconnect`, `scen dump-body`, `scen effects`, `scen extract`, `scen facets`, `scen field`, `scen glossary`, `scen hotspots`, `scen idioms`, `scen import-triggers`, `scen lint`, `scen mechanic`, `scen palette-usage`, `scen patch`, `scen plan`, `scen refs`, `scen settings`, `scen shop-catalog`, `scen smoke`, `scen smoke-recipe`, `scen strings`, `scen terrain`, `scen trigger-flow`, `scen trigger-neighborhood`, `scen triggers`, `scen units`, `scen watch`, `scen write-check`, `scen xs`, `scen xs attach`, `scen xs compare`, `scen xs deploy`, `scen xs embed`, `scen xs extract`
 - **swatch** — `swatch patterns`
 - **xs** — `xs bridge`, `xs datagen`, `xs harness`, `xs inspect`, `xs shims`
 - **xsdat** — `xsdat decode`
@@ -142,17 +144,17 @@ kit docs <lint> ...
 ### `doctor`
 
 ```
-kit doctor [--sandbox]
+kit doctor [--sandbox] [--game-dir DIR]
 ```
 
 | flag | value |
 | --- | --- |
 | `--sandbox` | _(boolean)_ |
+| `--game-dir` | `DIR` |
 
 **writes output files**
 
-- probe: `non_json_output`
-- note: AoE2Kit doctor
+- probe: `skipped_mutating`
 
 ### `facts`
 
@@ -167,6 +169,16 @@ Subcommands: `list`, `check`
 | `--include-provisional` | _(boolean)_ |
 | `--domain` | `DOMAIN` |
 | `--text` | _(boolean)_ |
+
+- probe: `group_entry`
+
+### `felt`
+
+```
+kit felt <grammar> ...
+```
+
+**writes output files**
 
 - probe: `group_entry`
 
@@ -247,6 +259,37 @@ kit portable-check [folder] [--profile full|handoff|sandbox|public]
 - probe: `ok`
 - JSON top-level keys: `checks`, `errors`, `ok`, `profile`, `root`, `warnings`
 - response type: `kit.PortableReport` (full nested shape in `api_schemas.json`)
+
+### `preview`
+
+```
+kit preview <scenario|replay|snapshot> --out file.png [--minimap] [--minimap-orientation normal|transpose|flipx|flipy|rotate90|rotate180|rotate270 (default rotate270)] [--projection topdown|diamond] [--scale N] [--layers LIST] [--crop x1,y1,x2,y2] [--sprites] [--dat FILE] [--palette FILE] [--game-dir DIR] [--textures] [--terrain-repeat TILES] [--texture-repeat TILES] [--no-terrain-edges] [--mood NAME|scenario|none]
+```
+
+Subcommands: `scenario`, `replay`, `snapshot`
+
+| flag | value |
+| --- | --- |
+| `--out` | `file.png` **(required)** |
+| `--minimap` | _(boolean)_ |
+| `--minimap-orientation` | `normal|transpose|flipx|flipy|rotate90|rotate180|rotate270` |
+| `--projection` | `topdown|diamond` |
+| `--scale` | `N` |
+| `--layers` | `LIST` |
+| `--crop` | `x1,y1,x2,y2` |
+| `--sprites` | _(boolean)_ |
+| `--dat` | `FILE` |
+| `--palette` | `FILE` |
+| `--game-dir` | `DIR` |
+| `--textures` | _(boolean)_ |
+| `--terrain-repeat` | `TILES` |
+| `--texture-repeat` | `TILES` |
+| `--no-terrain-edges` | _(boolean)_ |
+| `--mood` | `NAME|scenario|none` |
+
+**writes output files**
+
+- probe: `skipped_mutating`
 
 ### `project`
 
@@ -343,7 +386,7 @@ kit verify [folder] [--go-checks]
 
 - probe: `ok`
 - verification: `structure_failed`
-- JSON top-level keys: `artifacts_ok`, `docs_ok`, `errors`, `go_available`, `inventory_ok`, `manifest_ok`, `profile`, `root`, `source_build_ok`, `verification`, `version`
+- JSON top-level keys: `artifacts_ok`, `docs_ok`, `errors`, `generation`, `go_available`, `inventory_ok`, `manifest_ok`, `profile`, `root`, `source_build_ok`, `verification`, `version`
 - response type: `kit.VerifyReport` (full nested shape in `api_schemas.json`)
 
 ### `verify-run`
@@ -370,8 +413,9 @@ kit version [--json]
 | --- | --- |
 | `--json` | _(boolean)_ |
 
-- probe: `non_json_output`
-- note: 0.1.0
+- probe: `ok`
+- JSON top-level keys: `build_type`, `commit`, `platform`, `version`
+- response type: `kit.BuildInfo` (full nested shape in `api_schemas.json`)
 
 ## ai
 
@@ -1643,6 +1687,26 @@ kit docs lint [folder] [--text|--json]
 - verification: `structure_verified_not_engine_verified`
 - JSON top-level keys: `examples`, `files_scanned`, `ok`, `root`, `verification`
 
+## felt
+
+### `felt grammar`
+
+```
+kit felt grammar <unit-id> --out sheet.png --json grammar.json [--game-dir DIR] [--dat FILE] [--compendium FILE]
+```
+
+| flag | value |
+| --- | --- |
+| `--out` | `sheet.png` **(required)** |
+| `--json` | `grammar.json` **(required)** |
+| `--game-dir` | `DIR` |
+| `--dat` | `FILE` |
+| `--compendium` | `FILE` |
+
+**writes output files**
+
+- probe: `skipped_mutating`
+
 ## font
 
 ### `font glyphs`
@@ -1698,7 +1762,8 @@ kit fx lint <mod-or-resources/_common> [--dat empires*.dat] [--text]
 | `--dat` | `empires*.dat` |
 | `--text` | _(boolean)_ |
 
-- probe: `skipped_no_fixture`
+- probe: `non_json_output`
+- note: kit fx lint: read particles dir: open /tmp/kit-public-elevation-20261023/particles: no such file or directory
 
 ### `fx new`
 
@@ -1789,6 +1854,60 @@ kit player stats <profileId> [--match-type N] [--cache-dir DIR] [--force] [--tex
 **network I/O**
 
 - probe: `skipped_network`
+
+## preview
+
+### `preview assets`
+
+```
+kit preview assets <scenario> [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--missing-only] [--paths]
+```
+
+| flag | value |
+| --- | --- |
+| `--dat` | `FILE` |
+| `--game-dir` | `DIR` |
+| `--crop` | `x1,y1,x2,y2` |
+| `--missing-only` | _(boolean)_ |
+| `--paths` | _(boolean)_ |
+
+**writes output files**
+
+- probe: `skipped_mutating`
+
+### `preview calibrate-mood`
+
+```
+kit preview calibrate-mood --manifest FILE [--game-dir DIR] [--fit --holdout MOOD] [--out FILE]
+```
+
+| flag | value |
+| --- | --- |
+| `--manifest` | `FILE` **(required)** |
+| `--game-dir` | `DIR` |
+| `--fit` | _(boolean)_ |
+| `--holdout` | `MOOD` **(required)** |
+| `--out` | `FILE` |
+
+**writes output files**
+
+- probe: `skipped_mutating`
+
+### `preview snapshot`
+
+```
+kit preview snapshot <scenario> --out file.json [--stage NAME] [--dat FILE]
+```
+
+| flag | value |
+| --- | --- |
+| `--out` | `file.json` **(required)** |
+| `--stage` | `NAME` |
+| `--dat` | `FILE` |
+
+**writes output files**
+
+- probe: `skipped_mutating`
 
 ## project
 
@@ -2782,6 +2901,25 @@ kit scen bytediff <before.aoe2scenario> <after.aoe2scenario> [--text|--json] [--
 
 - probe: `skipped_no_fixture`
 
+### `scen census`
+
+```
+kit scen census <dir|files...> [--gaia] [--player N] [--min-maps K] [--against DIR] [--dat FILE] [--game-dir DIR] [--crop x1,y1,x2,y2] [--verbose] [--text|--json]
+```
+
+| flag | value |
+| --- | --- |
+| `--gaia` | _(boolean)_ |
+| `--player` | `N` |
+| `--min-maps` | `K` |
+| `--against` | `DIR` |
+| `--dat` | `FILE` |
+| `--game-dir` | `DIR` |
+| `--crop` | `x1,y1,x2,y2` |
+| `--verbose` | _(boolean)_ |
+
+- probe: `skipped_no_fixture`
+
 ### `scen coverage`
 
 ```
@@ -2950,6 +3088,39 @@ kit scen effects <file.aoe2scenario> [--raw|--census|--where EFFECT] [--trigger 
 
 - probe: `skipped_no_fixture`
 
+### `scen extract`
+
+```
+kit scen extract <scenario> --crop x1,y1,x2,y2 --out recipe.json [--terrain] [--relative]
+```
+
+| flag | value |
+| --- | --- |
+| `--crop` | `x1,y1,x2,y2` **(required)** |
+| `--out` | `recipe.json` **(required)** |
+| `--terrain` | _(boolean)_ |
+| `--relative` | _(boolean)_ |
+
+**writes output files**
+
+- probe: `skipped_mutating`
+
+### `scen facets`
+
+```
+kit scen facets <scenario> [--unit ID[,ID]] [--dat FILE] [--game-dir DIR] [--player N|--gaia] [--crop x1,y1,x2,y2] [--text|--json]
+```
+
+| flag | value |
+| --- | --- |
+| `--unit` | `ID[,ID` |
+| `--dat` | `FILE` |
+| `--game-dir` | `DIR` |
+| `--player` | `N|--gaia` |
+| `--crop` | `x1,y1,x2,y2` |
+
+- probe: `skipped_no_fixture`
+
 ### `scen field`
 
 ```
@@ -2973,6 +3144,28 @@ kit scen glossary <file.aoe2scenario> [--limit N] [--max-mb N] [--text]
 | `--limit` | `N` |
 | `--max-mb` | `N` |
 | `--text` | _(boolean)_ |
+
+- probe: `skipped_no_fixture`
+
+### `scen hotspots`
+
+```
+kit scen hotspots <scenario> [--unit ID,ID] [--diverse] [--min-count N] [--dat FILE] [--game-dir DIR] [--player N] [--gaia=false] [--cell N] [--top N] [--rank variety|count] [--include-forest-fish] [--crop x1,y1,x2,y2] [--text|--json]
+```
+
+| flag | value |
+| --- | --- |
+| `--unit` | `ID,ID` |
+| `--diverse` | _(boolean)_ |
+| `--min-count` | `N` |
+| `--dat` | `FILE` |
+| `--game-dir` | `DIR` |
+| `--player` | `N` |
+| `--cell` | `N` |
+| `--top` | `N` |
+| `--rank` | `variety|count` |
+| `--include-forest-fish` | _(boolean)_ |
+| `--crop` | `x1,y1,x2,y2` |
 
 - probe: `skipped_no_fixture`
 
@@ -3049,12 +3242,15 @@ kit scen palette-usage <file.aoe2scenario> --dat <empires*.dat> [--json|--text]
 ### `scen patch`
 
 ```
-kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--game-dir D] [--text|--json]
+kit scen patch <in.aoe2scenario> <out.aoe2scenario> --recipe recipe.json [--at x,y] [--rotate 90|180|270] [--grammar review.json] [--game-dir D] [--text|--json]
 ```
 
 | flag | value |
 | --- | --- |
 | `--recipe` | `recipe.json` **(required)** |
+| `--at` | `x,y` |
+| `--rotate` | `90|180|270` |
+| `--grammar` | `review.json` |
 | `--game-dir` | `D` |
 
 **writes output files**
@@ -3224,12 +3420,13 @@ kit scen triggers <file.aoe2scenario> [--grep TEXT] [--effect ID_OR_NAME] [--con
 ### `scen units`
 
 ```
-kit scen units <file.aoe2scenario> [--named] [--text|--json]
+kit scen units <file.aoe2scenario> [--named] [--text|--json] [--peak-rss]
 ```
 
 | flag | value |
 | --- | --- |
 | `--named` | _(boolean)_ |
+| `--peak-rss` | _(boolean)_ |
 
 - probe: `skipped_no_fixture`
 

@@ -266,3 +266,25 @@ func TestTexturedDiamondUsesSharedAxes(t *testing.T) {
 		}
 	}
 }
+
+func TestTexturedTerrainUsesHeightfieldGeometry(t *testing.T) {
+	root, d := terrainTestInstall(t)
+	s := Snapshot{Schema: SnapshotSchema, Width: 3, Height: 3}
+	for y := 0; y < 3; y++ {
+		for x := 0; x < 3; x++ {
+			h := 0.0
+			if x == 1 && y == 1 {
+				h = 2
+			}
+			s.Terrain = append(s.Terrain, Tile{X: x, Y: y, Elevation: h})
+		}
+	}
+	opts := Options{Scale: 16, Elevation: true, Dat: d, Textures: &TerrainTextureOptions{GameDir: root}}
+	img, report, err := RenderFlat(s, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.ElevationPadding != 8 || img.Bounds().Dy() <= 0 {
+		t.Fatalf("textured height field did not reserve elevated canvas: %+v %v", report, img.Bounds())
+	}
+}

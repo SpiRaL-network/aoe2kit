@@ -93,7 +93,7 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 			return nil, Report{}, err
 		}
 	}
-	base, report, err := RenderFlat(s, Options{Projection: opts.Projection, Scale: opts.Scale, Layers: map[string]bool{"terrain": layerEnabled(opts.Layers, "terrain"), "elevation": layerEnabled(opts.Layers, "elevation"), "starts": false}, Crop: opts.Crop, Dat: idx, Palette: opts.Palette, Textures: opts.Textures, Elevation: opts.Elevation})
+	base, report, err := RenderFlat(s, Options{Projection: opts.Projection, Scale: opts.Scale, Layers: map[string]bool{"terrain": layerEnabled(opts.Layers, "terrain"), "elevation": layerEnabled(opts.Layers, "elevation"), "starts": false}, Crop: opts.Crop, Dat: idx, Palette: opts.Palette, Textures: opts.Textures, Elevation: opts.Elevation, StoredObjectHeights: opts.StoredObjectHeights})
 	if err != nil {
 		return nil, Report{}, err
 	}
@@ -114,6 +114,13 @@ func RenderSprites(s Snapshot, opts Options, idx *datfile.Index, gameDir string)
 	scale := opts.Scale
 	if scale == 0 {
 		scale = 4
+	}
+	var ground []Tile
+	if opts.Elevation {
+		ground = heightTiles(s)
+	}
+	groundOffset := func(o Object) int {
+		return report.ElevationPadding - objectGroundLift(s, ground, o, scale, opts.Projection, opts.StoredObjectHeights)
 	}
 	objects := depthSortedObjects(s.Objects, crop, scale, defaultProjection(opts.Projection))
 	particleAssets := newParticleLoader(gameDir)

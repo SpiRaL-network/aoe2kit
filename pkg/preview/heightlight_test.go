@@ -12,7 +12,7 @@ func TestHeightVertexLightPreservesPlanarSlope(t *testing.T) {
 			s.Terrain = append(s.Terrain, Tile{X: x, Y: y, Elevation: float64(x)})
 		}
 	}
-	tiles := heightTiles(s, nil)
+	tiles := heightTiles(s)
 	for y := 2; y <= 5; y++ {
 		for x := 2; x <= 5; x++ {
 			got := heightVertexLight(tiles, 7, 7, x, y)

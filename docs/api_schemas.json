@@ -1,6 +1,6 @@
 {
   "note": "Complete nested shape of every exported report type, extracted statically from source. No execution involved; this is the authoritative response schema.",
-  "type_count": 1044,
+  "type_count": 1121,
   "types": {
     "aifile.DiffChange": {
       "package": "aifile",
@@ -5588,6 +5588,331 @@
         {
           "name": "Unknown",
           "json": "unknown",
+          "go_type": "int"
+        }
+      ]
+    },
+    "compose.Brush": {
+      "package": "compose",
+      "name": "Brush",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Variants",
+          "go_type": "[]int"
+        }
+      ]
+    },
+    "compose.Grid": {
+      "package": "compose",
+      "name": "Grid",
+      "fields": [
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        },
+        {
+          "name": "Terrain",
+          "json": "terrain_id",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Layer",
+          "json": "layer",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Elevation",
+          "json": "elevation",
+          "go_type": "[]int"
+        }
+      ]
+    },
+    "compose.Placement": {
+      "package": "compose",
+      "name": "Placement",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Player",
+          "go_type": "int"
+        },
+        {
+          "name": "Variant",
+          "go_type": "int"
+        },
+        {
+          "name": "Status",
+          "go_type": "int"
+        },
+        {
+          "name": "X",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "go_type": "float64"
+        },
+        {
+          "name": "Z",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "compose.Point": {
+      "package": "compose",
+      "name": "Point",
+      "fields": [
+        {
+          "name": "X",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "compose.Pool": {
+      "package": "compose",
+      "name": "Pool",
+      "fields": [
+        {
+          "name": "Point",
+          "go_type": "Point",
+          "ref": "compose.Point",
+          "embedded": true
+        },
+        {
+          "name": "Radius",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "compose.RNG": {
+      "package": "compose",
+      "name": "RNG",
+      "doc": "RNG is the workshop generators' xorshift64 sequence.",
+      "fields": null
+    },
+    "compose.RiverOptions": {
+      "package": "compose",
+      "name": "RiverOptions",
+      "fields": [
+        {
+          "name": "Core",
+          "go_type": "int"
+        },
+        {
+          "name": "Shallow",
+          "go_type": "int"
+        },
+        {
+          "name": "Bank",
+          "go_type": "int"
+        },
+        {
+          "name": "Deep",
+          "go_type": "int"
+        },
+        {
+          "name": "BankWidth",
+          "go_type": "float64"
+        },
+        {
+          "name": "Pools",
+          "go_type": "[]Pool",
+          "ref": "compose.Pool"
+        }
+      ]
+    },
+    "compose.RiverPoint": {
+      "package": "compose",
+      "name": "RiverPoint",
+      "fields": [
+        {
+          "name": "Point",
+          "go_type": "Point",
+          "ref": "compose.Point",
+          "embedded": true
+        },
+        {
+          "name": "HalfWidth",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "compose.Scene": {
+      "package": "compose",
+      "name": "Scene",
+      "doc": "Scene uses sticky errors: invalid placement never silently disappears, and a failed scene cannot export.",
+      "fields": [
+        {
+          "name": "Random",
+          "go_type": "*RNG",
+          "ref": "compose.RNG"
+        }
+      ]
+    },
+    "compose.StairOptions": {
+      "package": "compose",
+      "name": "StairOptions",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Steps",
+          "go_type": "int"
+        },
+        {
+          "name": "GapStart",
+          "go_type": "int"
+        },
+        {
+          "name": "GapTerrain",
+          "go_type": "int"
+        },
+        {
+          "name": "FlatChance",
+          "go_type": "float64"
+        },
+        {
+          "name": "EndCaps",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "compose.TerraceOptions": {
+      "package": "compose",
+      "name": "TerraceOptions",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Coverups",
+          "go_type": "[][]Brush",
+          "ref": "compose.Brush"
+        }
+      ]
+    },
+    "compose.TrackOptions": {
+      "package": "compose",
+      "name": "TrackOptions",
+      "fields": [
+        {
+          "name": "Dry",
+          "go_type": "int"
+        },
+        {
+          "name": "Mud",
+          "go_type": "int"
+        },
+        {
+          "name": "HalfWidth",
+          "go_type": "float64"
+        },
+        {
+          "name": "NoiseSeed",
+          "go_type": "int"
+        },
+        {
+          "name": "WetThreshold",
+          "go_type": "float64"
+        },
+        {
+          "name": "MissingBoards",
+          "go_type": "float64"
+        },
+        {
+          "name": "DryBoardChance",
+          "go_type": "float64"
+        },
+        {
+          "name": "RoadID",
+          "go_type": "int"
+        },
+        {
+          "name": "AvoidTerrains",
+          "go_type": "[]int"
+        }
+      ]
+    },
+    "compose.Turtle": {
+      "package": "compose",
+      "name": "Turtle",
+      "fields": [
+        {
+          "name": "Road",
+          "go_type": "WoodenRoad",
+          "ref": "compose.WoodenRoad"
+        },
+        {
+          "name": "Next",
+          "go_type": "Point",
+          "ref": "compose.Point"
+        },
+        {
+          "name": "DX",
+          "go_type": "int"
+        },
+        {
+          "name": "DY",
+          "go_type": "int"
+        }
+      ]
+    },
+    "compose.WallOptions": {
+      "package": "compose",
+      "name": "WallOptions",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Axis",
+          "go_type": "Axis"
+        },
+        {
+          "name": "HighSide",
+          "go_type": "int"
+        },
+        {
+          "name": "Mortar",
+          "go_type": "[]Brush",
+          "ref": "compose.Brush",
+          "doc": "Mortar palettes are explicit so rock species match the wall material."
+        }
+      ]
+    },
+    "compose.WoodenRoad": {
+      "package": "compose",
+      "name": "WoodenRoad",
+      "doc": "WoodenRoad is the measured visual-index convention for the Wooden Road kit (normally unit 2748).",
+      "fields": [
+        {
+          "name": "Scene",
+          "go_type": "*Scene",
+          "ref": "compose.Scene"
+        },
+        {
+          "name": "UnitID",
           "go_type": "int"
         }
       ]
@@ -14677,6 +15002,41 @@
           "ref": "datfile.DebugString"
         },
         {
+          "name": "BlendPriority",
+          "json": "blend_priority",
+          "go_type": "int32"
+        },
+        {
+          "name": "BlendType",
+          "json": "blend_type",
+          "go_type": "int32"
+        },
+        {
+          "name": "MinimapColorHigh",
+          "json": "minimap_color_high",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MinimapColorMedium",
+          "json": "minimap_color_medium",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MinimapColorLow",
+          "json": "minimap_color_low",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MinimapColorCliffLeft",
+          "json": "minimap_color_cliff_left",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MinimapColorCliffRight",
+          "json": "minimap_color_cliff_right",
+          "go_type": "uint8"
+        },
+        {
           "name": "Span",
           "json": "span",
           "go_type": "Span",
@@ -15650,6 +16010,18 @@
           "ref": "datfile.Span"
         },
         {
+          "name": "MapDrawLevel",
+          "json": "map_draw_level",
+          "go_type": "Span",
+          "ref": "datfile.Span"
+        },
+        {
+          "name": "MapColor",
+          "json": "map_color",
+          "go_type": "Span",
+          "ref": "datfile.Span"
+        },
+        {
           "name": "ObstructionTypeID",
           "json": "obstruction_type_id",
           "go_type": "Span",
@@ -16392,6 +16764,16 @@
         {
           "name": "MovementType",
           "json": "movement_type",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MapDrawLevel",
+          "json": "map_draw_level",
+          "go_type": "uint8"
+        },
+        {
+          "name": "MapColor",
+          "json": "map_color",
           "go_type": "uint8"
         },
         {
@@ -17749,6 +18131,97 @@
         }
       ]
     },
+    "felt.Catalog": {
+      "package": "felt",
+      "name": "Catalog",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Entries",
+          "json": "entries",
+          "go_type": "[]Entry",
+          "ref": "felt.Entry"
+        }
+      ]
+    },
+    "felt.Entry": {
+      "package": "felt",
+      "name": "Entry",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_const",
+          "go_type": "int"
+        },
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Contexts",
+          "json": "contexts",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Grammar",
+          "json": "grammar",
+          "go_type": "[]Variant",
+          "ref": "felt.Variant"
+        }
+      ]
+    },
+    "felt.Variant": {
+      "package": "felt",
+      "name": "Variant",
+      "fields": [
+        {
+          "name": "Index",
+          "json": "variant",
+          "go_type": "int"
+        },
+        {
+          "name": "Axis",
+          "json": "axis",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Role",
+          "json": "role",
+          "go_type": "string"
+        },
+        {
+          "name": "RendersAlong",
+          "json": "renders_along",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "RotatesTo",
+          "json": "rotates_to",
+          "go_type": "map[int]int",
+          "optional": true
+        },
+        {
+          "name": "Evidence",
+          "json": "evidence",
+          "go_type": "string"
+        },
+        {
+          "name": "Note",
+          "json": "note",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
     "fetch.Part": {
       "package": "fetch",
       "name": "Part",
@@ -18282,6 +18755,44 @@
           "name": "After",
           "json": "after",
           "go_type": "int"
+        }
+      ]
+    },
+    "gameinstall.Status": {
+      "package": "gameinstall",
+      "name": "Status",
+      "fields": [
+        {
+          "name": "Found",
+          "json": "found",
+          "go_type": "bool"
+        },
+        {
+          "name": "GameDir",
+          "json": "game_dir",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "SpritesReadable",
+          "json": "sprites_readable",
+          "go_type": "bool"
+        },
+        {
+          "name": "SpriteAssetCount",
+          "json": "sprite_asset_count",
+          "go_type": "int"
+        },
+        {
+          "name": "SpriteAssetLocation",
+          "json": "sprite_asset_location",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Message",
+          "json": "message",
+          "go_type": "string"
         }
       ]
     },
@@ -21239,6 +21750,25 @@
         }
       ]
     },
+    "gfx.BlendomaticMode": {
+      "package": "gfx",
+      "name": "BlendomaticMode",
+      "doc": "BlendomaticMode holds the installed file's flags, packed bit masks and alpha diamonds.",
+      "fields": [
+        {
+          "name": "Flags",
+          "go_type": "[]byte"
+        },
+        {
+          "name": "PackedBits",
+          "go_type": "[]byte"
+        },
+        {
+          "name": "Alpha",
+          "go_type": "[]*image.Gray"
+        }
+      ]
+    },
     "gfx.SLD": {
       "package": "gfx",
       "name": "SLD",
@@ -23906,6 +24436,2239 @@
           "json": "raw_keys",
           "go_type": "map[string]any",
           "optional": true
+        }
+      ]
+    },
+    "preview.AssetFetchReport": {
+      "package": "preview",
+      "name": "AssetFetchReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Copied",
+          "json": "copied",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Present",
+          "json": "already_present",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Remaining",
+          "json": "remaining",
+          "go_type": "[]NeededAsset",
+          "ref": "preview.NeededAsset"
+        },
+        {
+          "name": "Unresolved",
+          "json": "unresolved",
+          "go_type": "[]AssetIssue",
+          "ref": "preview.AssetIssue",
+          "optional": true
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.AssetIssue": {
+      "package": "preview",
+      "name": "AssetIssue",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Reason",
+          "json": "reason",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.AssetManifest": {
+      "package": "preview",
+      "name": "AssetManifest",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "Assets",
+          "json": "assets",
+          "go_type": "[]NeededAsset",
+          "ref": "preview.NeededAsset"
+        },
+        {
+          "name": "Unresolved",
+          "json": "unresolved",
+          "go_type": "[]AssetIssue",
+          "ref": "preview.AssetIssue"
+        },
+        {
+          "name": "Complete",
+          "json": "dependency_list_complete",
+          "go_type": "bool"
+        },
+        {
+          "name": "Missing",
+          "json": "missing",
+          "go_type": "int"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.CensusEntry": {
+      "package": "preview",
+      "name": "CensusEntry",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Name",
+          "json": "dat_name",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ClassID",
+          "json": "class_id",
+          "go_type": "int16"
+        },
+        {
+          "name": "Known",
+          "json": "dat_known",
+          "go_type": "bool"
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        },
+        {
+          "name": "Players",
+          "json": "players",
+          "go_type": "map[int]int"
+        },
+        {
+          "name": "Rotations",
+          "json": "rotations",
+          "go_type": "[]RotationCount",
+          "ref": "preview.RotationCount"
+        }
+      ]
+    },
+    "preview.CensusFile": {
+      "package": "preview",
+      "name": "CensusFile",
+      "fields": [
+        {
+          "name": "Path",
+          "json": "path",
+          "go_type": "string"
+        },
+        {
+          "name": "Version",
+          "json": "version",
+          "go_type": "string"
+        },
+        {
+          "name": "Units",
+          "json": "matched_units",
+          "go_type": "int"
+        },
+        {
+          "name": "PeakRSSKiB",
+          "json": "peak_rss_kib",
+          "go_type": "int64",
+          "optional": true
+        }
+      ]
+    },
+    "preview.CensusReport": {
+      "package": "preview",
+      "name": "CensusReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "Total",
+          "json": "total",
+          "go_type": "int"
+        },
+        {
+          "name": "Distinct",
+          "json": "distinct_unit_kinds",
+          "go_type": "int"
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "[]CensusEntry",
+          "ref": "preview.CensusEntry"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.CorpusCounter": {
+      "package": "preview",
+      "name": "CorpusCounter",
+      "fields": null
+    },
+    "preview.CorpusReport": {
+      "package": "preview",
+      "name": "CorpusReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Total",
+          "json": "total",
+          "go_type": "int"
+        },
+        {
+          "name": "Returned",
+          "json": "returned",
+          "go_type": "int"
+        },
+        {
+          "name": "Files",
+          "json": "files",
+          "go_type": "[]CensusFile",
+          "ref": "preview.CensusFile"
+        },
+        {
+          "name": "AgainstFiles",
+          "json": "against_files",
+          "go_type": "[]CensusFile",
+          "ref": "preview.CensusFile",
+          "optional": true
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "[]CorpusUnit",
+          "ref": "preview.CorpusUnit"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.CorpusUnit": {
+      "package": "preview",
+      "name": "CorpusUnit",
+      "fields": [
+        {
+          "name": "CensusEntry",
+          "go_type": "CensusEntry",
+          "ref": "preview.CensusEntry",
+          "embedded": true
+        },
+        {
+          "name": "Maps",
+          "json": "maps",
+          "go_type": "int"
+        },
+        {
+          "name": "AgainstCount",
+          "json": "against_count",
+          "go_type": "int"
+        },
+        {
+          "name": "AgainstMaps",
+          "json": "against_maps",
+          "go_type": "int"
+        },
+        {
+          "name": "CountDelta",
+          "json": "count_delta",
+          "go_type": "int"
+        },
+        {
+          "name": "MapDelta",
+          "json": "map_delta",
+          "go_type": "int"
+        },
+        {
+          "name": "OnlyInInput",
+          "json": "only_in_input",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "preview.Crop": {
+      "package": "preview",
+      "name": "Crop",
+      "fields": [
+        {
+          "name": "X1",
+          "json": "x1",
+          "go_type": "int"
+        },
+        {
+          "name": "Y1",
+          "json": "y1",
+          "go_type": "int"
+        },
+        {
+          "name": "X2",
+          "json": "x2",
+          "go_type": "int"
+        },
+        {
+          "name": "Y2",
+          "json": "y2",
+          "go_type": "int"
+        }
+      ]
+    },
+    "preview.DiamondRegistration": {
+      "package": "preview",
+      "name": "DiamondRegistration",
+      "doc": "DiamondRegistration fits the rotate270 diamond convention used by preview: px = OX + (x+y)*Scale/2; py = OY + (y-x-height)*Scale/4.",
+      "fields": [
+        {
+          "name": "Scale",
+          "go_type": "float64"
+        },
+        {
+          "name": "OX",
+          "go_type": "float64"
+        },
+        {
+          "name": "OY",
+          "go_type": "float64"
+        },
+        {
+          "name": "FitRMS",
+          "go_type": "float64"
+        },
+        {
+          "name": "FitCount",
+          "go_type": "int"
+        },
+        {
+          "name": "Residuals",
+          "go_type": "[]RegistrationResidual",
+          "ref": "preview.RegistrationResidual"
+        }
+      ]
+    },
+    "preview.FacetEntry": {
+      "package": "preview",
+      "name": "FacetEntry",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Name",
+          "json": "dat_name",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        },
+        {
+          "name": "Stored",
+          "json": "stored_rotations",
+          "go_type": "[]RotationCount",
+          "ref": "preview.RotationCount"
+        },
+        {
+          "name": "Available",
+          "json": "available",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Placed",
+          "json": "placed",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Missing",
+          "json": "missing",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Unexpected",
+          "json": "unexpected",
+          "go_type": "[]RotationCount",
+          "ref": "preview.RotationCount",
+          "optional": true
+        },
+        {
+          "name": "Complete",
+          "json": "complete",
+          "go_type": "*bool",
+          "optional": true
+        },
+        {
+          "name": "Unknown",
+          "json": "unknown",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.FacetReport": {
+      "package": "preview",
+      "name": "FacetReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Version",
+          "json": "scenario_version",
+          "go_type": "string"
+        },
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "[]FacetEntry",
+          "ref": "preview.FacetEntry"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.GrammarOptions": {
+      "package": "preview",
+      "name": "GrammarOptions",
+      "fields": [
+        {
+          "name": "UnitID",
+          "go_type": "int"
+        },
+        {
+          "name": "Dat",
+          "go_type": "*datfile.Index",
+          "ref": "datfile.Index"
+        },
+        {
+          "name": "GameDir",
+          "go_type": "string"
+        },
+        {
+          "name": "CompendiumPath",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.GrammarReport": {
+      "package": "preview",
+      "name": "GrammarReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Entries",
+          "json": "entries",
+          "go_type": "[]felt.Entry",
+          "ref": "felt.Entry"
+        },
+        {
+          "name": "GraphicFile",
+          "json": "graphic_file",
+          "go_type": "string"
+        },
+        {
+          "name": "FrameCount",
+          "json": "animation_frames_per_variant",
+          "go_type": "int"
+        },
+        {
+          "name": "Items",
+          "json": "items",
+          "go_type": "[]SpriteItem",
+          "ref": "preview.SpriteItem"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.Hotspot": {
+      "package": "preview",
+      "name": "Hotspot",
+      "fields": [
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        },
+        {
+          "name": "Variety",
+          "json": "distinct_unit_kinds",
+          "go_type": "int"
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "[]CensusEntry",
+          "ref": "preview.CensusEntry"
+        },
+        {
+          "name": "Bounds",
+          "json": "bounds",
+          "go_type": "Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "CropArg",
+          "json": "crop_arg",
+          "go_type": "string"
+        },
+        {
+          "name": "Score",
+          "json": "score",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "preview.HotspotReport": {
+      "package": "preview",
+      "name": "HotspotReport",
+      "fields": [
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Rank",
+          "json": "rank",
+          "go_type": "string"
+        },
+        {
+          "name": "GaiaOnly",
+          "json": "gaia_only",
+          "go_type": "bool"
+        },
+        {
+          "name": "ExcludedForestFish",
+          "json": "excluded_forest_fish",
+          "go_type": "int"
+        },
+        {
+          "name": "MatchedCells",
+          "json": "matched_cells",
+          "go_type": "int"
+        },
+        {
+          "name": "Hotspots",
+          "json": "hotspots",
+          "go_type": "[]Hotspot",
+          "ref": "preview.Hotspot"
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.ImageExtent": {
+      "package": "preview",
+      "name": "ImageExtent",
+      "doc": "SnapshotImageExtent adds the height-field headroom to the flat image frame.",
+      "fields": [
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        },
+        {
+          "name": "Scale",
+          "json": "scale",
+          "go_type": "int"
+        },
+        {
+          "name": "Projection",
+          "json": "projection",
+          "go_type": "string"
+        },
+        {
+          "name": "MapOriginX",
+          "json": "map_origin_x",
+          "go_type": "int"
+        },
+        {
+          "name": "MapOriginY",
+          "json": "map_origin_y",
+          "go_type": "int"
+        }
+      ]
+    },
+    "preview.Mood": {
+      "package": "preview",
+      "name": "Mood",
+      "doc": "Mood is one colour mood (\"Color Mood\" in the editor) from the game's terrain/colorcorrection_json/colorcorrection.json.",
+      "fields": [
+        {
+          "name": "ShaderFields",
+          "json": "shader_fields",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Saturation",
+          "json": "saturation",
+          "go_type": "float64"
+        },
+        {
+          "name": "Contrast",
+          "json": "contrast",
+          "go_type": "float64"
+        },
+        {
+          "name": "Brightness",
+          "json": "brightness",
+          "go_type": "float64"
+        },
+        {
+          "name": "TintFactor",
+          "json": "tint_factor",
+          "go_type": "float64"
+        },
+        {
+          "name": "TintColor",
+          "json": "tint_color",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "TerrainTint",
+          "json": "terrain_tint_color",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "BloomThreshold",
+          "json": "bloom_threshold",
+          "go_type": "float64"
+        },
+        {
+          "name": "BloomIntensity",
+          "json": "bloom_intensity",
+          "go_type": "float64"
+        },
+        {
+          "name": "BloomTint",
+          "json": "bloom_tint_color",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "ShadowStrength",
+          "json": "shadow_strength",
+          "go_type": "float64"
+        },
+        {
+          "name": "CloudStrength",
+          "json": "cloud_strength",
+          "go_type": "float64"
+        },
+        {
+          "name": "DistanceFog",
+          "json": "distance_fog_visible_intensity",
+          "go_type": "float64"
+        },
+        {
+          "name": "FogColor",
+          "json": "distance_fog_color",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "BloomSaturation",
+          "json": "bloom_saturation",
+          "go_type": "float64"
+        },
+        {
+          "name": "BloomScene",
+          "json": "bloom_scene_intensity",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "BloomTerrain",
+          "json": "bloom_terrain_correction",
+          "go_type": "float64"
+        },
+        {
+          "name": "BloomSigma",
+          "json": "bloom_sigma",
+          "go_type": "float64"
+        },
+        {
+          "name": "ShadowColor",
+          "json": "shadow_color",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "VignetteBorder",
+          "json": "vignette_border",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "VignetteRadius",
+          "json": "vignette_radius",
+          "go_type": "float64"
+        },
+        {
+          "name": "VignetteAmount",
+          "json": "vignette_intensity",
+          "go_type": "float64"
+        },
+        {
+          "name": "VignetteColor",
+          "json": "vignette_color",
+          "go_type": "[]float64"
+        }
+      ]
+    },
+    "preview.MoodAlignment": {
+      "package": "preview",
+      "name": "MoodAlignment",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Offset",
+          "json": "offset",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Correlation",
+          "json": "correlation",
+          "go_type": "float64"
+        },
+        {
+          "name": "PreviewSHA256",
+          "json": "preview_sha256",
+          "go_type": "string"
+        },
+        {
+          "name": "CaptureSHA256",
+          "json": "capture_sha256",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.MoodCalibrationCase": {
+      "package": "preview",
+      "name": "MoodCalibrationCase",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Preview",
+          "json": "preview",
+          "go_type": "string"
+        },
+        {
+          "name": "Capture",
+          "json": "capture",
+          "go_type": "string"
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "string"
+        },
+        {
+          "name": "InputMood",
+          "json": "input_mood",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Offset",
+          "json": "offset",
+          "go_type": "*[]int",
+          "optional": true
+        },
+        {
+          "name": "Stride",
+          "json": "stride",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Regions",
+          "json": "regions",
+          "go_type": "[]MoodCalibrationRegion",
+          "ref": "preview.MoodCalibrationRegion",
+          "optional": true
+        },
+        {
+          "name": "TextureInput",
+          "json": "texture_input",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "TextureGain",
+          "json": "texture_gain",
+          "go_type": "[]float64",
+          "optional": true
+        }
+      ]
+    },
+    "preview.MoodCalibrationManifest": {
+      "package": "preview",
+      "name": "MoodCalibrationManifest",
+      "doc": "MoodCalibrationManifest paths are relative to the manifest, not the process cwd.",
+      "fields": [
+        {
+          "name": "Cases",
+          "json": "cases",
+          "go_type": "[]MoodCalibrationCase",
+          "ref": "preview.MoodCalibrationCase"
+        }
+      ]
+    },
+    "preview.MoodCalibrationRegion": {
+      "package": "preview",
+      "name": "MoodCalibrationRegion",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Points",
+          "json": "points",
+          "go_type": "[][]int"
+        },
+        {
+          "name": "Exclude",
+          "json": "exclude",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Texture",
+          "json": "texture",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.MoodFitCase": {
+      "package": "preview",
+      "name": "MoodFitCase",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "Mood",
+          "ref": "preview.Mood"
+        },
+        {
+          "name": "InputMood",
+          "json": "input_mood",
+          "go_type": "*Mood",
+          "ref": "preview.Mood",
+          "optional": true
+        },
+        {
+          "name": "Samples",
+          "json": "samples",
+          "go_type": "[]MoodSample",
+          "ref": "preview.MoodSample"
+        }
+      ]
+    },
+    "preview.MoodFitResult": {
+      "package": "preview",
+      "name": "MoodFitResult",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "string"
+        },
+        {
+          "name": "HeldOut",
+          "json": "held_out",
+          "go_type": "bool"
+        },
+        {
+          "name": "Samples",
+          "json": "samples",
+          "go_type": "int"
+        },
+        {
+          "name": "Before",
+          "json": "before_rms",
+          "go_type": "float64"
+        },
+        {
+          "name": "After",
+          "json": "after_rms",
+          "go_type": "float64"
+        },
+        {
+          "name": "Residuals",
+          "json": "residuals",
+          "go_type": "[]MoodResidual",
+          "ref": "preview.MoodResidual"
+        }
+      ]
+    },
+    "preview.MoodModel": {
+      "package": "preview",
+      "name": "MoodModel",
+      "doc": "MoodModel is a shared empirical grade, not a reconstruction of the engine shader.",
+      "fields": [
+        {
+          "name": "TintShape",
+          "json": "tint_shape",
+          "go_type": "string"
+        },
+        {
+          "name": "Pivot",
+          "json": "pivot",
+          "go_type": "float64"
+        },
+        {
+          "name": "Tint",
+          "json": "tint",
+          "go_type": "float64"
+        },
+        {
+          "name": "Multiply",
+          "json": "multiply",
+          "go_type": "float64"
+        },
+        {
+          "name": "Attenuate",
+          "json": "attenuate",
+          "go_type": "float64"
+        },
+        {
+          "name": "Bloom",
+          "json": "bloom",
+          "go_type": "float64"
+        },
+        {
+          "name": "Highlight",
+          "json": "highlight",
+          "go_type": "float64"
+        },
+        {
+          "name": "Fog",
+          "json": "fog",
+          "go_type": "float64"
+        },
+        {
+          "name": "BloomChroma",
+          "json": "bloom_chroma",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "preview.MoodReport": {
+      "package": "preview",
+      "name": "MoodReport",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Source",
+          "json": "source",
+          "go_type": "string"
+        },
+        {
+          "name": "Rule",
+          "json": "rule",
+          "go_type": "string"
+        },
+        {
+          "name": "NotModelled",
+          "json": "not_modelled",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.MoodResidual": {
+      "package": "preview",
+      "name": "MoodResidual",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Excluded",
+          "json": "excluded",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Before",
+          "json": "before_rms",
+          "go_type": "float64"
+        },
+        {
+          "name": "After",
+          "json": "after_rms",
+          "go_type": "float64"
+        },
+        {
+          "name": "Predicted",
+          "json": "predicted_rgb",
+          "go_type": "[]float64"
+        }
+      ]
+    },
+    "preview.MoodSample": {
+      "package": "preview",
+      "name": "MoodSample",
+      "fields": [
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "Input",
+          "json": "input_rgb",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "Capture",
+          "json": "capture_rgb",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "Excluded",
+          "json": "excluded",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Texture",
+          "json": "texture",
+          "go_type": "*MoodTextureStats",
+          "ref": "preview.MoodTextureStats",
+          "optional": true
+        }
+      ]
+    },
+    "preview.MoodTextureStats": {
+      "package": "preview",
+      "name": "MoodTextureStats",
+      "fields": [
+        {
+          "name": "SHA256",
+          "json": "sha256",
+          "go_type": "string"
+        },
+        {
+          "name": "Mean",
+          "json": "mean_rgb",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "Median",
+          "json": "median_rgb",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "Pixels",
+          "json": "opaque_pixels",
+          "go_type": "int"
+        }
+      ]
+    },
+    "preview.NeededAsset": {
+      "package": "preview",
+      "name": "NeededAsset",
+      "fields": [
+        {
+          "name": "Path",
+          "json": "path",
+          "go_type": "string"
+        },
+        {
+          "name": "Kind",
+          "json": "kind",
+          "go_type": "string"
+        },
+        {
+          "name": "Status",
+          "json": "status",
+          "go_type": "string"
+        },
+        {
+          "name": "Units",
+          "json": "unit_ids",
+          "go_type": "[]int"
+        }
+      ]
+    },
+    "preview.Object": {
+      "package": "preview",
+      "name": "Object",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        },
+        {
+          "name": "Z",
+          "json": "z",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "Rotation",
+          "json": "rotation",
+          "go_type": "float64"
+        },
+        {
+          "name": "Status",
+          "json": "status",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "InitialAnimationFrame",
+          "json": "initial_animation_frame",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Variant",
+          "json": "variant",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Player",
+          "json": "player",
+          "go_type": "int"
+        },
+        {
+          "name": "Class",
+          "json": "class",
+          "go_type": "string"
+        },
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "FootprintX",
+          "json": "footprint_x",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "FootprintY",
+          "json": "footprint_y",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "Blocking",
+          "json": "blocking",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "MapDrawLevel",
+          "json": "map_draw_level",
+          "go_type": "uint8",
+          "optional": true
+        },
+        {
+          "name": "MapColor",
+          "json": "map_color",
+          "go_type": "uint8",
+          "optional": true
+        },
+        {
+          "name": "HasMapFields",
+          "json": "has_map_fields",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "MinimapMode",
+          "json": "minimap_mode",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "HasMinimapMode",
+          "json": "has_minimap_mode",
+          "go_type": "bool",
+          "optional": true
+        }
+      ]
+    },
+    "preview.Options": {
+      "package": "preview",
+      "name": "Options",
+      "fields": [
+        {
+          "name": "Projection",
+          "go_type": "string"
+        },
+        {
+          "name": "Scale",
+          "go_type": "int"
+        },
+        {
+          "name": "Layers",
+          "go_type": "map[string]bool"
+        },
+        {
+          "name": "Crop",
+          "go_type": "*Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "MinimapScale",
+          "go_type": "int"
+        },
+        {
+          "name": "MinimapOrientation",
+          "go_type": "string"
+        },
+        {
+          "name": "Palette",
+          "go_type": "[]color.RGBA"
+        },
+        {
+          "name": "SpriteTilePixels",
+          "go_type": "int"
+        },
+        {
+          "name": "Dat",
+          "go_type": "*datfile.Index",
+          "ref": "datfile.Index"
+        },
+        {
+          "name": "Textures",
+          "go_type": "*TerrainTextureOptions",
+          "ref": "preview.TerrainTextureOptions"
+        },
+        {
+          "name": "Shadows",
+          "go_type": "*ShadowOptions",
+          "ref": "preview.ShadowOptions"
+        },
+        {
+          "name": "Elevation",
+          "go_type": "bool"
+        },
+        {
+          "name": "StoredObjectHeights",
+          "go_type": "bool"
+        },
+        {
+          "name": "RotationModel",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.ParticleReport": {
+      "package": "preview",
+      "name": "ParticleReport",
+      "doc": "ParticleReport distinguishes an explicit DAT reference from the as-yet uncalibrated angle/anchor convention used to preview a static loop frame.",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        },
+        {
+          "name": "GraphicID",
+          "json": "graphic_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Name",
+          "json": "particle",
+          "go_type": "string"
+        },
+        {
+          "name": "Mapping",
+          "json": "mapping_evidence",
+          "go_type": "string"
+        },
+        {
+          "name": "Status",
+          "json": "status",
+          "go_type": "string"
+        },
+        {
+          "name": "Reason",
+          "json": "reason",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Layer",
+          "json": "layer",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Angle",
+          "json": "angle",
+          "go_type": "int"
+        },
+        {
+          "name": "Angles",
+          "json": "angles",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Frame",
+          "json": "atlas_frame",
+          "go_type": "int"
+        },
+        {
+          "name": "Filename",
+          "json": "frame_name",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Scale",
+          "json": "scale",
+          "go_type": "float64",
+          "optional": true
+        },
+        {
+          "name": "Placement",
+          "json": "placement_evidence",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.ProjectDefaults": {
+      "package": "preview",
+      "name": "ProjectDefaults",
+      "doc": "ProjectDefaults supplies optional CLI defaults, never output destinations.",
+      "fields": [
+        {
+          "name": "Dat",
+          "json": "dat",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "GameDir",
+          "json": "game_dir",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Sprites",
+          "json": "sprites",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Textures",
+          "json": "textures",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Shadows",
+          "json": "shadows",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Elevation",
+          "json": "elevation",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "Scale",
+          "json": "scale",
+          "go_type": "int",
+          "optional": true
+        }
+      ]
+    },
+    "preview.RegistrationAnchor": {
+      "package": "preview",
+      "name": "RegistrationAnchor",
+      "doc": "RegistrationAnchor pairs a world position and explicit ground height with an observed screenshot point.",
+      "fields": [
+        {
+          "name": "X",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "go_type": "float64"
+        },
+        {
+          "name": "Height",
+          "go_type": "float64"
+        },
+        {
+          "name": "PX",
+          "go_type": "float64"
+        },
+        {
+          "name": "PY",
+          "go_type": "float64"
+        },
+        {
+          "name": "Holdout",
+          "go_type": "bool",
+          "optional": true
+        }
+      ]
+    },
+    "preview.RegistrationResidual": {
+      "package": "preview",
+      "name": "RegistrationResidual",
+      "fields": [
+        {
+          "name": "DX",
+          "go_type": "float64"
+        },
+        {
+          "name": "DY",
+          "go_type": "float64"
+        },
+        {
+          "name": "Distance",
+          "go_type": "float64"
+        },
+        {
+          "name": "Holdout",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "preview.Report": {
+      "package": "preview",
+      "name": "Report",
+      "fields": [
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "*Crop",
+          "ref": "preview.Crop",
+          "optional": true
+        },
+        {
+          "name": "Scale",
+          "json": "scale",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "OK",
+          "json": "ok",
+          "go_type": "bool"
+        },
+        {
+          "name": "Stage",
+          "json": "stage",
+          "go_type": "string"
+        },
+        {
+          "name": "Projection",
+          "json": "projection",
+          "go_type": "string"
+        },
+        {
+          "name": "ImageWidth",
+          "json": "image_width",
+          "go_type": "int"
+        },
+        {
+          "name": "ImageHeight",
+          "json": "image_height",
+          "go_type": "int"
+        },
+        {
+          "name": "Drawn",
+          "json": "drawn",
+          "go_type": "int"
+        },
+        {
+          "name": "CountsByClass",
+          "json": "counts_by_class",
+          "go_type": "map[string]int"
+        },
+        {
+          "name": "Skipped",
+          "json": "skipped",
+          "go_type": "[]Skipped",
+          "ref": "preview.Skipped",
+          "optional": true
+        },
+        {
+          "name": "TerrainColors",
+          "json": "terrain_colors",
+          "go_type": "string"
+        },
+        {
+          "name": "PixelSHA256",
+          "json": "pixel_sha256",
+          "go_type": "string"
+        },
+        {
+          "name": "Minimap",
+          "json": "minimap",
+          "go_type": "bool",
+          "optional": true
+        },
+        {
+          "name": "MinimapOrientation",
+          "json": "minimap_orientation",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ObjectColors",
+          "json": "object_colors",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ObjectMarkerSizing",
+          "json": "object_marker_sizing",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Palette",
+          "json": "palette",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ElevationMode",
+          "json": "elevation_mode",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ElevationPadding",
+          "json": "elevation_padding",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "ObjectHeightMode",
+          "json": "object_height_mode",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Fallbacks",
+          "json": "fallbacks",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Textures",
+          "json": "textures",
+          "go_type": "*TerrainTextureReport",
+          "ref": "preview.TerrainTextureReport",
+          "optional": true
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "*MoodReport",
+          "ref": "preview.MoodReport",
+          "optional": true
+        },
+        {
+          "name": "Shadows",
+          "json": "shadows",
+          "go_type": "*ShadowReport",
+          "ref": "preview.ShadowReport",
+          "optional": true
+        },
+        {
+          "name": "Particles",
+          "json": "particles",
+          "go_type": "[]ParticleReport",
+          "ref": "preview.ParticleReport",
+          "optional": true
+        },
+        {
+          "name": "RotationModel",
+          "json": "rotation_model",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "ScenarioVersion",
+          "json": "scenario_version",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.RotationCount": {
+      "package": "preview",
+      "name": "RotationCount",
+      "fields": [
+        {
+          "name": "Rotation",
+          "json": "rotation",
+          "go_type": "float64"
+        },
+        {
+          "name": "Count",
+          "json": "count",
+          "go_type": "int"
+        }
+      ]
+    },
+    "preview.ShaderMoodAudit": {
+      "package": "preview",
+      "name": "ShaderMoodAudit",
+      "fields": [
+        {
+          "name": "Options",
+          "json": "options",
+          "go_type": "ShaderMoodOptions",
+          "ref": "preview.ShaderMoodOptions"
+        },
+        {
+          "name": "Assumptions",
+          "json": "assumptions",
+          "go_type": "[]string"
+        },
+        {
+          "name": "InverseRMS",
+          "json": "input_inverse_rms",
+          "go_type": "map[string]float64"
+        },
+        {
+          "name": "Results",
+          "json": "results",
+          "go_type": "[]MoodFitResult",
+          "ref": "preview.MoodFitResult"
+        }
+      ]
+    },
+    "preview.ShaderMoodOptions": {
+      "package": "preview",
+      "name": "ShaderMoodOptions",
+      "doc": "ShaderMoodOptions records engine state that cannot be recovered from the mood JSON alone.",
+      "fields": [
+        {
+          "name": "ColorCorrection",
+          "json": "color_correction",
+          "go_type": "bool"
+        },
+        {
+          "name": "Bloom",
+          "json": "bloom",
+          "go_type": "bool"
+        },
+        {
+          "name": "BloomScale",
+          "json": "bloom_option_scale",
+          "go_type": "float64"
+        },
+        {
+          "name": "HorizontalSum",
+          "json": "horizontal_tap_sum",
+          "go_type": "float64"
+        },
+        {
+          "name": "VerticalSum",
+          "json": "vertical_tap_sum",
+          "go_type": "float64"
+        },
+        {
+          "name": "Gamma",
+          "json": "gamma_exponent",
+          "go_type": "float64"
+        },
+        {
+          "name": "InputLight",
+          "json": "input_lighting",
+          "go_type": "[]float64"
+        },
+        {
+          "name": "ModulationAlpha",
+          "json": "modulation_alpha",
+          "go_type": "float64"
+        },
+        {
+          "name": "DistanceFog",
+          "json": "distance_fog",
+          "go_type": "bool"
+        },
+        {
+          "name": "DistanceScale",
+          "json": "distance_fog_option_scale",
+          "go_type": "float64"
+        },
+        {
+          "name": "ScreenY",
+          "json": "screen_y",
+          "go_type": "float64"
+        }
+      ]
+    },
+    "preview.ShadowOptions": {
+      "package": "preview",
+      "name": "ShadowOptions",
+      "doc": "ShadowOptions enables the experimental SLD coverage pass.",
+      "fields": [
+        {
+          "name": "Mood",
+          "go_type": "*Mood",
+          "ref": "preview.Mood"
+        },
+        {
+          "name": "Overlap",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.ShadowReport": {
+      "package": "preview",
+      "name": "ShadowReport",
+      "fields": [
+        {
+          "name": "Overlap",
+          "json": "overlap",
+          "go_type": "string"
+        },
+        {
+          "name": "Mood",
+          "json": "mood",
+          "go_type": "string"
+        },
+        {
+          "name": "Drawn",
+          "json": "drawn",
+          "go_type": "int"
+        },
+        {
+          "name": "Missing",
+          "json": "missing_layers",
+          "go_type": "int"
+        },
+        {
+          "name": "CoveredPixels",
+          "json": "covered_pixels",
+          "go_type": "int"
+        },
+        {
+          "name": "Skipped",
+          "json": "skipped",
+          "go_type": "[]Skipped",
+          "ref": "preview.Skipped",
+          "optional": true
+        },
+        {
+          "name": "Limitations",
+          "json": "limitations",
+          "go_type": "[]string"
+        }
+      ]
+    },
+    "preview.Skipped": {
+      "package": "preview",
+      "name": "Skipped",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Reason",
+          "json": "reason",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.Snapshot": {
+      "package": "preview",
+      "name": "Snapshot",
+      "fields": [
+        {
+          "name": "ScenarioVersion",
+          "json": "scenario_version",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Schema",
+          "json": "schema",
+          "go_type": "string"
+        },
+        {
+          "name": "Stage",
+          "json": "stage",
+          "go_type": "string"
+        },
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        },
+        {
+          "name": "Terrain",
+          "json": "terrain",
+          "go_type": "[]Tile",
+          "ref": "preview.Tile"
+        },
+        {
+          "name": "Objects",
+          "json": "objects",
+          "go_type": "[]Object",
+          "ref": "preview.Object",
+          "optional": true
+        },
+        {
+          "name": "PlayerColors",
+          "json": "player_colors",
+          "go_type": "map[int]int",
+          "optional": true
+        },
+        {
+          "name": "SourceWarnings",
+          "json": "source_warnings",
+          "go_type": "[]string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.SpriteItem": {
+      "package": "preview",
+      "name": "SpriteItem",
+      "fields": [
+        {
+          "name": "UnitID",
+          "json": "unit_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Name",
+          "json": "name",
+          "go_type": "string"
+        },
+        {
+          "name": "GraphicID",
+          "json": "graphic_id",
+          "go_type": "int"
+        },
+        {
+          "name": "GraphicFile",
+          "json": "graphic_file",
+          "go_type": "string"
+        },
+        {
+          "name": "Variant",
+          "json": "variant",
+          "go_type": "int"
+        },
+        {
+          "name": "Frame",
+          "json": "frame",
+          "go_type": "int"
+        },
+        {
+          "name": "States",
+          "json": "states",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "Status",
+          "json": "status",
+          "go_type": "string"
+        },
+        {
+          "name": "Reason",
+          "json": "reason",
+          "go_type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.StudyOptions": {
+      "package": "preview",
+      "name": "StudyOptions",
+      "fields": [
+        {
+          "name": "Crop",
+          "go_type": "*Crop",
+          "ref": "preview.Crop"
+        },
+        {
+          "name": "GaiaOnly",
+          "go_type": "bool"
+        },
+        {
+          "name": "Player",
+          "go_type": "*int"
+        },
+        {
+          "name": "UnitIDs",
+          "go_type": "[]int"
+        },
+        {
+          "name": "Diverse",
+          "go_type": "bool"
+        },
+        {
+          "name": "MinCount",
+          "go_type": "int"
+        },
+        {
+          "name": "IncludeForestFish",
+          "go_type": "bool"
+        },
+        {
+          "name": "Cell",
+          "go_type": "int"
+        },
+        {
+          "name": "Top",
+          "go_type": "int"
+        },
+        {
+          "name": "Rank",
+          "go_type": "string"
+        }
+      ]
+    },
+    "preview.TerrainAssetReport": {
+      "package": "preview",
+      "name": "TerrainAssetReport",
+      "fields": [
+        {
+          "name": "ID",
+          "json": "terrain_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Texture",
+          "json": "texture",
+          "go_type": "string"
+        },
+        {
+          "name": "TextureWidth",
+          "json": "texture_width",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "TextureHeight",
+          "json": "texture_height",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "Mask",
+          "json": "mask",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "MaskTopFraction",
+          "json": "mask_top_fraction",
+          "go_type": "*float64",
+          "optional": true
+        },
+        {
+          "name": "BlendType",
+          "json": "blend_type",
+          "go_type": "int32"
+        },
+        {
+          "name": "BlendPriority",
+          "json": "blend_priority",
+          "go_type": "int32"
+        },
+        {
+          "name": "BlendFamily",
+          "json": "candidate_blend_family",
+          "go_type": "string"
+        },
+        {
+          "name": "Issues",
+          "json": "issues",
+          "go_type": "[]string",
+          "optional": true
+        }
+      ]
+    },
+    "preview.TerrainTextureOptions": {
+      "package": "preview",
+      "name": "TerrainTextureOptions",
+      "doc": "TerrainTextureOptions opts in to installed art.",
+      "fields": [
+        {
+          "name": "GameDir",
+          "go_type": "string"
+        },
+        {
+          "name": "Repeat",
+          "go_type": "float64"
+        },
+        {
+          "name": "TextureRepeat",
+          "go_type": "float64"
+        },
+        {
+          "name": "Edges",
+          "go_type": "bool"
+        }
+      ]
+    },
+    "preview.TerrainTextureReport": {
+      "package": "preview",
+      "name": "TerrainTextureReport",
+      "fields": [
+        {
+          "name": "Repeat",
+          "json": "mask_repeat_tiles",
+          "go_type": "float64"
+        },
+        {
+          "name": "TextureRepeat",
+          "json": "texture_repeat_tiles",
+          "go_type": "float64"
+        },
+        {
+          "name": "LayerRule",
+          "json": "layer_rule",
+          "go_type": "string"
+        },
+        {
+          "name": "EmptyMaskRule",
+          "json": "empty_mask_rule",
+          "go_type": "string"
+        },
+        {
+          "name": "EdgeRule",
+          "json": "edge_rule",
+          "go_type": "string"
+        },
+        {
+          "name": "EdgeEvidence",
+          "json": "edge_evidence",
+          "go_type": "[]string",
+          "optional": true
+        },
+        {
+          "name": "BlendomaticSHA256",
+          "json": "blendomatic_sha256",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "BlendomaticModes",
+          "json": "blendomatic_modes",
+          "go_type": "int",
+          "optional": true
+        },
+        {
+          "name": "EdgeIssue",
+          "json": "edge_issue",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Assumptions",
+          "json": "assumptions",
+          "go_type": "[]string"
+        },
+        {
+          "name": "Assets",
+          "json": "assets",
+          "go_type": "[]TerrainAssetReport",
+          "ref": "preview.TerrainAssetReport"
+        }
+      ]
+    },
+    "preview.Tile": {
+      "package": "preview",
+      "name": "Tile",
+      "fields": [
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "int"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "int"
+        },
+        {
+          "name": "TerrainID",
+          "json": "terrain_id",
+          "go_type": "int"
+        },
+        {
+          "name": "Layer",
+          "json": "layer",
+          "go_type": "*int",
+          "optional": true
+        },
+        {
+          "name": "Elevation",
+          "json": "elevation",
+          "go_type": "float64"
         }
       ]
     },
@@ -42237,6 +45000,67 @@
         }
       ]
     },
+    "scenario.Artwork": {
+      "package": "scenario",
+      "name": "Artwork",
+      "doc": "Artwork is a read-only projection, not a File.",
+      "fields": [
+        {
+          "name": "Version",
+          "json": "version",
+          "go_type": "string"
+        },
+        {
+          "name": "Scope",
+          "json": "scope",
+          "go_type": "string"
+        },
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        },
+        {
+          "name": "ColorMood",
+          "json": "color_mood",
+          "go_type": "string",
+          "optional": true
+        },
+        {
+          "name": "Tiles",
+          "json": "tiles",
+          "go_type": "[]TerrainTile",
+          "ref": "scenario.TerrainTile"
+        },
+        {
+          "name": "Units",
+          "json": "units",
+          "go_type": "UnitInfo",
+          "ref": "scenario.UnitInfo"
+        },
+        {
+          "name": "PlayerColors",
+          "json": "player_colors",
+          "go_type": "map[int]int"
+        },
+        {
+          "name": "Sections",
+          "json": "sections",
+          "go_type": "[]SectionInfo",
+          "ref": "scenario.SectionInfo"
+        },
+        {
+          "name": "UnparsedBytes",
+          "json": "unparsed_bytes",
+          "go_type": "int"
+        }
+      ]
+    },
     "scenario.BeforeAfter": {
       "package": "scenario",
       "name": "BeforeAfter",
@@ -45422,6 +48246,25 @@
         }
       ]
     },
+    "scenario.ExtractOptions": {
+      "package": "scenario",
+      "name": "ExtractOptions",
+      "fields": [
+        {
+          "name": "Crop",
+          "go_type": "MotifCrop",
+          "ref": "scenario.MotifCrop"
+        },
+        {
+          "name": "Terrain",
+          "go_type": "bool"
+        },
+        {
+          "name": "Relative",
+          "go_type": "bool"
+        }
+      ]
+    },
     "scenario.FieldQueryOptions": {
       "package": "scenario",
       "name": "FieldQueryOptions",
@@ -46763,6 +49606,79 @@
         }
       ]
     },
+    "scenario.MotifCrop": {
+      "package": "scenario",
+      "name": "MotifCrop",
+      "doc": "MotifCrop uses half-open tile bounds, matching preview crop coordinates.",
+      "fields": [
+        {
+          "name": "X1",
+          "json": "x1",
+          "go_type": "int"
+        },
+        {
+          "name": "Y1",
+          "json": "y1",
+          "go_type": "int"
+        },
+        {
+          "name": "X2",
+          "json": "x2",
+          "go_type": "int"
+        },
+        {
+          "name": "Y2",
+          "json": "y2",
+          "go_type": "int"
+        }
+      ]
+    },
+    "scenario.MotifPlacement": {
+      "package": "scenario",
+      "name": "MotifPlacement",
+      "fields": [
+        {
+          "name": "X",
+          "json": "x",
+          "go_type": "float64"
+        },
+        {
+          "name": "Y",
+          "json": "y",
+          "go_type": "float64"
+        },
+        {
+          "name": "Width",
+          "json": "width",
+          "go_type": "int"
+        },
+        {
+          "name": "Height",
+          "json": "height",
+          "go_type": "int"
+        }
+      ]
+    },
+    "scenario.MotifTransform": {
+      "package": "scenario",
+      "name": "MotifTransform",
+      "fields": [
+        {
+          "name": "At",
+          "go_type": "*PointRecipe",
+          "ref": "scenario.PointRecipe"
+        },
+        {
+          "name": "Rotate",
+          "go_type": "int"
+        },
+        {
+          "name": "Grammar",
+          "go_type": "felt.Catalog",
+          "ref": "felt.Catalog"
+        }
+      ]
+    },
     "scenario.NamedSection": {
       "package": "scenario",
       "name": "NamedSection",
@@ -48033,6 +50949,13 @@
       "name": "Recipe",
       "fields": [
         {
+          "name": "Source",
+          "json": "source",
+          "go_type": "*RecipeSource",
+          "ref": "scenario.RecipeSource",
+          "optional": true
+        },
+        {
           "name": "DatPath",
           "json": "dat_path",
           "go_type": "string",
@@ -48139,6 +51062,51 @@
           "json": "map",
           "go_type": "[]MapRecipe",
           "ref": "scenario.MapRecipe",
+          "optional": true
+        }
+      ]
+    },
+    "scenario.RecipeSource": {
+      "package": "scenario",
+      "name": "RecipeSource",
+      "fields": [
+        {
+          "name": "Kind",
+          "json": "kind",
+          "go_type": "string"
+        },
+        {
+          "name": "Scenario",
+          "json": "scenario",
+          "go_type": "string"
+        },
+        {
+          "name": "Version",
+          "json": "version",
+          "go_type": "string"
+        },
+        {
+          "name": "Crop",
+          "json": "crop",
+          "go_type": "MotifCrop",
+          "ref": "scenario.MotifCrop"
+        },
+        {
+          "name": "Relative",
+          "json": "relative",
+          "go_type": "bool"
+        },
+        {
+          "name": "Placement",
+          "json": "placement",
+          "go_type": "*MotifPlacement",
+          "ref": "scenario.MotifPlacement",
+          "optional": true
+        },
+        {
+          "name": "Notes",
+          "json": "notes",
+          "go_type": "[]string",
           "optional": true
         }
       ]
@@ -51472,6 +54440,12 @@
           "name": "Status",
           "json": "status",
           "go_type": "int"
+        },
+        {
+          "name": "InitialAnimationFrame",
+          "json": "initial_animation_frame",
+          "go_type": "int",
+          "optional": true
         },
         {
           "name": "CaptionStringID",

@@ -60,6 +60,15 @@ func validateStoredObjectHeights(s Snapshot) error {
 
 // SnapshotImageExtent adds the height-field headroom to the flat image frame.
 // Optional stored=true also reserves headroom for recorded object Z values.
+type ImageExtent struct {
+	Width      int    `json:"width"`
+	Height     int    `json:"height"`
+	Scale      int    `json:"scale"`
+	Projection string `json:"projection"`
+	MapOriginX int    `json:"map_origin_x"`
+	MapOriginY int    `json:"map_origin_y"`
+}
+
 func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation bool, stored ...bool) (ImageExtent, error) {
 	if err := validateSnapshot(s); err != nil {
 		return ImageExtent{}, err
@@ -74,11 +83,20 @@ func SnapshotImageExtent(s Snapshot, scale int, projection string, elevation boo
 			return ImageExtent{}, err
 		}
 	}
-	e, err := FullImageExtent(s.Width, s.Height, scale, projection)
-	if err != nil {
-		return e, err
+	if scale == 0 {
+		scale = 4
 	}
-	pad := elevationPadding(s, Crop{X2: s.Width, Y2: s.Height}, e.Scale, projection, elevation, stored...)
+	if scale < 1 || scale > 128 || (projection != "" && projection != "diamond" && projection != "topdown") {
+		return ImageExtent{}, fmt.Errorf("invalid preview scale or projection")
+	}
+	projection = defaultProjection(projection)
+	w, h := s.Width*scale, s.Height*scale
+	if projection == "diamond" {
+		w, h = (s.Width+s.Height)*scale/2+1, (s.Width+s.Height)*scale/4+scale*2+1
+	}
+	x, y := mapPoint(0, 0, Crop{X2: s.Width, Y2: s.Height}, scale, projection)
+	e := ImageExtent{Width: w, Height: h, Scale: scale, Projection: projection, MapOriginX: x, MapOriginY: y}
+	pad := elevationPadding(s, Crop{X2: s.Width, Y2: s.Height}, scale, projection, elevation, stored...)
 	e.Height += pad
 	e.MapOriginY += pad
 	return e, nil
@@ -235,10 +253,7 @@ func renderHeightfield(img *image.RGBA, tiles []Tile, s Snapshot, crop Crop, sca
 	}
 }
 
-func heightTiles(s Snapshot, session *renderSession) []Tile {
-	if session != nil {
-		return session.terrain
-	}
+func heightTiles(s Snapshot) []Tile {
 	tiles := make([]Tile, len(s.Terrain))
 	for _, t := range s.Terrain {
 		tiles[t.Y*s.Width+t.X] = t
